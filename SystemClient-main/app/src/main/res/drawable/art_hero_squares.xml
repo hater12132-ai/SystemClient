@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Wide strip of floating glass squares; the centre (x 205-355) is left free for the cube. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="560dp"
+    android:height="160dp"
+    android:viewportWidth="560"
+    android:viewportHeight="160">
+    <!-- outlined -->
+    <path android:fillColor="#00000000" android:strokeColor="#FFFFFF" android:strokeAlpha="0.20"
+        android:strokeWidth="5" android:pathData="M34,22 h54 v54 h-54 z" />
+    <path android:fillColor="#00000000" android:strokeColor="#FFFFFF" android:strokeAlpha="0.15"
+        android:strokeWidth="5" android:pathData="M118,92 h44 v44 h-44 z" />
+    <path android:fillColor="#00000000" android:strokeColor="#7FAEFF" android:strokeAlpha="0.40"
+        android:strokeWidth="5" android:pathData="M392,20 h46 v46 h-46 z" />
+    <path android:fillColor="#00000000" android:strokeColor="#FFFFFF" android:strokeAlpha="0.16"
+        android:strokeWidth="5" android:pathData="M470,86 h58 v58 h-58 z" />
+    <!-- filled -->
+    <path android:fillColor="#FFFFFF" android:fillAlpha="0.10"
+        android:pathData="M132,14 h30 v30 h-30 z" />
+    <path android:fillColor="#7FAEFF" android:fillAlpha="0.24"
+        android:pathData="M54,110 h22 v22 h-22 z" />
+    <path android:fillColor="#FFFFFF" android:fillAlpha="0.09"
+        android:pathData="M366,104 h30 v30 h-30 z" />
+    <path android:fillColor="#7FAEFF" android:fillAlpha="0.28"
+        android:pathData="M476,28 h20 v20 h-20 z" />
+    <path android:fillColor="#FFFFFF" android:fillAlpha="0.12"
+        android:pathData="M530,52 h14 v14 h-14 z" />
+    <path android:fillColor="#FFFFFF" android:fillAlpha="0.08"
+        android:pathData="M12,70 h14 v14 h-14 z" />
+    <path android:fillColor="#FFFFFF" android:fillAlpha="0.10"
+        android:pathData="M182,60 h12 v12 h-12 z" />
+</vector>

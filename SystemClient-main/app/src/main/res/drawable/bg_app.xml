@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- App backdrop (light): pale base with soft blue orbs. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#F3F6FD" />
+        </shape>
+    </item>
+    <item
+        android:width="620dp"
+        android:height="620dp"
+        android:gravity="top|start">
+        <shape android:shape="oval">
+            <gradient
+                android:type="radial"
+                android:gradientRadius="310dp"
+                android:startColor="#442F6BFF"
+                android:endColor="#002F6BFF" />
+        </shape>
+    </item>
+    <item
+        android:width="560dp"
+        android:height="560dp"
+        android:gravity="bottom|end">
+        <shape android:shape="oval">
+            <gradient
+                android:type="radial"
+                android:gradientRadius="280dp"
+                android:startColor="#336B4DFF"
+                android:endColor="#006B4DFF" />
+        </shape>
+    </item>
+</layer-list>
