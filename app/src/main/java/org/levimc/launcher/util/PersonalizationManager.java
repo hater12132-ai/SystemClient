@@ -823,7 +823,7 @@ public class PersonalizationManager {
     }
 
     public static final int[] PRESET_COLORS = {
-            0xFF26A69A, 0xFF42A5F5, 0xFF5C6BC0,
+            0xFF3D82FF, 0xFF42A5F5, 0xFF5C6BC0,
             0xFFAB47BC, 0xFFEC407A, 0xFFEF5350,
             0xFFFF7043, 0xFFFFA726, 0xFFFFCA28,
             0xFF66BB6A, 0xFF26C6DA, 0xFF29B6F6,

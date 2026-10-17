@@ -376,6 +376,7 @@ public class BaseActivity extends AppCompatActivity {
         for (int id : tabIds) {
             TextView tab = findViewById(id);
             if (tab == null) continue;
+            tab.setSelected(id == activeTabId);
             int color;
             if (id == activeTabId) {
                 color = accent != 0 ? accent : getResources().getColor(R.color.on_surface, getTheme());

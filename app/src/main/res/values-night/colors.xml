@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">#4AE0A0</color>
-    <color name="on_primary">#000000</color>
+    <color name="primary">#3D82FF</color>
+    <color name="on_primary">#FFFFFF</color>
 
-    <color name="secondary">#00FFFF</color>
-    <color name="on_secondary">#000000</color>
+    <color name="secondary">#7C9CFF</color>
+    <color name="on_secondary">#0A0C14</color>
 
-    <color name="primary_container">#1A3A2A</color>
-    <color name="on_primary_container">#4AE0A0</color>
+    <color name="primary_container">#14264D</color>
+    <color name="on_primary_container">#A9C4FF</color>
 
-    <color name="tertiary">#81D4FA</color>
-    <color name="on_tertiary">#000000</color>
+    <color name="tertiary">#8AB4FF</color>
+    <color name="on_tertiary">#0A0C14</color>
     <color name="external_mod_ad">#FFB74D</color>
 
-    <color name="error">#FF6B6B</color>
-    <color name="on_error">#000000</color>
+    <color name="error">#FF6B7A</color>
+    <color name="on_error">#0A0C14</color>
 
-    <color name="background">#000000</color>
-    <color name="surface">#0A0A0A</color>
-    <color name="surface_variant">#1A1A1A</color>
-    <color name="on_background">#FFFFFF</color>
-    <color name="on_surface">#FFFFFF</color>
+    <color name="background">#080A12</color>
+    <color name="surface">#11141F</color>
+    <color name="surface_variant">#1A1F2E</color>
+    <color name="on_background">#F2F5FC</color>
+    <color name="on_surface">#F2F5FC</color>
 
-    <color name="outline">#2C2C2E</color>
-    <color name="divider">#333333</color>
+    <color name="outline">#2A3042</color>
+    <color name="divider">#14FFFFFF</color>
 
     <color name="white">#FFFFFF</color>
     <color name="scrim">#99000000</color>
@@ -32,9 +32,16 @@
     <color name="glow_cyan">#00FFFF</color>
 
     <color name="abi_label_text">#FFFFFF</color>
-    <color name="accent_text">#4AE0A0</color>
+    <color name="accent_text">#8DB2FF</color>
 
-    <color name="text_primary">#FFFFFF</color>
-    <color name="text_secondary">#AAAAAA</color>
+    <color name="text_primary">#F2F5FC</color>
+    <color name="text_secondary">#98A2B8</color>
     <color name="qa_icon_color">#FFFFFF</color>
+
+    <!-- Glass tokens -->
+    <color name="glass_fill">#12FFFFFF</color>
+    <color name="glass_fill_inner">#0DFFFFFF</color>
+    <color name="glass_stroke">#26FFFFFF</color>
+    <color name="glass_sheen">#14FFFFFF</color>
+    <color name="nav_fill">#40080A12</color>
 </resources>

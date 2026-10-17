@@ -15,7 +15,7 @@
         <item name="colorOnBackground">@color/on_background</item>
         <item name="colorOutline">@color/outline</item>
 
-        <item name="android:windowBackground">@color/background</item>
+        <item name="android:windowBackground">@drawable/bg_app</item>
         <item name="android:windowDisablePreview">true</item>
 
         <item name="android:statusBarColor">@android:color/transparent</item>

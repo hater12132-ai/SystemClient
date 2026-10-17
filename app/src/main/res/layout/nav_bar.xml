@@ -4,13 +4,14 @@
     android:id="@+id/nav_bar_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/bg_nav_bar"
     android:orientation="vertical">
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp">
+        android:layout_height="52dp"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -69,8 +70,9 @@
                     android:id="@+id/nav_tab_launch"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_marginVertical="9dp"
                     android:gravity="center"
-                    android:paddingHorizontal="12dp"
+                    android:paddingHorizontal="14dp"
                     android:fontFamily="@font/misans"
                     android:text="@string/nav_launch"
                     android:textColor="@color/on_surface"
@@ -78,49 +80,52 @@
                     android:textStyle="bold"
                     android:drawableStart="@drawable/ic_nav_launch"
                     android:drawablePadding="5dp"
-                    android:background="?attr/selectableItemBackground" />
+                    android:background="@drawable/bg_nav_tab" />
 
                 <TextView
                     android:id="@+id/nav_tab_instances"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_marginVertical="9dp"
                     android:gravity="center"
-                    android:paddingHorizontal="12dp"
+                    android:paddingHorizontal="14dp"
                     android:fontFamily="@font/misans"
                     android:text="@string/nav_instances"
                     android:textColor="@color/text_secondary"
                     android:textSize="13sp"
                     android:drawableStart="@drawable/ic_nav_instances"
                     android:drawablePadding="5dp"
-                    android:background="?attr/selectableItemBackground" />
+                    android:background="@drawable/bg_nav_tab" />
 
                 <TextView
                     android:id="@+id/nav_tab_about"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_marginVertical="9dp"
                     android:gravity="center"
-                    android:paddingHorizontal="12dp"
+                    android:paddingHorizontal="14dp"
                     android:fontFamily="@font/misans"
                     android:text="@string/nav_about"
                     android:textColor="@color/text_secondary"
                     android:textSize="13sp"
                     android:drawableStart="@drawable/ic_nav_about"
                     android:drawablePadding="5dp"
-                    android:background="?attr/selectableItemBackground" />
+                    android:background="@drawable/bg_nav_tab" />
 
                 <TextView
                     android:id="@+id/nav_tab_settings"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_marginVertical="9dp"
                     android:gravity="center"
-                    android:paddingHorizontal="12dp"
+                    android:paddingHorizontal="14dp"
                     android:fontFamily="@font/misans"
                     android:text="@string/nav_settings"
                     android:textColor="@color/text_secondary"
                     android:textSize="13sp"
                     android:drawableStart="@drawable/ic_nav_settings"
                     android:drawablePadding="5dp"
-                    android:background="?attr/selectableItemBackground" />
+                    android:background="@drawable/bg_nav_tab" />
 
             </LinearLayout>
         </HorizontalScrollView>
