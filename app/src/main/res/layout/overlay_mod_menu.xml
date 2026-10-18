@@ -15,9 +15,9 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="20dp"
-        app:cardBackgroundColor="#F20A0C10"
+        app:cardBackgroundColor="#F2080A0E"
         app:cardCornerRadius="20dp"
-        app:cardElevation="18dp"
+        app:cardElevation="20dp"
         app:cardPreventCornerOverlap="true">
 
         <LinearLayout
@@ -27,7 +27,7 @@
 
             <LinearLayout
                 android:id="@+id/mod_menu_sidebar"
-                android:layout_width="176dp"
+                android:layout_width="180dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/bg_mod_menu_sidebar"
                 android:orientation="vertical"
@@ -39,18 +39,17 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="14dp"
+                    android:layout_marginBottom="16dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:paddingStart="4dp"
-                    android:paddingEnd="4dp">
+                    android:paddingStart="4dp">
 
                     <ImageView
                         android:id="@+id/mod_menu_logo"
-                        android:layout_width="26dp"
-                        android:layout_height="26dp"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
                         android:contentDescription="@string/app_name"
-                        android:src="@mipmap/ic_launcher" />
+                        android:src="@drawable/ic_system_star" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -58,8 +57,9 @@
                         android:layout_marginStart="8dp"
                         android:text="System"
                         android:textColor="#F2F4F8"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.02" />
                 </LinearLayout>
 
                 <TextView
@@ -85,10 +85,76 @@
                     android:gravity="center_vertical"
                     android:paddingStart="16dp"
                     android:paddingEnd="12dp"
-                    android:text="@string/mod_menu_modules"
+                    android:text="All"
                     android:textColor="#E8EAED"
                     android:textSize="13sp"
                     android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_mod_menu_nav_item"
+                    android:gravity="center_vertical"
+                    android:paddingStart="12dp"
+                    android:text="Combat"
+                    android:textColor="#9AA3B5"
+                    android:textSize="13sp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_mod_menu_nav_item"
+                    android:gravity="center_vertical"
+                    android:paddingStart="12dp"
+                    android:text="Movement"
+                    android:textColor="#9AA3B5"
+                    android:textSize="13sp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_mod_menu_nav_item"
+                    android:gravity="center_vertical"
+                    android:paddingStart="12dp"
+                    android:text="Player"
+                    android:textColor="#9AA3B5"
+                    android:textSize="13sp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_mod_menu_nav_item"
+                    android:gravity="center_vertical"
+                    android:paddingStart="12dp"
+                    android:text="Render"
+                    android:textColor="#9AA3B5"
+                    android:textSize="13sp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_mod_menu_nav_item"
+                    android:gravity="center_vertical"
+                    android:paddingStart="12dp"
+                    android:text="Visual"
+                    android:textColor="#9AA3B5"
+                    android:textSize="13sp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/bg_mod_menu_nav_item"
+                    android:gravity="center_vertical"
+                    android:paddingStart="12dp"
+                    android:text="Client"
+                    android:textColor="#9AA3B5"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:paddingStart="6dp"
+                    android:text="Settings"
+                    android:textColor="#6B7280"
+                    android:textSize="11sp" />
+
 
                 <ImageButton
                     android:id="@+id/nav_modules_compact"
@@ -120,7 +186,7 @@
                     android:paddingStart="16dp"
                     android:paddingEnd="12dp"
                     android:singleLine="true"
-                    android:text="@string/mod_menu_hud_editor"
+                    android:text="Waypoints"
                     android:textColor="#9AA3B5"
                     android:textSize="13sp" />
 
@@ -172,6 +238,55 @@
                     android:src="@drawable/ic_settings"
                     android:tint="#9AA3B5"
                     android:visibility="gone" />
+
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_mod_menu_footer"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:background="@drawable/bg_mod_menu_nav_compact_selected"
+                        android:gravity="center"
+                        android:text="S"
+                        android:textColor="#F2F4F8"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="SystemClient"
+                            android:textColor="#F2F4F8"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="systemdlc.com"
+                            android:textColor="#6B7280"
+                            android:textSize="9sp" />
+                    </LinearLayout>
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -252,14 +367,14 @@
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:padding="6dp"
                             android:src="@drawable/ic_arrow_back"
-                            android:tint="#F2F4F8" />
+                            android:tint="#FFFFFF" />
 
                         <TextView
                             android:id="@+id/config_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
-                            android:textColor="#F2F4F8"
+                            android:textColor="#FFFFFF"
                             android:textSize="14sp"
                             android:textStyle="bold" />
                     </LinearLayout>
@@ -271,7 +386,7 @@
                         android:background="@drawable/bg_close_button"
                         android:padding="8dp"
                         android:src="@drawable/ic_close"
-                        android:tint="#F2F4F8" />
+                        android:tint="#FFFFFF" />
 
                 </LinearLayout>
 
@@ -521,7 +636,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/mod_menu_notifications"
-                                    android:textColor="#F2F4F8"
+                                    android:textColor="#FFFFFF"
                                     android:textSize="13sp"
                                     android:textStyle="bold" />
 
@@ -571,7 +686,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/mod_menu_pause_menu_only"
-                                    android:textColor="#F2F4F8"
+                                    android:textColor="#FFFFFF"
                                     android:textSize="13sp"
                                     android:textStyle="bold" />
 
@@ -623,7 +738,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/mod_menu_keybind"
-                                    android:textColor="#F2F4F8"
+                                    android:textColor="#FFFFFF"
                                     android:textSize="13sp"
                                     android:textStyle="bold" />
 
@@ -696,7 +811,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/mod_menu_compact"
-                                    android:textColor="#F2F4F8"
+                                    android:textColor="#FFFFFF"
                                     android:textSize="13sp"
                                     android:textStyle="bold" />
 
@@ -745,7 +860,7 @@
                                     android:layout_marginStart="12dp"
                                     android:layout_weight="1"
                                     android:text="@string/mod_menu_opacity"
-                                    android:textColor="#F2F4F8"
+                                    android:textColor="#FFFFFF"
                                     android:textSize="13sp"
                                     android:textStyle="bold" />
 
@@ -800,7 +915,7 @@
                                     android:layout_marginStart="12dp"
                                     android:layout_weight="1"
                                     android:text="@string/mod_menu_button_opacity"
-                                    android:textColor="#F2F4F8"
+                                    android:textColor="#FFFFFF"
                                     android:textSize="13sp"
                                     android:textStyle="bold" />
 
@@ -857,9 +972,9 @@
         android:layout_gravity="top|center_horizontal"
         android:layout_marginTop="20dp"
         android:visibility="gone"
-        app:cardBackgroundColor="#F20A0C10"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="12dp">
+        app:cardBackgroundColor="#F2080A0E"
+        app:cardCornerRadius="14dp"
+        app:cardElevation="10dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -911,7 +1026,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/mod_menu_hud_editor"
+                            android:text="Waypoints"
                             android:textColor="#F2F4F8"
                             android:textSize="13sp"
                             android:textStyle="bold" />
@@ -957,7 +1072,7 @@
                     android:contentDescription="@string/cancel"
                     android:padding="8dp"
                     android:src="@drawable/ic_close"
-                    android:tint="#F2F4F8" />
+                    android:tint="#FFFFFF" />
 
             </LinearLayout>
 
