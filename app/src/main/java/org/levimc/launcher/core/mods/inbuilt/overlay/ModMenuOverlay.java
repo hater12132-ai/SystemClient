@@ -233,6 +233,10 @@ public class ModMenuOverlay {
             });
             
             setupViews();
+            try {
+                new SystemDlcMenuController(activity, overlayView).attach();
+            } catch (Throwable ignored) {
+            }
             loadMods();
             restoreModsScrollPosition();
             
@@ -276,6 +280,10 @@ public class ModMenuOverlay {
         overlayView = LayoutInflater.from(activity).inflate(R.layout.overlay_mod_menu, null);
         prepareMenuKeyboard();
         setupViews();
+        try {
+            new SystemDlcMenuController(activity, overlayView).attach();
+        } catch (Throwable ignored) {
+        }
         loadMods();
         restoreModsScrollPosition();
         
