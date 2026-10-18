@@ -90,7 +90,7 @@ public class AccountsAdapter extends RecyclerView.Adapter<AccountsAdapter.Accoun
         }
         ColorStateList tint = ColorStateList.valueOf(accent);
         holder.btnUse.setBackgroundTintList(tint);
-        holder.btnUse.setTextColor(Color.WHITE);
+        holder.btnUse.setTextColor(org.levimc.launcher.util.PersonalizationManager.contrastOn(accent));
     }
 
     @Override

@@ -137,7 +137,7 @@ public class ApkVersionConfirmDialog extends DialogFragment {
                 title.setTextColor(accent);
                 editVersionName.setBackground(createAccentEditTextBackground(context, accent));
                 btnInstall.setBackgroundTintList(ColorStateList.valueOf(accent));
-                btnInstall.setTextColor(Color.WHITE);
+                btnInstall.setTextColor(org.levimc.launcher.util.PersonalizationManager.contrastOn(accent));
             }
         } catch (Exception ignored) {}
 

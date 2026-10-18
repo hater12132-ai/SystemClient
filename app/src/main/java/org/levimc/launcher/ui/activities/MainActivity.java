@@ -6,6 +6,10 @@ import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.ImageDecoder;
+import android.graphics.drawable.AnimatedImageDrawable;
+import android.graphics.drawable.Drawable;
+import org.levimc.launcher.ui.views.LiquidGlassDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -118,12 +122,14 @@ import okhttp3.OkHttpClient;
     private OnBackPressedCallback onBackPressedCallback;
     private boolean launcherInitialized;
     private boolean postEulaFlowRunning;
+    private AnimatedImageDrawable heroAnimation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        setupGlassAndHero();
         closeLauncherRestartAfterFirstDraw();
         setupNavBar();
         setupManagersAndHandlers();
@@ -671,6 +677,7 @@ import okhttp3.OkHttpClient;
     @Override
     protected void onResume() {
         super.onResume();
+        updateAmbientAndHero(true);
         refreshAccountHeaderUI();
         if (!launcherInitialized) {
             showPostEulaFlow();
@@ -684,6 +691,47 @@ import okhttp3.OkHttpClient;
         if (binding != null && versionManager != null) {
             binding.launchButton.setEnabled(true);
         }
+    }
+
+    /** Black liquid-glass LAUNCH button + the animated hero. Launch behaviour itself is untouched. */
+    private void setupGlassAndHero() {
+        float density = getResources().getDisplayMetrics().density;
+        binding.launchButton.setBackground(new LiquidGlassDrawable(0xD9000000, 16 * density, density));
+        try {
+            ImageDecoder.Source src = ImageDecoder.createSource(getResources(), R.raw.hero_anim);
+            Drawable drawable = ImageDecoder.decodeDrawable(src, (decoder, info, source) -> {
+                int w = info.getSize().getWidth();
+                int h = info.getSize().getHeight();
+                float scale = Math.min(1f, 480f / Math.max(w, h));
+                decoder.setTargetSize(Math.max(1, Math.round(w * scale)), Math.max(1, Math.round(h * scale)));
+            });
+            binding.heroArt.setImageDrawable(drawable);
+            if (drawable instanceof AnimatedImageDrawable) {
+                heroAnimation = (AnimatedImageDrawable) drawable;
+                heroAnimation.setRepeatCount(AnimatedImageDrawable.REPEAT_INFINITE);
+            }
+        } catch (Throwable ignored) {
+            // keep the static first frame from the layout
+        }
+    }
+
+    private void updateAmbientAndHero(boolean resumed) {
+        if (binding == null) return;
+        boolean customBackground = new PersonalizationManager(this).hasBackgroundImage();
+        binding.ambientBackdrop.setVisibility(customBackground ? View.GONE : View.VISIBLE);
+        if (heroAnimation != null) {
+            if (resumed) {
+                if (!heroAnimation.isRunning()) heroAnimation.start();
+            } else if (heroAnimation.isRunning()) {
+                heroAnimation.stop();
+            }
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        updateAmbientAndHero(false);
+        super.onStop();
     }
 
     @SuppressLint({"ClickableViewAccessibility", "UnsafeIntentLaunch"})

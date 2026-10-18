@@ -228,7 +228,7 @@ public class InstanceSettingsActivity extends BaseActivity {
                 } else {
                     tabs[i].setBackgroundResource(R.drawable.bg_tab_selected);
                 }
-                tabs[i].setTextColor(android.graphics.Color.WHITE);
+                tabs[i].setTextColor(org.levimc.launcher.util.PersonalizationManager.contrastOn(accent));
             } else {
                 tabs[i].setBackgroundResource(R.drawable.bg_tab_unselected);
                 tabs[i].setTextColor(getColor(R.color.text_secondary));

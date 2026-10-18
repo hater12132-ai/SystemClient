@@ -182,7 +182,7 @@ public class SettingsActivity extends BaseActivity {
                 } else {
                     tabs[i].setBackgroundResource(R.drawable.bg_tab_selected);
                 }
-                tabs[i].setTextColor(Color.WHITE);
+                tabs[i].setTextColor(org.levimc.launcher.util.PersonalizationManager.contrastOn(accent));
                 tabs[i].setTextSize(13);
             } else {
                 tabs[i].setBackgroundResource(R.drawable.bg_tab_unselected);
@@ -478,19 +478,19 @@ public class SettingsActivity extends BaseActivity {
         Button btnSelectImage = findViewById(R.id.btn_select_bg_image);
         if (btnSelectImage != null && accent != 0) {
             btnSelectImage.setBackgroundTintList(ColorStateList.valueOf(accent));
-            btnSelectImage.setTextColor(Color.WHITE);
+            btnSelectImage.setTextColor(org.levimc.launcher.util.PersonalizationManager.contrastOn(accent));
         }
         
         Button btnCheckUpdate = findViewById(R.id.btn_check_update);
         if (btnCheckUpdate != null && accent != 0) {
             btnCheckUpdate.setBackgroundTintList(ColorStateList.valueOf(accent));
-            btnCheckUpdate.setTextColor(Color.WHITE);
+            btnCheckUpdate.setTextColor(org.levimc.launcher.util.PersonalizationManager.contrastOn(accent));
         }
 
         Button btnUpdatePreloaderSigs = findViewById(R.id.btn_update_preloader_sigs);
         if (btnUpdatePreloaderSigs != null && accent != 0) {
             btnUpdatePreloaderSigs.setBackgroundTintList(ColorStateList.valueOf(accent));
-            btnUpdatePreloaderSigs.setTextColor(Color.WHITE);
+            btnUpdatePreloaderSigs.setTextColor(org.levimc.launcher.util.PersonalizationManager.contrastOn(accent));
         }
         
         SwitchMaterial switchLogcat = findViewById(R.id.switch_logcat);
@@ -533,7 +533,7 @@ public class SettingsActivity extends BaseActivity {
         Button navSignInBtn = findViewById(R.id.nav_sign_in_button);
         if (navSignInBtn != null && accent != 0) {
             navSignInBtn.setBackgroundTintList(ColorStateList.valueOf(accent));
-            navSignInBtn.setTextColor(Color.WHITE);
+            navSignInBtn.setTextColor(org.levimc.launcher.util.PersonalizationManager.contrastOn(accent));
         }
         
         int[] navTabIds = {R.id.nav_tab_launch, R.id.nav_tab_instances, R.id.nav_tab_about, R.id.nav_tab_settings};

@@ -137,7 +137,7 @@ public class LibsRepairDialog extends Dialog {
             }
             if (accent != 0 && pauseButton != null) {
                 pauseButton.setBackgroundTintList(ColorStateList.valueOf(accent));
-                pauseButton.setTextColor(Color.WHITE);
+                pauseButton.setTextColor(org.levimc.launcher.util.PersonalizationManager.contrastOn(accent));
             }
             if (accent != 0 && iconContainer != null) {
                 iconContainer.setBackgroundTintList(ColorStateList.valueOf(withAlpha(accent, 34)));

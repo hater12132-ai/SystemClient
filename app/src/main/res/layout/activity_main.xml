@@ -4,13 +4,25 @@
   The window background (bg_app) provides the dark mesh the glass panels sit on.
   Every android:id below is bound from MainActivity via ViewBinding - do not rename or remove.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:clipChildren="false"
     android:clipToPadding="false">
+
+    <org.levimc.launcher.ui.views.AmbientGradientView
+        android:id="@+id/ambient_backdrop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:clipChildren="false"
+        android:clipToPadding="false">
 
     <LinearLayout
         android:id="@+id/root_layout"
@@ -153,7 +165,8 @@
                                 android:layout_width="18dp"
                                 android:layout_height="18dp"
                                 android:src="@drawable/ic_qa_curseforge"
-                                android:scaleType="fitCenter" />
+                                android:scaleType="fitCenter"
+                                app:tint="@color/primary" />
 
                             <TextView
                                 android:layout_width="0dp"
@@ -192,7 +205,8 @@
                                 android:layout_width="18dp"
                                 android:layout_height="18dp"
                                 android:src="@drawable/ic_qa_account"
-                                android:scaleType="fitCenter" />
+                                android:scaleType="fitCenter"
+                                app:tint="@color/primary" />
 
                             <TextView
                                 android:layout_width="0dp"
@@ -231,7 +245,8 @@
                                 android:layout_width="18dp"
                                 android:layout_height="18dp"
                                 android:src="@drawable/ic_qa_launch"
-                                android:scaleType="fitCenter" />
+                                android:scaleType="fitCenter"
+                                app:tint="@color/primary" />
 
                             <TextView
                                 android:layout_width="0dp"
@@ -290,11 +305,14 @@
                     android:scaleType="centerCrop"
                     android:importantForAccessibility="no" />
 
+                <!-- Static first frame; MainActivity swaps in the animated drawable (res/raw/hero_anim.webp). -->
                 <ImageView
+                    android:id="@+id/hero_art"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="4dp"
-                    android:src="@drawable/art_hero_cube"
+                    android:scaleX="1.45"
+                    android:scaleY="1.45"
+                    android:src="@drawable/art_hero_static"
                     android:scaleType="fitCenter"
                     android:importantForAccessibility="no" />
             </FrameLayout>
@@ -343,11 +361,18 @@
                 android:focusable="true"
                 android:foreground="@drawable/fg_tile_ripple">
 
-                <ImageView
+                <FrameLayout
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:src="@drawable/ic_minecraft_cube"
-                    android:scaleType="centerCrop" />
+                    android:background="@drawable/bg_icon_chip">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_cube_outline"
+                        app:tint="@color/primary" />
+                </FrameLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -394,27 +419,20 @@
                 <Button
                     android:id="@+id/launch_button"
                     android:layout_width="match_parent"
-                    android:layout_height="54dp"
+                    android:layout_height="56dp"
                     android:minWidth="0dp"
                     android:minHeight="0dp"
                     android:paddingHorizontal="16dp"
                     android:background="@drawable/bg_launch_main"
                     android:foreground="@drawable/fg_launch_main"
-                    android:elevation="10dp"
                     android:stateListAnimator="@null"
-                    android:outlineSpotShadowColor="@color/primary"
-                    android:outlineAmbientShadowColor="@color/primary"
                     app:backgroundTint="@null"
-                    app:icon="@drawable/ic_nav_launch"
-                    app:iconPadding="8dp"
-                    app:iconTint="@android:color/white"
-                    app:iconGravity="textStart"
-                    app:iconSize="20dp"
                     android:text="@string/launch"
-                    android:textColor="@color/on_primary"
-                    android:textSize="16sp"
+                    android:textColor="@color/primary"
+                    android:textSize="17sp"
                     android:textStyle="bold"
-                    android:textAllCaps="false"
+                    android:textAllCaps="true"
+                    android:letterSpacing="0.14"
                     android:fontFamily="@font/misans"
                     android:insetTop="0dp"
                     android:insetBottom="0dp" />
@@ -712,4 +730,5 @@
             </ScrollView>
         </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+    </LinearLayout>
+</FrameLayout>

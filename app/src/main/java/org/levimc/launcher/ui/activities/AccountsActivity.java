@@ -149,7 +149,7 @@ public class AccountsActivity extends BaseActivity {
         }
         if (bottomAddButton != null) {
             bottomAddButton.setBackgroundTintList(ColorStateList.valueOf(accent));
-            bottomAddButton.setTextColor(Color.WHITE);
+            bottomAddButton.setTextColor(org.levimc.launcher.util.PersonalizationManager.contrastOn(accent));
         }
     }
 

@@ -57,11 +57,11 @@ public class AboutActivity extends BaseActivity {
             gd.setCornerRadius(4 * getResources().getDisplayMetrics().density);
             if (authorBadge != null) {
                 authorBadge.setBackground(gd);
-                authorBadge.setTextColor(android.graphics.Color.WHITE);
+                authorBadge.setTextColor(org.levimc.launcher.util.PersonalizationManager.contrastOn(accent));
             }
             if (maintainerBadge != null) {
                 maintainerBadge.setBackground(gd);
-                maintainerBadge.setTextColor(android.graphics.Color.WHITE);
+                maintainerBadge.setTextColor(org.levimc.launcher.util.PersonalizationManager.contrastOn(accent));
             }
         }
     }

@@ -181,7 +181,7 @@ public class MsftLoginActivity extends BaseActivity {
         for (Button button : buttons) {
             if (button != null) {
                 button.setBackgroundTintList(ColorStateList.valueOf(accent));
-                button.setTextColor(Color.WHITE);
+                button.setTextColor(org.levimc.launcher.util.PersonalizationManager.contrastOn(accent));
             }
         }
         ProgressBar progressBar = findViewById(R.id.msft_progress_bar);

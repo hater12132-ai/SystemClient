@@ -260,7 +260,7 @@ public class CustomAlertDialog extends Dialog {
             int accent = pm.getAccentColor();
             if (accent != 0) {
                 btnPositive.setBackgroundTintList(android.content.res.ColorStateList.valueOf(accent));
-                btnPositive.setTextColor(Color.WHITE);
+                btnPositive.setTextColor(org.levimc.launcher.util.PersonalizationManager.contrastOn(accent));
             }
         } catch (Exception ignored) {}
     }

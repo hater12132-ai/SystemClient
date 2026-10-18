@@ -14,8 +14,8 @@
             <gradient
                 android:type="radial"
                 android:gradientRadius="310dp"
-                android:startColor="#442F6BFF"
-                android:endColor="#002F6BFF" />
+                android:startColor="#1F000000"
+                android:endColor="#00000000" />
         </shape>
     </item>
     <item
@@ -26,8 +26,8 @@
             <gradient
                 android:type="radial"
                 android:gradientRadius="280dp"
-                android:startColor="#336B4DFF"
-                android:endColor="#006B4DFF" />
+                android:startColor="#14000000"
+                android:endColor="#00000000" />
         </shape>
     </item>
 </layer-list>

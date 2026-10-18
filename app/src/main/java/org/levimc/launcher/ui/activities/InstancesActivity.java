@@ -237,7 +237,7 @@ public class InstancesActivity extends BaseActivity {
             boolean selected = (i == currentFilter);
             tabs[i].setSelected(selected);
             if (selected) {
-                tabs[i].setTextColor(android.graphics.Color.WHITE);
+                tabs[i].setTextColor(org.levimc.launcher.util.PersonalizationManager.contrastOn(accent));
                 tabs[i].setTypeface(tabs[i].getTypeface(), android.graphics.Typeface.BOLD);
                 if (accent != 0) {
                     android.graphics.drawable.GradientDrawable gd = new android.graphics.drawable.GradientDrawable();
@@ -283,7 +283,7 @@ public class InstancesActivity extends BaseActivity {
             gd.setColor(accent);
             gd.setCornerRadius(20 * getResources().getDisplayMetrics().density);
             btnImport.setBackground(gd);
-            btnImport.setTextColor(android.graphics.Color.WHITE);
+            btnImport.setTextColor(org.levimc.launcher.util.PersonalizationManager.contrastOn(accent));
         }
         btnImport.setOnClickListener(v -> startApkFilePicker());
     }
@@ -315,7 +315,7 @@ public class InstancesActivity extends BaseActivity {
             gd.setColor(accent);
             gd.setCornerRadius(20 * getResources().getDisplayMetrics().density);
             button.setBackground(gd);
-            button.setTextColor(android.graphics.Color.WHITE);
+            button.setTextColor(org.levimc.launcher.util.PersonalizationManager.contrastOn(accent));
         }
     }
 

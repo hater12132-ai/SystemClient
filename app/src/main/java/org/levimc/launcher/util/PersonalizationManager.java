@@ -71,6 +71,11 @@ public class PersonalizationManager {
     private static final int GLASS_G_LIGHT = 255;
     private static final int GLASS_B_LIGHT = 255;
 
+    /** Readable text colour (black or white) for content drawn on top of the given background colour. */
+    public static int contrastOn(int bg) {
+        return Color.luminance(bg) > 0.5f ? Color.BLACK : Color.WHITE;
+    }
+
     public PersonalizationManager(Context context) {
         this.context = context.getApplicationContext();
         this.prefs = this.context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -289,7 +294,7 @@ public class PersonalizationManager {
         if (signInBtn instanceof Button) {
             Button btn = (Button) signInBtn;
             btn.setBackgroundTintList(ColorStateList.valueOf(accent));
-            btn.setTextColor(Color.WHITE);
+            btn.setTextColor(contrastOn(accent));
         }
     }
 
@@ -687,7 +692,7 @@ public class PersonalizationManager {
                     int currentTint = btn.getBackgroundTintList().getDefaultColor();
                     if (currentTint == defaultPrimary || currentTint == defaultSecondary || currentTint == defaultTertiary) {
                         btn.setBackgroundTintList(ColorStateList.valueOf(accentColor));
-                        btn.setTextColor(Color.WHITE);
+                        btn.setTextColor(contrastOn(accentColor));
                     }
                 }
             } catch (Exception ignored) {}
@@ -704,7 +709,7 @@ public class PersonalizationManager {
                         int gdColor = gd.getColor().getDefaultColor();
                         if (gdColor == defaultPrimary || gdColor == defaultSecondary || gdColor == defaultTertiary) {
                             gd.setColor(accentColor);
-                            btn.setTextColor(Color.WHITE);
+                            btn.setTextColor(contrastOn(accentColor));
                         }
                     }
                 } catch (Exception ignored) {}
@@ -823,7 +828,7 @@ public class PersonalizationManager {
     }
 
     public static final int[] PRESET_COLORS = {
-            0xFF3D82FF, 0xFF42A5F5, 0xFF5C6BC0,
+            0xFFF4F4F6, 0xFF42A5F5, 0xFF5C6BC0,
             0xFFAB47BC, 0xFFEC407A, 0xFFEF5350,
             0xFFFF7043, 0xFFFFA726, 0xFFFFCA28,
             0xFF66BB6A, 0xFF26C6DA, 0xFF29B6F6,
