@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -52,6 +53,13 @@ final class SystemDlcMenuController {
     private final Map<String, List<ModuleDef>> modulesByCategory = new LinkedHashMap<>();
     private String expandedId = null;
     private String activeCategory = "Combat";
+    private boolean favoritesOnly = false;
+    private boolean sidebarVisible = true;
+    private boolean russian = false;
+    private boolean lightTheme = false;
+    private View sidebar;
+    private ImageButton btnFavorites;
+    private ImageButton btnTheme;
 
     SystemDlcMenuController(Activity activity, View root) {
         this.activity = activity;
@@ -63,6 +71,61 @@ final class SystemDlcMenuController {
     }
 
     void attach() {
+        sidebar = root.findViewById(R.id.sys_sidebar);
+        sidebarVisible = prefs.getBoolean("sidebar_visible", true);
+        russian = prefs.getBoolean("lang_ru", false);
+        lightTheme = prefs.getBoolean("theme_light", false);
+        favoritesOnly = prefs.getBoolean("favorites_only", false);
+
+        applySidebarVisibility();
+        applyThemeChrome();
+
+        View btnSidebar = root.findViewById(R.id.sys_btn_sidebar);
+        if (btnSidebar != null) {
+            btnSidebar.setOnClickListener(v -> {
+                sidebarVisible = !sidebarVisible;
+                prefs.edit().putBoolean("sidebar_visible", sidebarVisible).apply();
+                applySidebarVisibility();
+            });
+        }
+
+        btnFavorites = root.findViewById(R.id.sys_btn_favorites);
+        if (btnFavorites != null) {
+            updateFavoritesButton();
+            btnFavorites.setOnClickListener(v -> {
+                favoritesOnly = !favoritesOnly;
+                prefs.edit().putBoolean("favorites_only", favoritesOnly).apply();
+                updateFavoritesButton();
+                rebuildGrid(currentQuery());
+            });
+        }
+
+        View btnLang = root.findViewById(R.id.sys_btn_language);
+        if (btnLang != null) {
+            btnLang.setOnClickListener(v -> {
+                russian = !russian;
+                prefs.edit().putBoolean("lang_ru", russian).apply();
+                applyLanguageLabels();
+                Toast.makeText(activity, russian ? "Русский" : "English", Toast.LENGTH_SHORT).show();
+                rebuildGrid(currentQuery());
+            });
+        }
+
+        btnTheme = root.findViewById(R.id.sys_btn_theme);
+        if (btnTheme != null) {
+            updateThemeButton();
+            btnTheme.setOnClickListener(v -> {
+                lightTheme = !lightTheme;
+                prefs.edit().putBoolean("theme_light", lightTheme).apply();
+                updateThemeButton();
+                applyThemeChrome();
+                rebuildGrid(currentQuery());
+                Toast.makeText(activity, lightTheme ? "Light mode" : "Night mode", Toast.LENGTH_SHORT).show();
+            });
+        }
+
+        // close is already wired by ModMenuOverlay via btn_close_menu
+
         int[] catIds = {
                 R.id.sys_cat_all, R.id.sys_cat_combat, R.id.sys_cat_movement,
                 R.id.sys_cat_player, R.id.sys_cat_render, R.id.sys_cat_visual, R.id.sys_cat_client
@@ -83,10 +146,56 @@ final class SystemDlcMenuController {
 
         EditText search = root.findViewById(R.id.sys_search);
         if (search != null) {
+            search.setHint(russian ? "Поиск" : "Search");
             search.addTextChangedListener(new SimpleTextWatcher(s -> rebuildGrid(s)));
         }
 
+        applyLanguageLabels();
         selectCategory("Combat");
+    }
+
+    private void applySidebarVisibility() {
+        if (sidebar == null) return;
+        sidebar.setVisibility(sidebarVisible ? View.VISIBLE : View.GONE);
+    }
+
+    private void updateFavoritesButton() {
+        if (btnFavorites == null) return;
+        btnFavorites.setBackgroundResource(favoritesOnly
+                ? R.drawable.bg_sys_icon_btn_active
+                : R.drawable.bg_sys_icon_btn);
+    }
+
+    private void updateThemeButton() {
+        if (btnTheme == null) return;
+        btnTheme.setImageResource(lightTheme ? R.drawable.ic_sys_sun : R.drawable.ic_sys_moon);
+    }
+
+    private void applyThemeChrome() {
+        View container = root.findViewById(R.id.mod_menu_container);
+        // Keep dark SystemDLC chrome for now; light mode softens panel via alpha tags later
+        if (container != null) {
+            container.setAlpha(lightTheme ? 0.97f : 1f);
+        }
+    }
+
+    private void applyLanguageLabels() {
+        String[] en = {"All", "Combat", "Movement", "Player", "Render", "Visual", "Client"};
+        String[] ru = {"Все", "Бой", "Движение", "Игрок", "Рендер", "Визуал", "Клиент"};
+        String[] labels = russian ? ru : en;
+        for (int i = 0; i < categoryViews.size() && i < labels.length; i++) {
+            categoryViews.get(i).setText(labels[i]);
+        }
+        // keep internal keys in English via categoryNames array
+        EditText search = root.findViewById(R.id.sys_search);
+        if (search != null) search.setHint(russian ? "Поиск" : "Search");
+        if (topCategory != null) {
+            int idx = 0;
+            for (int i = 0; i < categoryNames.length; i++) {
+                if (categoryNames[i].equals(activeCategory)) { idx = i; break; }
+            }
+            topCategory.setText(labels[idx]);
+        }
     }
 
     private void wireNav(int id, String name) {
@@ -108,7 +217,16 @@ final class SystemDlcMenuController {
             tv.setTextColor(sel ? TEXT : MUTED);
             tv.setTypeface(Typeface.create(Typeface.DEFAULT, sel ? Typeface.BOLD : Typeface.NORMAL));
         }
-        if (topCategory != null) topCategory.setText(name);
+        if (topCategory != null) {
+            // show localized label
+            String[] en = {"All", "Combat", "Movement", "Player", "Render", "Visual", "Client"};
+            String[] ru = {"Все", "Бой", "Движение", "Игрок", "Рендер", "Визуал", "Клиент"};
+            String label = name;
+            for (int i = 0; i < en.length; i++) {
+                if (en[i].equals(name)) { label = russian ? ru[i] : en[i]; break; }
+            }
+            topCategory.setText(label);
+        }
         rebuildGrid("");
     }
 
@@ -124,10 +242,12 @@ final class SystemDlcMenuController {
             if (group != null) list.addAll(group);
         }
         String q = query == null ? "" : query.trim().toLowerCase(Locale.US);
-        if (!q.isEmpty()) {
+        if (!q.isEmpty() || favoritesOnly) {
             List<ModuleDef> filtered = new ArrayList<>();
             for (ModuleDef m : list) {
-                if (m.title.toLowerCase(Locale.US).contains(q)) filtered.add(m);
+                if (!q.isEmpty() && !m.title.toLowerCase(Locale.US).contains(q)) continue;
+                if (favoritesOnly && !prefs.getBoolean(m.id + "_fav", false)) continue;
+                filtered.add(m);
             }
             list = filtered;
         }

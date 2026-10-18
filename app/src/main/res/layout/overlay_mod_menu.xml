@@ -269,48 +269,117 @@
                 android:orientation="vertical"
                 android:padding="12dp">
 
-                <!-- Top bar -->
+                <!-- Top bar: sidebar | tab | search + keybind | fav | lang | theme | close -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/sys_btn_sidebar"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:background="@drawable/bg_sys_icon_btn"
+                        android:contentDescription="Toggle sidebar"
+                        android:padding="7dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_sys_sidebar" />
+
                     <TextView
                         android:id="@+id/sys_top_category"
                         android:layout_width="wrap_content"
                         android:layout_height="34dp"
+                        android:layout_marginStart="8dp"
                         android:background="@drawable/bg_sys_top_chip"
-                        android:gravity="center"
-                        android:paddingStart="14dp"
+                        android:gravity="center_vertical"
+                        android:paddingStart="12dp"
                         android:paddingEnd="14dp"
                         android:text="Combat"
                         android:textColor="#F2F4F8"
                         android:textSize="13sp"
                         android:textStyle="bold" />
-                    <EditText
-                        android:id="@+id/sys_search"
+
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="34dp"
                         android:layout_marginStart="10dp"
                         android:layout_weight="1"
                         android:background="@drawable/bg_sys_input"
-                        android:hint="Search"
-                        android:imeOptions="actionSearch"
-                        android:inputType="text"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="12dp"
-                        android:textColor="#F2F4F8"
-                        android:textColorHint="#5C6370"
-                        android:textSize="13sp" />
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="8dp">
+
+                        <EditText
+                            android:id="@+id/sys_search"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@android:color/transparent"
+                            android:hint="Search"
+                            android:imeOptions="actionSearch"
+                            android:inputType="text"
+                            android:textColor="#F2F4F8"
+                            android:textColorHint="#5C6370"
+                            android:textSize="13sp" />
+
+                        <TextView
+                            android:id="@+id/sys_search_keybind"
+                            android:layout_width="wrap_content"
+                            android:layout_height="22dp"
+                            android:background="@drawable/bg_sys_badge"
+                            android:gravity="center"
+                            android:paddingStart="6dp"
+                            android:paddingEnd="6dp"
+                            android:text="^K"
+                            android:textColor="#6B7280"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+
+                    <ImageButton
+                        android:id="@+id/sys_btn_favorites"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_sys_icon_btn"
+                        android:contentDescription="Favorites"
+                        android:padding="7dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_sys_star_outline" />
+
+                    <ImageButton
+                        android:id="@+id/sys_btn_language"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:layout_marginStart="6dp"
+                        android:background="@drawable/bg_sys_icon_btn"
+                        android:contentDescription="Language"
+                        android:padding="7dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_sys_lang" />
+
+                    <ImageButton
+                        android:id="@+id/sys_btn_theme"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:layout_marginStart="6dp"
+                        android:background="@drawable/bg_sys_icon_btn"
+                        android:contentDescription="Theme"
+                        android:padding="7dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_sys_moon" />
+
                     <ImageButton
                         android:id="@+id/btn_close_menu"
                         android:layout_width="34dp"
                         android:layout_height="34dp"
-                        android:layout_marginStart="8dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:padding="7dp"
-                        android:src="@android:drawable/ic_menu_close_clear_cancel"
-                        android:tint="#9AA3B5" />
+                        android:layout_marginStart="6dp"
+                        android:background="@drawable/bg_sys_icon_btn"
+                        android:contentDescription="Close"
+                        android:padding="8dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_sys_close" />
                 </LinearLayout>
 
                 <!-- Module grid host (built in Java) -->
