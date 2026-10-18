@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="hero_scale" format="float" type="dimen">1.45</item>
+</resources>

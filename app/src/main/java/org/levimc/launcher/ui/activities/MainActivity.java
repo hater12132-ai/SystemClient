@@ -718,7 +718,8 @@ import okhttp3.OkHttpClient;
     private void updateAmbientAndHero(boolean resumed) {
         if (binding == null) return;
         boolean customBackground = new PersonalizationManager(this).hasBackgroundImage();
-        binding.ambientBackdrop.setVisibility(customBackground ? View.GONE : View.VISIBLE);
+        View ambient = findViewById(R.id.ambient_backdrop);
+        if (ambient != null) ambient.setVisibility(customBackground ? View.GONE : View.VISIBLE);
         if (heroAnimation != null) {
             if (resumed) {
                 if (!heroAnimation.isRunning()) heroAnimation.start();

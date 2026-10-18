@@ -137,7 +137,23 @@ public class BaseActivity extends AppCompatActivity {
         contentView.setAlpha(0f);
         contentView.setTranslationY(8f * getResources().getDisplayMetrics().density);
 
-        super.setContentView(wrapper);
+        // The drifting glow sits behind BOTH the nav bar and the content, so there is no hard edge
+        // (no dark band) where the nav bar ends.
+        android.widget.FrameLayout frame = new android.widget.FrameLayout(this);
+        frame.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+        ));
+        org.levimc.launcher.ui.views.AmbientGradientView ambient =
+                new org.levimc.launcher.ui.views.AmbientGradientView(this);
+        ambient.setId(R.id.ambient_backdrop);
+        ambient.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        ambient.setVisibility(new PersonalizationManager(this).hasBackgroundImage() ? View.GONE : View.VISIBLE);
+        frame.addView(ambient, new android.widget.FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        frame.addView(wrapper);
+
+        super.setContentView(frame);
         navBarInjected = true;
         setupBaseNavBar();
 

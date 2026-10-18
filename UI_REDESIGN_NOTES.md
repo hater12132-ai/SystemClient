@@ -24,3 +24,13 @@ that forced white text on accent buttons · MainActivity (glass button, hero, li
 overlay default accent colors.
 
 Not compiled here (no Android SDK). APK grows ~3 MB (hero animation).
+
+## Round 2 fixes
+- Hero animation toned down (view alpha 0.55; smaller on tablets via `@dimen/hero_scale`, values-sw600dp).
+- Nav logo is now `drawable-nodpi/ic_systemclient_logo.png` (your icon).
+- Tip line replaced by a low-opacity watermark: icon + pixel "SystemClient" wordmark (`wm_systemclient.png`,
+  blocky Minecraft-style pixel letters with drop shadow; no Minecraft font file exists in the project).
+  `tip_text` is still in the layout (hidden) because MainActivity keeps rotating its text.
+- Top dark band removed: the drifting glow is now created in `BaseActivity` behind nav + content (id `ambient_backdrop`
+  in values/ids.xml), the nav bar has no fill and its divider is hidden.
+- Fixed floating squares spilling over the Mods/Content cards (squares art is now square-aspect and clipped).

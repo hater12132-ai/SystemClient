@@ -4,8 +4,7 @@
     android:id="@+id/nav_bar_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_nav_bar"
-    android:orientation="vertical">
+        android:orientation="vertical">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -35,9 +34,9 @@
 
             <ImageView
                 android:id="@+id/nav_logo"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:src="@drawable/ic_leaf_logo"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_systemclient_logo"
                 app:tint="@color/primary" />
 
             <TextView
@@ -221,6 +220,7 @@
         android:id="@+id/nav_divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:visibility="gone"
         android:background="@color/divider" />
 
 </LinearLayout>
