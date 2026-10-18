@@ -304,7 +304,7 @@
                     android:id="@+id/hero_art"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:alpha="0.55"
+                    android:alpha="1"
                     android:scaleX="@dimen/hero_scale"
                     android:scaleY="@dimen/hero_scale"
                     android:src="@drawable/art_hero_static"

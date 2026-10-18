@@ -704,7 +704,10 @@ import okhttp3.OkHttpClient;
                 int h = info.getSize().getHeight();
                 float scale = Math.min(1f, 480f / Math.max(w, h));
                 decoder.setTargetSize(Math.max(1, Math.round(w * scale)), Math.max(1, Math.round(h * scale)));
+                decoder.setAllocator(ImageDecoder.ALLOCATOR_SOFTWARE);
             });
+            binding.heroArt.setAlpha(1f);
+            binding.heroArt.clearColorFilter();
             binding.heroArt.setImageDrawable(drawable);
             if (drawable instanceof AnimatedImageDrawable) {
                 heroAnimation = (AnimatedImageDrawable) drawable;
