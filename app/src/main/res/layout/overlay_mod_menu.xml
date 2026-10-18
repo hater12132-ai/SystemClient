@@ -6,29 +6,22 @@
     android:clickable="true"
     android:focusable="true">
 
-    <androidx.cardview.widget.CardView
+    <FrameLayout
         android:id="@+id/mod_menu_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="18dp"
-        android:layout_marginEnd="28dp"
-        android:layout_marginBottom="18dp"
-        app:cardBackgroundColor="#F2080A0E"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="20dp"
-        app:cardPreventCornerOverlap="true">
+        android:layout_margin="20dp"
+        android:background="@drawable/bg_sys_root">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
-            <!-- ===== LEFT SIDEBAR ===== -->
+            <!-- SIDEBAR -->
             <LinearLayout
                 android:id="@+id/sys_sidebar"
-                android:layout_width="188dp"
+                android:layout_width="200dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/bg_sys_sidebar"
                 android:orientation="vertical"
@@ -38,22 +31,24 @@
                 android:paddingBottom="12dp">
 
                 <LinearLayout
+                    android:id="@+id/sys_brand_row"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="14dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
                         android:src="@drawable/ic_system_star" />
                     <TextView
+                        android:id="@+id/sys_brand_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:text="System"
                         android:textColor="#F2F4F8"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -63,99 +58,99 @@
                     android:layout_marginBottom="6dp"
                     android:paddingStart="4dp"
                     android:text="Client categories"
-                    android:textColor="#6B7280"
+                    android:textColor="#5C6370"
                     android:textSize="11sp" />
 
-                    <TextView
-                        android:id="@+id/sys_cat_all"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_marginBottom="2dp"
-                        android:background="@drawable/bg_sys_nav"
-                        android:gravity="center_vertical"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="12dp"
-                        android:text="All"
-                        android:textColor="#9AA3B5"
-                        android:textSize="13sp" />
+                <TextView
+                    android:id="@+id/sys_cat_all"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/bg_sys_nav"
+                    android:gravity="center_vertical"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:text="All"
+                    android:textColor="#9AA3B5"
+                    android:textSize="13sp" />
 
-                    <TextView
-                        android:id="@+id/sys_cat_combat"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_marginBottom="2dp"
-                        android:background="@drawable/bg_sys_nav"
-                        android:gravity="center_vertical"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="12dp"
-                        android:text="Combat"
-                        android:textColor="#F2F4F8"
-                        android:textSize="13sp" />
+                <TextView
+                    android:id="@+id/sys_cat_combat"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/bg_sys_nav"
+                    android:gravity="center_vertical"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:text="Combat"
+                    android:textColor="#9AA3B5"
+                    android:textSize="13sp" />
 
-                    <TextView
-                        android:id="@+id/sys_cat_movement"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_marginBottom="2dp"
-                        android:background="@drawable/bg_sys_nav"
-                        android:gravity="center_vertical"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="12dp"
-                        android:text="Movement"
-                        android:textColor="#9AA3B5"
-                        android:textSize="13sp" />
+                <TextView
+                    android:id="@+id/sys_cat_movement"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/bg_sys_nav"
+                    android:gravity="center_vertical"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:text="Movement"
+                    android:textColor="#9AA3B5"
+                    android:textSize="13sp" />
 
-                    <TextView
-                        android:id="@+id/sys_cat_player"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_marginBottom="2dp"
-                        android:background="@drawable/bg_sys_nav"
-                        android:gravity="center_vertical"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="12dp"
-                        android:text="Player"
-                        android:textColor="#9AA3B5"
-                        android:textSize="13sp" />
+                <TextView
+                    android:id="@+id/sys_cat_player"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/bg_sys_nav"
+                    android:gravity="center_vertical"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:text="Player"
+                    android:textColor="#9AA3B5"
+                    android:textSize="13sp" />
 
-                    <TextView
-                        android:id="@+id/sys_cat_render"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_marginBottom="2dp"
-                        android:background="@drawable/bg_sys_nav"
-                        android:gravity="center_vertical"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="12dp"
-                        android:text="Render"
-                        android:textColor="#9AA3B5"
-                        android:textSize="13sp" />
+                <TextView
+                    android:id="@+id/sys_cat_render"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/bg_sys_nav"
+                    android:gravity="center_vertical"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:text="Render"
+                    android:textColor="#9AA3B5"
+                    android:textSize="13sp" />
 
-                    <TextView
-                        android:id="@+id/sys_cat_visual"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_marginBottom="2dp"
-                        android:background="@drawable/bg_sys_nav"
-                        android:gravity="center_vertical"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="12dp"
-                        android:text="Visual"
-                        android:textColor="#9AA3B5"
-                        android:textSize="13sp" />
+                <TextView
+                    android:id="@+id/sys_cat_visual"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/bg_sys_nav"
+                    android:gravity="center_vertical"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:text="Visual"
+                    android:textColor="#9AA3B5"
+                    android:textSize="13sp" />
 
-                    <TextView
-                        android:id="@+id/sys_cat_client"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_marginBottom="2dp"
-                        android:background="@drawable/bg_sys_nav"
-                        android:gravity="center_vertical"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="12dp"
-                        android:text="Client"
-                        android:textColor="#9AA3B5"
-                        android:textSize="13sp" />
+                <TextView
+                    android:id="@+id/sys_cat_client"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/bg_sys_nav"
+                    android:gravity="center_vertical"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:text="Client"
+                    android:textColor="#9AA3B5"
+                    android:textSize="13sp" />
 
 
                 <TextView
@@ -165,79 +160,76 @@
                     android:layout_marginBottom="6dp"
                     android:paddingStart="4dp"
                     android:text="Settings"
-                    android:textColor="#6B7280"
+                    android:textColor="#5C6370"
                     android:textSize="11sp" />
 
-                    <TextView
-                        android:id="@+id/sys_nav_configs"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_marginBottom="2dp"
-                        android:background="@drawable/bg_sys_nav"
-                        android:gravity="center_vertical"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="12dp"
-                        android:text="Configs"
-                        android:textColor="#9AA3B5"
-                        android:textSize="13sp" />
-
-                    <TextView
-                        android:id="@+id/sys_nav_friends"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_marginBottom="2dp"
-                        android:background="@drawable/bg_sys_nav"
-                        android:gravity="center_vertical"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="12dp"
-                        android:text="Friends"
-                        android:textColor="#9AA3B5"
-                        android:textSize="13sp" />
-
-                    <TextView
-                        android:id="@+id/sys_nav_waypoints"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_marginBottom="2dp"
-                        android:background="@drawable/bg_sys_nav"
-                        android:gravity="center_vertical"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="12dp"
-                        android:text="Waypoints"
-                        android:textColor="#9AA3B5"
-                        android:textSize="13sp" />
-
-                    <TextView
-                        android:id="@+id/sys_nav_settings"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_marginBottom="2dp"
-                        android:background="@drawable/bg_sys_nav"
-                        android:gravity="center_vertical"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="12dp"
-                        android:text="Settings"
-                        android:textColor="#9AA3B5"
-                        android:textSize="13sp" />
-
-                    <TextView
-                        android:id="@+id/sys_nav_search"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_marginBottom="2dp"
-                        android:background="@drawable/bg_sys_nav"
-                        android:gravity="center_vertical"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="12dp"
-                        android:text="Search"
-                        android:textColor="#9AA3B5"
-                        android:textSize="13sp" />
-
-
-                <Space
+                <TextView
+                    android:id="@+id/sys_nav_configs"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/bg_sys_nav"
+                    android:gravity="center_vertical"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:text="Configs"
+                    android:textColor="#9AA3B5"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/sys_nav_friends"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/bg_sys_nav"
+                    android:gravity="center_vertical"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:text="Friends"
+                    android:textColor="#9AA3B5"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/sys_nav_waypoints"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/bg_sys_nav"
+                    android:gravity="center_vertical"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:text="Waypoints"
+                    android:textColor="#9AA3B5"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/sys_nav_settings"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/bg_sys_nav"
+                    android:gravity="center_vertical"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:text="Settings"
+                    android:textColor="#9AA3B5"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/sys_nav_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/bg_sys_nav"
+                    android:gravity="center_vertical"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:text="Search"
+                    android:textColor="#9AA3B5"
+                    android:textSize="13sp" />
+
+
+                <Space android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -261,24 +253,15 @@
                         android:layout_marginStart="8dp"
                         android:layout_weight="1"
                         android:orientation="vertical">
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="SystemPlayer"
-                            android:textColor="#F2F4F8"
-                            android:textSize="11sp"
-                            android:textStyle="bold" />
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="www.systemdlc.com"
-                            android:textColor="#6B7280"
-                            android:textSize="9sp" />
+                        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:text="SystemPlayer" android:textColor="#F2F4F8" android:textSize="11sp" android:textStyle="bold" />
+                        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:text="www.systemdlc.com" android:textColor="#5C6370" android:textSize="9sp" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- ===== MAIN CONTENT ===== -->
+            <!-- MAIN -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -289,14 +272,13 @@
                 <!-- Top bar -->
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="44dp"
+                    android:layout_height="40dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
-
                     <TextView
                         android:id="@+id/sys_top_category"
                         android:layout_width="wrap_content"
-                        android:layout_height="36dp"
+                        android:layout_height="34dp"
                         android:background="@drawable/bg_sys_top_chip"
                         android:gravity="center"
                         android:paddingStart="14dp"
@@ -305,313 +287,51 @@
                         android:textColor="#F2F4F8"
                         android:textSize="13sp"
                         android:textStyle="bold" />
-
-                    <LinearLayout
+                    <EditText
+                        android:id="@+id/sys_search"
                         android:layout_width="0dp"
-                        android:layout_height="36dp"
+                        android:layout_height="34dp"
                         android:layout_marginStart="10dp"
                         android:layout_weight="1"
                         android:background="@drawable/bg_sys_input"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
+                        android:hint="Search"
+                        android:imeOptions="actionSearch"
+                        android:inputType="text"
                         android:paddingStart="12dp"
-                        android:paddingEnd="8dp">
-                        <EditText
-                            android:id="@+id/sys_search"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:background="@android:color/transparent"
-                            android:hint="Search"
-                            android:imeOptions="actionSearch"
-                            android:inputType="text"
-                            android:textColor="#F2F4F8"
-                            android:textColorHint="#6B7280"
-                            android:textSize="13sp" />
-                    </LinearLayout>
-
+                        android:paddingEnd="12dp"
+                        android:textColor="#F2F4F8"
+                        android:textColorHint="#5C6370"
+                        android:textSize="13sp" />
                     <ImageButton
                         android:id="@+id/btn_close_menu"
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
                         android:layout_marginStart="8dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
-                        android:padding="8dp"
+                        android:padding="7dp"
                         android:src="@android:drawable/ic_menu_close_clear_cancel"
                         android:tint="#9AA3B5" />
                 </LinearLayout>
 
-                <!-- Three columns -->
-                <LinearLayout
-                    android:id="@+id/sys_columns"
+                <!-- Module grid host (built in Java) -->
+                <ScrollView
+                    android:id="@+id/sys_module_scroll"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_marginTop="12dp"
                     android:layout_weight="1"
-                    android:orientation="horizontal">
-
-                    <!-- Function -->
-                    <ScrollView
-                        android:id="@+id/sys_col_function"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginEnd="8dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_sys_card"
-                        android:fillViewport="true"
-                        android:padding="12dp">
-                        <LinearLayout
-                            android:id="@+id/sys_function_body"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:gravity="center_vertical"
-                                android:orientation="horizontal">
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:text="Function"
-                                    android:textColor="#F2F4F8"
-                                    android:textSize="15sp"
-                                    android:textStyle="bold" />
-                                <Switch
-                                    android:id="@+id/sys_function_toggle"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content" />
-                            </LinearLayout>
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="12dp"
-                                android:text="Preset"
-                                android:textColor="#F2F4F8"
-                                android:textSize="13sp"
-                                android:textStyle="bold" />
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="Pick a preset to bias the function toward one of three behaviours."
-                                android:textColor="#6B7280"
-                                android:textSize="11sp" />
-                            <TextView
-                                android:id="@+id/sys_preset_value"
-                                android:layout_width="match_parent"
-                                android:layout_height="40dp"
-                                android:layout_marginTop="8dp"
-                                android:background="@drawable/bg_sys_input"
-                                android:gravity="center_vertical"
-                                android:paddingStart="12dp"
-                                android:text="Balanced"
-                                android:textColor="#E8EAED"
-                                android:textSize="13sp" />
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="14dp"
-                                android:text="Mode"
-                                android:textColor="#F2F4F8"
-                                android:textSize="13sp"
-                                android:textStyle="bold" />
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="How aggressively the function runs. Smart adapts; the other two are fixed."
-                                android:textColor="#6B7280"
-                                android:textSize="11sp" />
-                            <TextView
-                                android:id="@+id/sys_mode_value"
-                                android:layout_width="match_parent"
-                                android:layout_height="40dp"
-                                android:layout_marginTop="8dp"
-                                android:background="@drawable/bg_sys_input"
-                                android:gravity="center_vertical"
-                                android:paddingStart="12dp"
-                                android:text="Smart"
-                                android:textColor="#E8EAED"
-                                android:textSize="13sp" />
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="14dp"
-                                android:text="Range"
-                                android:textColor="#F2F4F8"
-                                android:textSize="13sp"
-                                android:textStyle="bold" />
-                            <TextView
-                                android:id="@+id/sys_range_label"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:gravity="end"
-                                android:text="2.8 blocks"
-                                android:textColor="#9AA3B5"
-                                android:textSize="11sp" />
-                            <SeekBar
-                                android:id="@+id/sys_range_seek"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:max="100"
-                                android:progress="28" />
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="12dp"
-                                android:gravity="center_vertical"
-                                android:orientation="horizontal">
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:text="Sync to TPS"
-                                    android:textColor="#F2F4F8"
-                                    android:textSize="13sp" />
-                                <Switch android:id="@+id/sys_sync_tps" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-                            </LinearLayout>
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="12dp"
-                                android:text="Hotkey"
-                                android:textColor="#F2F4F8"
-                                android:textSize="13sp"
-                                android:textStyle="bold" />
-                            <TextView
-                                android:id="@+id/sys_hotkey"
-                                android:layout_width="match_parent"
-                                android:layout_height="40dp"
-                                android:layout_marginTop="6dp"
-                                android:background="@drawable/bg_sys_input"
-                                android:gravity="center"
-                                android:text="^K"
-                                android:textColor="#9AA3B5"
-                                android:textSize="13sp" />
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="14dp"
-                                android:text="Accent colour"
-                                android:textColor="#F2F4F8"
-                                android:textSize="13sp"
-                                android:textStyle="bold" />
-                            <TextView
-                                android:id="@+id/sys_accent_hex"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="end"
-                                android:background="@drawable/bg_sys_chip"
-                                android:paddingStart="8dp"
-                                android:paddingEnd="8dp"
-                                android:paddingTop="2dp"
-                                android:paddingBottom="2dp"
-                                android:text="#3358D4"
-                                android:textColor="#E8EAED"
-                                android:textSize="11sp" />
-                            <LinearLayout
-                                android:id="@+id/sys_accent_row"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
-                                android:orientation="horizontal" />
-                        </LinearLayout>
-                    </ScrollView>
-
-                    <!-- Preview -->
-                    <ScrollView
-                        android:id="@+id/sys_col_preview"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginEnd="8dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_sys_card"
-                        android:fillViewport="true"
-                        android:padding="12dp">
-                        <LinearLayout
-                            android:id="@+id/sys_preview_body"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:gravity="center_vertical"
-                                android:orientation="horizontal">
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:text="Preview"
-                                    android:textColor="#F2F4F8"
-                                    android:textSize="15sp"
-                                    android:textStyle="bold" />
-                                <Switch android:id="@+id/sys_preview_toggle" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-                            </LinearLayout>
-                            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:text="Layout" android:textColor="#F2F4F8" android:textSize="13sp" android:textStyle="bold" />
-                            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Pick which layout the preview uses." android:textColor="#6B7280" android:textSize="11sp" />
-                            <TextView android:id="@+id/sys_layout_value" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginTop="8dp" android:background="@drawable/bg_sys_input" android:gravity="center_vertical" android:paddingStart="12dp" android:text="Compact" android:textColor="#E8EAED" android:textSize="13sp" />
-                            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:text="Display mode" android:textColor="#F2F4F8" android:textSize="13sp" android:textStyle="bold" />
-                            <LinearLayout android:layout_width="match_parent" android:layout_height="36dp" android:layout_marginTop="8dp" android:orientation="horizontal">
-                                <TextView android:id="@+id/sys_mode_normal" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="@drawable/bg_sys_input" android:gravity="center" android:text="Normal" android:textColor="#9AA3B5" android:textSize="12sp" />
-                                <TextView android:id="@+id/sys_mode_transparent" android:layout_width="0dp" android:layout_height="match_parent" android:layout_marginStart="6dp" android:layout_weight="1" android:background="@drawable/bg_sys_chip" android:gravity="center" android:text="Transparent" android:textColor="#F2F4F8" android:textSize="12sp" />
-                            </LinearLayout>
-                            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:text="Client colour" android:textColor="#F2F4F8" android:textSize="13sp" android:textStyle="bold" />
-                            <TextView android:id="@+id/sys_client_colour" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginTop="8dp" android:background="@drawable/bg_sys_input" android:gravity="center_vertical" android:paddingStart="12dp" android:text="Default" android:textColor="#E8EAED" android:textSize="13sp" />
-                            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:text="Styling" android:textColor="#F2F4F8" android:textSize="13sp" android:textStyle="bold" />
-                            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Fine-tune the style of each parameter." android:textColor="#6B7280" android:textSize="11sp" />
-                            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:text="Intensity" android:textColor="#9AA3B5" android:textSize="12sp" />
-                            <SeekBar android:id="@+id/sys_intensity" android:layout_width="match_parent" android:layout_height="wrap_content" android:max="100" android:progress="88" />
-                            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="Refraction" android:textColor="#9AA3B5" android:textSize="12sp" />
-                            <SeekBar android:id="@+id/sys_refraction" android:layout_width="match_parent" android:layout_height="wrap_content" android:max="100" android:progress="40" />
-                            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:gravity="center_vertical" android:orientation="horizontal">
-                                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Chromatic" android:textColor="#9AA3B5" android:textSize="12sp" />
-                                <Switch android:id="@+id/sys_chromatic" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-                            </LinearLayout>
-                        </LinearLayout>
-                    </ScrollView>
-
-                    <!-- Elements -->
-                    <ScrollView
-                        android:id="@+id/sys_col_elements"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_sys_card"
-                        android:fillViewport="true"
-                        android:padding="12dp">
-                        <LinearLayout
-                            android:id="@+id/sys_elements_body"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
-                            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
-                                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Elements" android:textColor="#F2F4F8" android:textSize="15sp" android:textStyle="bold" />
-                                <Switch android:id="@+id/sys_elements_toggle" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-                            </LinearLayout>
-                            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:text="Style" android:textColor="#F2F4F8" android:textSize="13sp" android:textStyle="bold" />
-                            <TextView android:id="@+id/sys_style_value" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginTop="8dp" android:background="@drawable/bg_sys_input" android:gravity="center_vertical" android:paddingStart="12dp" android:text="Flat" android:textColor="#E8EAED" android:textSize="13sp" />
-                            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:text="Displayed elements" android:textColor="#F2F4F8" android:textSize="13sp" android:textStyle="bold" />
-                            <TextView android:id="@+id/sys_elements_list" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginTop="8dp" android:background="@drawable/bg_sys_input" android:gravity="center_vertical" android:paddingStart="12dp" android:text="Waypoints, Potions, Keybinds…" android:textColor="#E8EAED" android:textSize="12sp" />
-                            <TextView android:id="@+id/sys_el_waypoints" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginTop="8dp" android:background="@drawable/bg_sys_input" android:gravity="center_vertical" android:paddingStart="12dp" android:text="Waypoints" android:textColor="#E8EAED" android:textSize="13sp" />
-                            <TextView android:id="@+id/sys_el_staff" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginTop="6dp" android:background="@drawable/bg_sys_input" android:gravity="center_vertical" android:paddingStart="12dp" android:text="StaffList" android:textColor="#E8EAED" android:textSize="13sp" />
-                            <TextView android:id="@+id/sys_el_potions" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginTop="6dp" android:background="@drawable/bg_sys_input" android:gravity="center_vertical" android:paddingStart="12dp" android:text="Potions" android:textColor="#E8EAED" android:textSize="13sp" />
-                            <TextView android:id="@+id/sys_el_keybinds" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginTop="6dp" android:background="@drawable/bg_sys_input" android:gravity="center_vertical" android:paddingStart="12dp" android:text="Keybinds" android:textColor="#E8EAED" android:textSize="13sp" />
-                            <TextView android:id="@+id/sys_el_notifs" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginTop="6dp" android:background="@drawable/bg_sys_input" android:gravity="center_vertical" android:paddingStart="12dp" android:text="Notifications" android:textColor="#E8EAED" android:textSize="13sp" />
-                            <TextView android:id="@+id/sys_reset_positions" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginTop="12dp" android:background="@drawable/bg_sys_chip" android:gravity="center" android:text="Reset positions" android:textColor="#F2F4F8" android:textSize="13sp" />
-                            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:text="Accent colour" android:textColor="#F2F4F8" android:textSize="13sp" android:textStyle="bold" />
-                            <LinearLayout android:id="@+id/sys_elements_accent_row" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal" />
-                            <TextView android:id="@+id/sys_open_settings" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginTop="14dp" android:background="@drawable/bg_sys_chip" android:gravity="center" android:text="Open settings" android:textColor="#F2F4F8" android:textSize="13sp" />
-                        </LinearLayout>
-                    </ScrollView>
-                </LinearLayout>
+                    android:fillViewport="true"
+                    android:scrollbars="none">
+                    <LinearLayout
+                        android:id="@+id/sys_module_host"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+                </ScrollView>
             </LinearLayout>
         </LinearLayout>
 
 
-    <!-- Legacy stubs so existing ModMenuOverlay does not NPE; not shown -->
     <LinearLayout android:id="@+id/mod_menu_sidebar" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
     <ImageView android:id="@+id/mod_menu_logo" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
     <LinearLayout android:id="@+id/filter_bar" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
@@ -660,9 +380,8 @@
     <FrameLayout android:id="@+id/mod_config_content" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
     <LinearLayout android:id="@+id/search_container" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
 
-    </androidx.cardview.widget.CardView>
+    </FrameLayout>
 
-    <!-- HUD editor tools kept for compatibility -->
     <androidx.cardview.widget.CardView
         android:id="@+id/hud_editor_tools"
         android:layout_width="wrap_content"
@@ -673,18 +392,8 @@
         app:cardBackgroundColor="#F20A0C10"
         app:cardCornerRadius="14dp"
         app:cardElevation="10dp">
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="8dp">
-            <LinearLayout
-                android:id="@+id/hud_editor_drag_handle"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:gravity="center"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp">
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:padding="8dp">
+            <LinearLayout android:id="@+id/hud_editor_drag_handle" android:layout_width="wrap_content" android:layout_height="40dp" android:gravity="center" android:paddingStart="12dp" android:paddingEnd="12dp">
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="HUD" android:textColor="#F2F4F8" />
             </LinearLayout>
             <Button android:id="@+id/btn_hud_save" android:layout_width="wrap_content" android:layout_height="40dp" android:text="Save" />
