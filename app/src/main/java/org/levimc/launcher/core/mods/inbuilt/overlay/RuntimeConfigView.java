@@ -59,11 +59,11 @@ final class RuntimeConfigView {
     private static final Map<String, String> LAST_SELECTED_CATEGORIES = new HashMap<>();
     private static final Map<String, Parcelable> CONTENT_SCROLL_STATES = new HashMap<>();
     private static final Map<String, Parcelable> CATEGORY_SCROLL_STATES = new HashMap<>();
-    private static final int ACCENT = 0xFF4AE0A0;
-    private static final int TEXT_PRIMARY = 0xFFF1F4F6;
-    private static final int TEXT_SECONDARY = 0xFFA8B0B8;
-    private static final int CARD = 0xFF202428;
-    private static final int CARD_SELECTED = 0xFF27312E;
+    private static final int ACCENT = 0xFF3358D4;
+    private static final int TEXT_PRIMARY = 0xFFF2F4F8;
+    private static final int TEXT_SECONDARY = 0xFF9AA3B5;
+    private static final int CARD = 0xFF141820;
+    private static final int CARD_SELECTED = 0xFF1A2230;
 
     private final Context context;
     private final ViewGroup host;
