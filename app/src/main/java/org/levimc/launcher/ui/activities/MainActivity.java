@@ -706,8 +706,13 @@ import okhttp3.OkHttpClient;
                 decoder.setTargetSize(Math.max(1, Math.round(w * scale)), Math.max(1, Math.round(h * scale)));
                 decoder.setAllocator(ImageDecoder.ALLOCATOR_SOFTWARE);
             });
+            // SOFTWARE layer avoids motion-blur/ghost trails from HW composition of animated frames
+            binding.heroArt.setLayerType(android.view.View.LAYER_TYPE_SOFTWARE, null);
             binding.heroArt.setAlpha(1f);
             binding.heroArt.clearColorFilter();
+            if (heroAnimation != null && heroAnimation.isRunning()) {
+                heroAnimation.stop();
+            }
             binding.heroArt.setImageDrawable(drawable);
             if (drawable instanceof AnimatedImageDrawable) {
                 heroAnimation = (AnimatedImageDrawable) drawable;

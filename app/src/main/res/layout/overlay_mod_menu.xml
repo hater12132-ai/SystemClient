@@ -75,7 +75,6 @@
                         android:gravity="center_vertical"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
-                        android:selected="false"
                         android:text="All"
                         android:textColor="#9AA3B5"
                         android:textSize="13sp" />
@@ -89,7 +88,6 @@
                         android:gravity="center_vertical"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
-                        android:selected="true"
                         android:text="Combat"
                         android:textColor="#F2F4F8"
                         android:textSize="13sp" />
@@ -103,7 +101,6 @@
                         android:gravity="center_vertical"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
-                        android:selected="false"
                         android:text="Movement"
                         android:textColor="#9AA3B5"
                         android:textSize="13sp" />
@@ -117,7 +114,6 @@
                         android:gravity="center_vertical"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
-                        android:selected="false"
                         android:text="Player"
                         android:textColor="#9AA3B5"
                         android:textSize="13sp" />
@@ -131,7 +127,6 @@
                         android:gravity="center_vertical"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
-                        android:selected="false"
                         android:text="Render"
                         android:textColor="#9AA3B5"
                         android:textSize="13sp" />
@@ -145,7 +140,6 @@
                         android:gravity="center_vertical"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
-                        android:selected="false"
                         android:text="Visual"
                         android:textColor="#9AA3B5"
                         android:textSize="13sp" />
@@ -159,7 +153,6 @@
                         android:gravity="center_vertical"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
-                        android:selected="false"
                         android:text="Client"
                         android:textColor="#9AA3B5"
                         android:textSize="13sp" />
@@ -184,7 +177,6 @@
                         android:gravity="center_vertical"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
-                        android:selected="false"
                         android:text="Configs"
                         android:textColor="#9AA3B5"
                         android:textSize="13sp" />
@@ -198,7 +190,6 @@
                         android:gravity="center_vertical"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
-                        android:selected="false"
                         android:text="Friends"
                         android:textColor="#9AA3B5"
                         android:textSize="13sp" />
@@ -212,7 +203,6 @@
                         android:gravity="center_vertical"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
-                        android:selected="false"
                         android:text="Waypoints"
                         android:textColor="#9AA3B5"
                         android:textSize="13sp" />
@@ -226,7 +216,6 @@
                         android:gravity="center_vertical"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
-                        android:selected="false"
                         android:text="Settings"
                         android:textColor="#9AA3B5"
                         android:textSize="13sp" />
@@ -240,7 +229,6 @@
                         android:gravity="center_vertical"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
-                        android:selected="false"
                         android:text="Search"
                         android:textColor="#9AA3B5"
                         android:textSize="13sp" />
