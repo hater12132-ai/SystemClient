@@ -19,9 +19,10 @@
             android:orientation="horizontal">
 
             <!-- SIDEBAR -->
+                        <!-- SIDEBAR -->
             <LinearLayout
                 android:id="@+id/sys_sidebar"
-                android:layout_width="200dp"
+                android:layout_width="210dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/bg_sys_sidebar"
                 android:orientation="vertical"
@@ -30,6 +31,7 @@
                 android:paddingEnd="12dp"
                 android:paddingBottom="12dp">
 
+                <!-- Brand: star + SystemClient -->
                 <LinearLayout
                     android:id="@+id/sys_brand_row"
                     android:layout_width="match_parent"
@@ -46,13 +48,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="System"
+                        android:text="SystemClient"
                         android:textColor="#F2F4F8"
                         android:textSize="15sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
                 <TextView
+                    android:id="@+id/sys_label_categories"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="6dp"
@@ -61,99 +64,39 @@
                     android:textColor="#5C6370"
                     android:textSize="11sp" />
 
-                <TextView
-                    android:id="@+id/sys_cat_all"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginBottom="2dp"
-                    android:background="@drawable/bg_sys_nav"
-                    android:gravity="center_vertical"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:text="All"
-                    android:textColor="#9AA3B5"
-                    android:textSize="13sp" />
+                <!-- Categories with icons -->
+                <LinearLayout android:id="@+id/sys_cat_all" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginBottom="2dp" android:background="@drawable/bg_sys_nav" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="10dp" android:paddingEnd="10dp">
+                    <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_cat_all" />
+                    <TextView android:id="@+id/sys_cat_all_text" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:layout_weight="1" android:text="All" android:textColor="#9AA3B5" android:textSize="13sp" />
+                </LinearLayout>
+                <LinearLayout android:id="@+id/sys_cat_combat" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginBottom="2dp" android:background="@drawable/bg_sys_nav" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="10dp" android:paddingEnd="10dp">
+                    <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_cat_combat" />
+                    <TextView android:id="@+id/sys_cat_combat_text" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:layout_weight="1" android:text="Combat" android:textColor="#9AA3B5" android:textSize="13sp" />
+                    <TextView android:id="@+id/sys_cat_combat_count" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/bg_sys_badge" android:paddingStart="6dp" android:paddingEnd="6dp" android:paddingTop="1dp" android:paddingBottom="1dp" android:text="6" android:textColor="#9AA3B5" android:textSize="10sp" />
+                </LinearLayout>
+                <LinearLayout android:id="@+id/sys_cat_movement" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginBottom="2dp" android:background="@drawable/bg_sys_nav" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="10dp" android:paddingEnd="10dp">
+                    <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_cat_movement" />
+                    <TextView android:id="@+id/sys_cat_movement_text" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:layout_weight="1" android:text="Movement" android:textColor="#9AA3B5" android:textSize="13sp" />
+                </LinearLayout>
+                <LinearLayout android:id="@+id/sys_cat_player" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginBottom="2dp" android:background="@drawable/bg_sys_nav" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="10dp" android:paddingEnd="10dp">
+                    <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_cat_player" />
+                    <TextView android:id="@+id/sys_cat_player_text" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:layout_weight="1" android:text="Player" android:textColor="#9AA3B5" android:textSize="13sp" />
+                </LinearLayout>
+                <LinearLayout android:id="@+id/sys_cat_render" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginBottom="2dp" android:background="@drawable/bg_sys_nav" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="10dp" android:paddingEnd="10dp">
+                    <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_cat_render" />
+                    <TextView android:id="@+id/sys_cat_render_text" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:layout_weight="1" android:text="Render" android:textColor="#9AA3B5" android:textSize="13sp" />
+                </LinearLayout>
+                <LinearLayout android:id="@+id/sys_cat_visual" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginBottom="2dp" android:background="@drawable/bg_sys_nav" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="10dp" android:paddingEnd="10dp">
+                    <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_cat_visual" />
+                    <TextView android:id="@+id/sys_cat_visual_text" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:layout_weight="1" android:text="Visual" android:textColor="#9AA3B5" android:textSize="13sp" />
+                </LinearLayout>
+                <LinearLayout android:id="@+id/sys_cat_client" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginBottom="2dp" android:background="@drawable/bg_sys_nav" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="10dp" android:paddingEnd="10dp">
+                    <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_cat_client" />
+                    <TextView android:id="@+id/sys_cat_client_text" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:layout_weight="1" android:text="Client" android:textColor="#9AA3B5" android:textSize="13sp" />
+                </LinearLayout>
 
                 <TextView
-                    android:id="@+id/sys_cat_combat"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginBottom="2dp"
-                    android:background="@drawable/bg_sys_nav"
-                    android:gravity="center_vertical"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:text="Combat"
-                    android:textColor="#9AA3B5"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/sys_cat_movement"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginBottom="2dp"
-                    android:background="@drawable/bg_sys_nav"
-                    android:gravity="center_vertical"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:text="Movement"
-                    android:textColor="#9AA3B5"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/sys_cat_player"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginBottom="2dp"
-                    android:background="@drawable/bg_sys_nav"
-                    android:gravity="center_vertical"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:text="Player"
-                    android:textColor="#9AA3B5"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/sys_cat_render"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginBottom="2dp"
-                    android:background="@drawable/bg_sys_nav"
-                    android:gravity="center_vertical"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:text="Render"
-                    android:textColor="#9AA3B5"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/sys_cat_visual"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginBottom="2dp"
-                    android:background="@drawable/bg_sys_nav"
-                    android:gravity="center_vertical"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:text="Visual"
-                    android:textColor="#9AA3B5"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/sys_cat_client"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginBottom="2dp"
-                    android:background="@drawable/bg_sys_nav"
-                    android:gravity="center_vertical"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:text="Client"
-                    android:textColor="#9AA3B5"
-                    android:textSize="13sp" />
-
-
-                <TextView
+                    android:id="@+id/sys_label_settings"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
@@ -163,74 +106,21 @@
                     android:textColor="#5C6370"
                     android:textSize="11sp" />
 
-                <TextView
-                    android:id="@+id/sys_nav_configs"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginBottom="2dp"
-                    android:background="@drawable/bg_sys_nav"
-                    android:gravity="center_vertical"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:text="Configs"
-                    android:textColor="#9AA3B5"
-                    android:textSize="13sp" />
+                <!-- Configs only -->
+                <LinearLayout android:id="@+id/sys_nav_configs" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginBottom="2dp" android:background="@drawable/bg_sys_nav" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="10dp" android:paddingEnd="10dp">
+                    <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_nav_configs" />
+                    <TextView android:id="@+id/sys_nav_configs_text" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:layout_weight="1" android:text="Configs" android:textColor="#9AA3B5" android:textSize="13sp" />
+                </LinearLayout>
 
-                <TextView
-                    android:id="@+id/sys_nav_friends"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginBottom="2dp"
-                    android:background="@drawable/bg_sys_nav"
-                    android:gravity="center_vertical"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:text="Friends"
-                    android:textColor="#9AA3B5"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/sys_nav_waypoints"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginBottom="2dp"
-                    android:background="@drawable/bg_sys_nav"
-                    android:gravity="center_vertical"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:text="Waypoints"
-                    android:textColor="#9AA3B5"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/sys_nav_settings"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginBottom="2dp"
-                    android:background="@drawable/bg_sys_nav"
-                    android:gravity="center_vertical"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:text="Settings"
-                    android:textColor="#9AA3B5"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/sys_nav_search"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginBottom="2dp"
-                    android:background="@drawable/bg_sys_nav"
-                    android:gravity="center_vertical"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:text="Search"
-                    android:textColor="#9AA3B5"
-                    android:textSize="13sp" />
-
+                <!-- Client Settings (gear) — no Search -->
+                <LinearLayout android:id="@+id/sys_nav_client_settings" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginBottom="2dp" android:background="@drawable/bg_sys_nav" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="10dp" android:paddingEnd="10dp">
+                    <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_nav_settings" />
+                    <TextView android:id="@+id/sys_nav_client_settings_text" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:layout_weight="1" android:text="Client Settings" android:textColor="#9AA3B5" android:textSize="13sp" />
+                </LinearLayout>
 
                 <Space android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" />
 
+                <!-- Footer: SystemPlayer + green online -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -253,19 +143,36 @@
                         android:layout_marginStart="8dp"
                         android:layout_weight="1"
                         android:orientation="vertical">
-                        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                            android:text="SystemPlayer" android:textColor="#F2F4F8" android:textSize="11sp" android:textStyle="bold" />
-                        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                            android:text="www.systemdlc.com" android:textColor="#5C6370" android:textSize="9sp" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="SystemPlayer"
+                            android:textColor="#F2F4F8"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+                            <ImageView
+                                android:layout_width="8dp"
+                                android:layout_height="8dp"
+                                android:src="@drawable/ic_online_dot" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="5dp"
+                                android:text="Online"
+                                android:textColor="#22C55E"
+                                android:textSize="10sp" />
+                        </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
 
             <!-- MAIN -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+android:layout_weight="1"
                 android:orientation="vertical"
                 android:padding="12dp">
 

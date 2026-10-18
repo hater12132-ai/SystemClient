@@ -46,7 +46,7 @@ final class SystemDlcMenuController {
     private final SharedPreferences prefs;
     private final LinearLayout moduleHost;
     private final TextView topCategory;
-    private final List<TextView> categoryViews = new ArrayList<>();
+    private final List<View> categoryViews = new ArrayList<>();
     private final String[] categoryNames = {
             "All", "Combat", "Movement", "Player", "Render", "Visual", "Client"
     };
@@ -131,18 +131,18 @@ final class SystemDlcMenuController {
                 R.id.sys_cat_player, R.id.sys_cat_render, R.id.sys_cat_visual, R.id.sys_cat_client
         };
         for (int i = 0; i < catIds.length; i++) {
-            TextView tv = root.findViewById(catIds[i]);
-            if (tv == null) continue;
-            categoryViews.add(tv);
+            View row = root.findViewById(catIds[i]);
+            if (row == null) continue;
+            categoryViews.add(row);
             final int idx = i;
-            tv.setOnClickListener(v -> selectCategory(categoryNames[idx]));
+            row.setOnClickListener(v -> selectCategory(categoryNames[idx]));
         }
 
-        wireNav(R.id.sys_nav_configs, "Configs");
-        wireNav(R.id.sys_nav_friends, "Friends");
-        wireNav(R.id.sys_nav_waypoints, "Waypoints");
-        wireNav(R.id.sys_nav_settings, "Settings");
-        wireNav(R.id.sys_nav_search, "Search");
+        View configs = root.findViewById(R.id.sys_nav_configs);
+        if (configs != null) configs.setOnClickListener(v -> openConfigsPanel());
+
+        View clientSettings = root.findViewById(R.id.sys_nav_client_settings);
+        if (clientSettings != null) clientSettings.setOnClickListener(v -> openClientSettingsPanel());
 
         EditText search = root.findViewById(R.id.sys_search);
         if (search != null) {
@@ -151,6 +151,7 @@ final class SystemDlcMenuController {
         }
 
         applyLanguageLabels();
+        applyPanelStyle();
         selectCategory("Combat");
     }
 
@@ -183,10 +184,22 @@ final class SystemDlcMenuController {
         String[] en = {"All", "Combat", "Movement", "Player", "Render", "Visual", "Client"};
         String[] ru = {"Все", "Бой", "Движение", "Игрок", "Рендер", "Визуал", "Клиент"};
         String[] labels = russian ? ru : en;
-        for (int i = 0; i < categoryViews.size() && i < labels.length; i++) {
-            categoryViews.get(i).setText(labels[i]);
+        int[] textIds = {
+                R.id.sys_cat_all_text, R.id.sys_cat_combat_text, R.id.sys_cat_movement_text,
+                R.id.sys_cat_player_text, R.id.sys_cat_render_text, R.id.sys_cat_visual_text, R.id.sys_cat_client_text
+        };
+        for (int i = 0; i < textIds.length && i < labels.length; i++) {
+            TextView tv = root.findViewById(textIds[i]);
+            if (tv != null) tv.setText(labels[i]);
         }
-        // keep internal keys in English via categoryNames array
+        TextView configsT = root.findViewById(R.id.sys_nav_configs_text);
+        if (configsT != null) configsT.setText(russian ? "Конфиги" : "Configs");
+        TextView csT = root.findViewById(R.id.sys_nav_client_settings_text);
+        if (csT != null) csT.setText(russian ? "Настройки клиента" : "Client Settings");
+        TextView catLabel = root.findViewById(R.id.sys_label_categories);
+        if (catLabel != null) catLabel.setText(russian ? "Категории" : "Client categories");
+        TextView setLabel = root.findViewById(R.id.sys_label_settings);
+        if (setLabel != null) setLabel.setText(russian ? "Настройки" : "Settings");
         EditText search = root.findViewById(R.id.sys_search);
         if (search != null) search.setHint(russian ? "Поиск" : "Search");
         if (topCategory != null) {
@@ -196,6 +209,143 @@ final class SystemDlcMenuController {
             }
             topCategory.setText(labels[idx]);
         }
+    }
+
+    private void openConfigsPanel() {
+        if (topCategory != null) topCategory.setText(russian ? "Конфиги" : "Configs");
+        if (moduleHost == null) return;
+        moduleHost.removeAllViews();
+        expandedId = null;
+
+        String[][] configs = {
+                {"Legit", "Safe visuals, low risk"},
+                {"Balanced", "Default SystemClient setup"},
+                {"Rage", "All combat modules aggressive"},
+                {"HvH", "High-intensity PvP preset"},
+                {"Minimal", "HUD + fullbright only"}
+        };
+        String active = prefs.getString("active_config", "Balanced");
+        for (String[] cfg : configs) {
+            final String name = cfg[0];
+            LinearLayout card = new LinearLayout(activity);
+            card.setOrientation(LinearLayout.VERTICAL);
+            card.setBackgroundResource(name.equals(active)
+                    ? R.drawable.bg_sys_module_card_expanded
+                    : R.drawable.bg_sys_module_card);
+            card.setPadding(dp(14), dp(14), dp(14), dp(14));
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            lp.bottomMargin = dp(8);
+            card.setLayoutParams(lp);
+
+            TextView title = new TextView(activity);
+            title.setText(name);
+            title.setTextColor(TEXT);
+            title.setTextSize(15);
+            title.setTypeface(Typeface.DEFAULT_BOLD);
+            TextView desc = new TextView(activity);
+            desc.setText(cfg[1]);
+            desc.setTextColor(MUTED);
+            desc.setTextSize(12);
+            card.addView(title);
+            card.addView(desc);
+            card.setOnClickListener(v -> {
+                prefs.edit().putString("active_config", name).apply();
+                Toast.makeText(activity, "Config: " + name, Toast.LENGTH_SHORT).show();
+                openConfigsPanel();
+            });
+            moduleHost.addView(card);
+        }
+    }
+
+    private void openClientSettingsPanel() {
+        if (topCategory != null) topCategory.setText(russian ? "Настройки клиента" : "Client Settings");
+        if (moduleHost == null) return;
+        moduleHost.removeAllViews();
+        expandedId = null;
+
+        LinearLayout panel = new LinearLayout(activity);
+        panel.setOrientation(LinearLayout.VERTICAL);
+        panel.setBackgroundResource(R.drawable.bg_sys_module_card);
+        panel.setPadding(dp(16), dp(16), dp(16), dp(16));
+        moduleHost.addView(panel);
+
+        TextView head = new TextView(activity);
+        head.setText(russian ? "Клиент" : "Client");
+        head.setTextColor(TEXT);
+        head.setTextSize(16);
+        head.setTypeface(Typeface.DEFAULT_BOLD);
+        panel.addView(head);
+
+        // Theme row already on top bar — mirror here
+        addToggleRow(panel, russian ? "Светлая тема" : "Light theme", "theme_light", lightTheme);
+        Switch themeSwitch = null;
+        // re-bind lightTheme field when toggled via panel - use listener after add
+        // UI size
+        addLabel(panel, russian ? "Размер UI" : "UI size", russian ? "Масштаб меню" : "Menu scale");
+        addSeek(panel, "ui_scale", 100, v -> v + "%");
+
+        // Transparent / Simple mode chips
+        addLabel(panel, russian ? "Стиль панели" : "Panel style", null);
+        LinearLayout modeRow = new LinearLayout(activity);
+        modeRow.setOrientation(LinearLayout.HORIZONTAL);
+        LinearLayout.LayoutParams mlp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        mlp.topMargin = dp(8);
+        modeRow.setLayoutParams(mlp);
+
+        String style = prefs.getString("panel_style", "simple");
+        TextView simple = makeStyleChip(russian ? "Простой" : "Simple", "simple".equals(style));
+        TextView transparent = makeStyleChip(russian ? "Прозрачный" : "Transparent", "transparent".equals(style));
+        simple.setOnClickListener(v -> {
+            prefs.edit().putString("panel_style", "simple").apply();
+            applyPanelStyle();
+            openClientSettingsPanel();
+        });
+        transparent.setOnClickListener(v -> {
+            prefs.edit().putString("panel_style", "transparent").apply();
+            applyPanelStyle();
+            openClientSettingsPanel();
+        });
+        LinearLayout.LayoutParams chipLp = new LinearLayout.LayoutParams(0, dp(40), 1f);
+        simple.setLayoutParams(chipLp);
+        LinearLayout.LayoutParams chipLp2 = new LinearLayout.LayoutParams(0, dp(40), 1f);
+        chipLp2.setMarginStart(dp(8));
+        transparent.setLayoutParams(chipLp2);
+        modeRow.addView(simple);
+        modeRow.addView(transparent);
+        panel.addView(modeRow);
+
+        TextView hint = new TextView(activity);
+        hint.setText(russian
+                ? "Прозрачный делает меню более прозрачным. Простой — стандартная тема."
+                : "Transparent softens the panel glass. Simple keeps the default client theme.");
+        hint.setTextColor(DIM);
+        hint.setTextSize(11);
+        LinearLayout.LayoutParams hlp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        hlp.topMargin = dp(10);
+        hint.setLayoutParams(hlp);
+        panel.addView(hint);
+
+        applyPanelStyle();
+    }
+
+    private TextView makeStyleChip(String label, boolean active) {
+        TextView t = new TextView(activity);
+        t.setText(label);
+        t.setGravity(android.view.Gravity.CENTER);
+        t.setTextColor(TEXT);
+        t.setTextSize(13);
+        t.setBackgroundResource(active ? R.drawable.bg_sys_module_card_expanded : R.drawable.bg_sys_input);
+        return t;
+    }
+
+    private void applyPanelStyle() {
+        View container = root.findViewById(R.id.mod_menu_container);
+        if (container == null) return;
+        String style = prefs.getString("panel_style", "simple");
+        container.setAlpha("transparent".equals(style) ? 0.82f : 1f);
     }
 
     private void wireNav(int id, String name) {
@@ -211,11 +361,21 @@ final class SystemDlcMenuController {
         activeCategory = name;
         expandedId = null;
         for (int i = 0; i < categoryViews.size(); i++) {
-            TextView tv = categoryViews.get(i);
+            View row = categoryViews.get(i);
             boolean sel = categoryNames[i].equals(name);
-            tv.setSelected(sel);
-            tv.setTextColor(sel ? TEXT : MUTED);
-            tv.setTypeface(Typeface.create(Typeface.DEFAULT, sel ? Typeface.BOLD : Typeface.NORMAL));
+            row.setSelected(sel);
+            // tint label text inside row
+            if (row instanceof ViewGroup) {
+                ViewGroup vg = (ViewGroup) row;
+                for (int c = 0; c < vg.getChildCount(); c++) {
+                    View child = vg.getChildAt(c);
+                    if (child instanceof TextView && child.getId() != R.id.sys_cat_combat_count) {
+                        TextView tv = (TextView) child;
+                        tv.setTextColor(sel ? TEXT : MUTED);
+                        tv.setTypeface(Typeface.create(Typeface.DEFAULT, sel ? Typeface.BOLD : Typeface.NORMAL));
+                    }
+                }
+            }
         }
         if (topCategory != null) {
             // show localized label
