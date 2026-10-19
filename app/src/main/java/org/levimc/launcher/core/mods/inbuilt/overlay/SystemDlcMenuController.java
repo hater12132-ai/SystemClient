@@ -36,7 +36,7 @@ import java.util.Map;
  */
 final class SystemDlcMenuController {
     private static final String PREFS = "system_dlc_menu";
-    private static final int ACCENT = 0xFF3358D4;
+    private static final int ACCENT = 0xFFE8EAED;
     private static final int TEXT = 0xFFF2F4F8;
     private static final int MUTED = 0xFF9AA3B5;
     private static final int DIM = 0xFF5C6370;
@@ -730,7 +730,7 @@ final class SystemDlcMenuController {
     }
 
     private void addAccentDots(LinearLayout panel, String key) {
-        int[] colors = {0xFFE53935, 0xFFFB8C00, 0xFFFDD835, 0xFF43A047, 0xFF00ACC1, 0xFF3358D4, 0xFF8E24AA};
+        int[] colors = {0xFFE53935, 0xFFFB8C00, 0xFFFDD835, 0xFF43A047, 0xFF00ACC1, 0xFFE8EAED, 0xFF8E24AA};
         LinearLayout row = new LinearLayout(activity);
         row.setOrientation(LinearLayout.HORIZONTAL);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
