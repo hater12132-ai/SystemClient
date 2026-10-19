@@ -77,7 +77,7 @@ final class ShatterCloseAnimator {
         final int rows = 5;
         final int sw = pw / cols;
         final int sh = ph / rows;
-        final Random rng = new Random(0x51A77ERu);
+        final Random rng = new Random(0x51A77ER);
         final List<Animator> anims = new ArrayList<>();
         final List<Bitmap> pieces = new ArrayList<>();
 
