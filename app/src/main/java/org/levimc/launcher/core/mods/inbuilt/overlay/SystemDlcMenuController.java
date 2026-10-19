@@ -186,13 +186,10 @@ final class SystemDlcMenuController {
         View brand = root.findViewById(R.id.sys_brand_text);
         if (brand != null) brand.setVisibility(sidebarVisible ? View.VISIBLE : View.GONE);
         View brandRow = root.findViewById(R.id.sys_brand_row);
-        if (brandRow != null) {
-            // In rail mode, center the star
-            if (brandRow instanceof ViewGroup) {
-                ((ViewGroup) brandRow).setGravity(sidebarVisible
-                        ? android.view.Gravity.CENTER_VERTICAL | android.view.Gravity.START
-                        : android.view.Gravity.CENTER);
-            }
+        if (brandRow instanceof LinearLayout) {
+            ((LinearLayout) brandRow).setGravity(sidebarVisible
+                    ? android.view.Gravity.CENTER_VERTICAL | android.view.Gravity.START
+                    : android.view.Gravity.CENTER);
         }
     }
 
@@ -216,12 +213,11 @@ final class SystemDlcMenuController {
         };
         for (int id : rowIds) {
             View row = root.findViewById(id);
-            if (!(row instanceof ViewGroup)) continue;
-            ViewGroup g = (ViewGroup) row;
+            if (!(row instanceof LinearLayout)) continue;
+            LinearLayout g = (LinearLayout) row;
             g.setGravity(visible
                     ? android.view.Gravity.CENTER_VERTICAL | android.view.Gravity.START
                     : android.view.Gravity.CENTER);
-            // tighten horizontal padding in rail so icons sit centered
             int hPad = (int) ((visible ? 10f : 0f) * activity.getResources().getDisplayMetrics().density);
             row.setPadding(hPad, row.getPaddingTop(), hPad, row.getPaddingBottom());
         }
