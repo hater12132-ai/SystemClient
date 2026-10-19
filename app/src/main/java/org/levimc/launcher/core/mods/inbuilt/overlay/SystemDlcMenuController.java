@@ -174,7 +174,7 @@ final class SystemDlcMenuController {
         // Always stay INSIDE the window. Expanded = labels; collapsed = icon rail (reference style).
         sidebar.setVisibility(View.VISIBLE);
         final float density = activity.getResources().getDisplayMetrics().density;
-        final int expandedPx = (int) (208f * density + 0.5f);
+        final int expandedPx = (int) (200f * density + 0.5f);
         final int railPx = (int) (56f * density + 0.5f);
         ViewGroup.LayoutParams lp = sidebar.getLayoutParams();
         if (lp != null) {
