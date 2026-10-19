@@ -254,6 +254,13 @@ public class ModMenuOverlay {
             }
             wmParams.gravity = Gravity.CENTER;
             wmParams.token = activity.getWindow().getDecorView().getWindowToken();
+
+            // Liquid glass: system backdrop blur behind this translucent panel window (API 31+)
+            try {
+                LiquidGlassBlurHelper.applyWindowBlurFlags(
+                        wmParams, LiquidGlassBlurHelper.isLiquidGlass(activity));
+            } catch (Throwable ignored) {
+            }
             
             windowManager.addView(overlayView, wmParams);
             isShowing = true;
@@ -295,6 +302,13 @@ public class ModMenuOverlay {
         isShowing = true;
         overlayView.requestFocus();
         wmParams = null;
+        try {
+            // Content-root path cannot use FLAG_BLUR_BEHIND; freeze-frame underlay instead
+            if (overlayView instanceof ViewGroup) {
+                LiquidGlassBlurHelper.attachFallbackUnderlay(activity, (ViewGroup) overlayView);
+            }
+        } catch (Throwable ignored) {
+        }
         restoreLastSection();
         
         overlayView.setAlpha(0f);
@@ -1338,6 +1352,11 @@ public class ModMenuOverlay {
                         }
                     }
                 } catch (Exception ignored) {}
+                try {
+                    if (overlayView instanceof ViewGroup) {
+                        LiquidGlassBlurHelper.removeFallbackUnderlay((ViewGroup) overlayView);
+                    }
+                } catch (Throwable ignored2) {}
                 overlayView = null;
                 isShowing = false;
             });

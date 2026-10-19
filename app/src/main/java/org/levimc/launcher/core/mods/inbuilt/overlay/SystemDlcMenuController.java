@@ -377,23 +377,36 @@ final class SystemDlcMenuController {
         String style = prefs.getString("panel_style", "simple");
         TextView simple = makeStyleChip(russian ? "Простой" : "Simple", "simple".equals(style));
         TextView transparent = makeStyleChip(russian ? "Прозрачный" : "Transparent", "transparent".equals(style));
+        TextView glass = makeStyleChip(russian ? "Стекло" : "Liquid glass", "liquid_glass".equals(style));
         simple.setOnClickListener(v -> {
             prefs.edit().putString("panel_style", "simple").apply();
             applyPanelStyle();
+            rebuildGrid(currentQuery());
             openClientSettingsPanel();
         });
         transparent.setOnClickListener(v -> {
             prefs.edit().putString("panel_style", "transparent").apply();
             applyPanelStyle();
+            rebuildGrid(currentQuery());
+            openClientSettingsPanel();
+        });
+        glass.setOnClickListener(v -> {
+            prefs.edit().putString("panel_style", "liquid_glass").apply();
+            applyPanelStyle();
+            rebuildGrid(currentQuery());
             openClientSettingsPanel();
         });
         LinearLayout.LayoutParams chipLp = new LinearLayout.LayoutParams(0, dp(40), 1f);
         simple.setLayoutParams(chipLp);
         LinearLayout.LayoutParams chipLp2 = new LinearLayout.LayoutParams(0, dp(40), 1f);
-        chipLp2.setMarginStart(dp(8));
+        chipLp2.setMarginStart(dp(6));
         transparent.setLayoutParams(chipLp2);
+        LinearLayout.LayoutParams chipLp3 = new LinearLayout.LayoutParams(0, dp(40), 1f);
+        chipLp3.setMarginStart(dp(6));
+        glass.setLayoutParams(chipLp3);
         modeRow.addView(simple);
         modeRow.addView(transparent);
+        modeRow.addView(glass);
         panel.addView(modeRow);
 
         TextView hint = new TextView(activity);
@@ -421,11 +434,82 @@ final class SystemDlcMenuController {
         return t;
     }
 
+    private boolean isGlass() {
+        return "liquid_glass".equals(prefs.getString("panel_style", "simple"));
+    }
+
     private void applyPanelStyle() {
         View container = root.findViewById(R.id.mod_menu_container);
         if (container == null) return;
         String style = prefs.getString("panel_style", "simple");
-        container.setAlpha("transparent".equals(style) ? 0.82f : 1f);
+        // Alpha: transparent fades whole panel; liquid_glass uses tinted drawables instead
+        if ("transparent".equals(style)) {
+            container.setAlpha(0.82f);
+            container.setBackgroundResource(R.drawable.bg_sys_root);
+        } else if ("liquid_glass".equals(style)) {
+            container.setAlpha(1f);
+            container.setBackgroundResource(R.drawable.bg_sys_root_glass);
+        } else {
+            container.setAlpha(1f);
+            container.setBackgroundResource(R.drawable.bg_sys_root);
+        }
+
+        View sidebar = root.findViewById(R.id.sys_sidebar);
+        if (sidebar != null) {
+            sidebar.setBackgroundResource(isGlass()
+                    ? R.drawable.bg_sys_sidebar_glass
+                    : R.drawable.bg_sys_sidebar);
+        }
+        View footer = root.findViewById(R.id.sys_footer_row);
+        if (footer != null) {
+            footer.setBackgroundResource(isGlass()
+                    ? R.drawable.bg_sys_footer_glass
+                    : R.drawable.bg_sys_footer);
+        }
+        // Top bar chips / icon buttons
+        int[] iconBtns = {
+                R.id.sys_btn_sidebar, R.id.sys_btn_favorites, R.id.sys_btn_language,
+                R.id.sys_btn_theme, R.id.btn_close_menu
+        };
+        for (int id : iconBtns) {
+            View v = root.findViewById(id);
+            if (v != null) {
+                v.setBackgroundResource(isGlass()
+                        ? R.drawable.bg_sys_icon_btn_glass
+                        : R.drawable.bg_sys_icon_btn);
+            }
+        }
+        View topCat = root.findViewById(R.id.sys_top_category);
+        if (topCat != null) {
+            topCat.setBackgroundResource(isGlass()
+                    ? R.drawable.bg_sys_top_chip_glass
+                    : R.drawable.bg_sys_top_chip);
+        }
+        // Search field parent is a LinearLayout with bg_sys_input — best-effort
+        View search = root.findViewById(R.id.sys_search);
+        if (search != null && search.getParent() instanceof View) {
+            View parent = (View) search.getParent();
+            try {
+                parent.setBackgroundResource(isGlass()
+                        ? R.drawable.bg_sys_input_glass
+                        : R.drawable.bg_sys_input);
+            } catch (Throwable ignored) {}
+        }
+        // Category rows use bg_sys_nav
+        int[] rows = {
+                R.id.sys_cat_all, R.id.sys_cat_combat, R.id.sys_cat_movement,
+                R.id.sys_cat_player, R.id.sys_cat_render, R.id.sys_cat_visual, R.id.sys_cat_client,
+                R.id.sys_nav_configs, R.id.sys_nav_friends, R.id.sys_nav_waypoints,
+                R.id.sys_nav_client_settings, R.id.sys_nav_search
+        };
+        for (int id : rows) {
+            View v = root.findViewById(id);
+            if (v != null) {
+                v.setBackgroundResource(isGlass()
+                        ? R.drawable.bg_sys_nav_glass
+                        : R.drawable.bg_sys_nav);
+            }
+        }
     }
 
     private void wireNav(int id, String name) {
@@ -531,6 +615,10 @@ final class SystemDlcMenuController {
         card.setOrientation(LinearLayout.VERTICAL);
         if (expanded) {
             card.setBackgroundResource(R.drawable.bg_sys_module_card_expanded);
+        } else if (isGlass()) {
+            card.setBackgroundResource(on[0]
+                    ? R.drawable.bg_sys_module_card_glass_on
+                    : R.drawable.bg_sys_module_card_glass);
         } else {
             card.setBackgroundResource(on[0] ? R.drawable.bg_sys_module_card_on : R.drawable.bg_sys_module_card);
         }
@@ -572,13 +660,17 @@ final class SystemDlcMenuController {
 
         // Custom toggle ImageView — exact ON/OFF art (avoids broken Switch sizing)
         ImageView toggle = new ImageView(activity);
-        toggle.setImageResource(on[0] ? R.drawable.bg_toggle_on : R.drawable.bg_toggle_off);
+        toggle.setImageResource(on[0]
+                ? (isGlass() ? R.drawable.bg_toggle_on_glass : R.drawable.bg_toggle_on)
+                : R.drawable.bg_toggle_off);
         toggle.setLayoutParams(new LinearLayout.LayoutParams(dp(42), dp(24)));
         toggle.setScaleType(ImageView.ScaleType.FIT_XY);
         toggle.setOnClickListener(v -> {
             on[0] = !on[0];
             prefs.edit().putBoolean(mod.id + "_on", on[0]).apply();
-            toggle.setImageResource(on[0] ? R.drawable.bg_toggle_on : R.drawable.bg_toggle_off);
+            toggle.setImageResource(on[0]
+                ? (isGlass() ? R.drawable.bg_toggle_on_glass : R.drawable.bg_toggle_on)
+                : R.drawable.bg_toggle_off);
             title.setTextColor(on[0] ? 0xFFF2F4F8 : 0xFF7A808C);
             chevron.setAlpha(on[0] ? 1f : 0.5f);
             star.setAlpha(on[0] ? 1f : 0.5f);
