@@ -523,20 +523,19 @@ final class SystemDlcMenuController {
     }
 
     private View buildModuleCard(ModuleDef mod) {
-        final boolean on = prefs.getBoolean(mod.id + "_on", mod.defaultOn);
-        final boolean fav = prefs.getBoolean(mod.id + "_fav", false);
+        final boolean[] on = { prefs.getBoolean(mod.id + "_on", mod.defaultOn) };
+        final boolean[] fav = { prefs.getBoolean(mod.id + "_fav", false) };
         final boolean expanded = mod.id.equals(expandedId);
 
         LinearLayout card = new LinearLayout(activity);
         card.setOrientation(LinearLayout.VERTICAL);
-        // ON = brighter rim/fill; OFF = dimmer (reference look)
         if (expanded) {
             card.setBackgroundResource(R.drawable.bg_sys_module_card_expanded);
         } else {
-            card.setBackgroundResource(on ? R.drawable.bg_sys_module_card_on : R.drawable.bg_sys_module_card);
+            card.setBackgroundResource(on[0] ? R.drawable.bg_sys_module_card_on : R.drawable.bg_sys_module_card);
         }
-        card.setPadding(dp(14), dp(14), dp(14), dp(14));
-        card.setMinimumHeight(dp(52));
+        card.setPadding(dp(14), dp(13), dp(14), dp(13));
+        card.setMinimumHeight(dp(50));
 
         LinearLayout header = new LinearLayout(activity);
         header.setOrientation(LinearLayout.HORIZONTAL);
@@ -544,56 +543,51 @@ final class SystemDlcMenuController {
         header.setLayoutParams(new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        // Left module icon (swords style)
-        ImageView icon = new ImageView(activity);
-        icon.setImageResource(R.drawable.ic_mod_swords);
-        icon.setLayoutParams(new LinearLayout.LayoutParams(dp(18), dp(18)));
-        // Dim icon when module is off
-        icon.setAlpha(on ? 1f : 0.45f);
+        // Chevron: ^ when expanded (up), v when collapsed — taps expand/collapse settings
+        ImageView chevron = new ImageView(activity);
+        chevron.setImageResource(expanded ? R.drawable.ic_chevron_up : R.drawable.ic_chevron_down);
+        chevron.setLayoutParams(new LinearLayout.LayoutParams(dp(18), dp(18)));
+        chevron.setAlpha(on[0] ? 1f : 0.5f);
 
         TextView title = new TextView(activity);
         title.setText(mod.title);
-        title.setTextColor(on ? 0xFFF2F4F8 : 0xFF8B929E);
+        title.setTextColor(on[0] ? 0xFFF2F4F8 : 0xFF7A808C);
         title.setTextSize(14);
         title.setTypeface(Typeface.DEFAULT_BOLD);
         LinearLayout.LayoutParams titleLp = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
         titleLp.setMarginStart(dp(12));
         title.setLayoutParams(titleLp);
 
-        // Outline star (no keybind badge)
         ImageView star = new ImageView(activity);
-        star.setImageResource(fav ? R.drawable.ic_sys_star_filled : R.drawable.ic_sys_star_outline);
-        star.setAlpha(on ? 1f : 0.55f);
+        star.setImageResource(fav[0] ? R.drawable.ic_sys_star_filled : R.drawable.ic_sys_star_outline);
+        star.setAlpha(on[0] ? 1f : 0.5f);
         LinearLayout.LayoutParams starLp = new LinearLayout.LayoutParams(dp(18), dp(18));
-        starLp.setMarginEnd(dp(10));
+        starLp.setMarginEnd(dp(12));
         star.setLayoutParams(starLp);
         star.setOnClickListener(v -> {
-            boolean now = !prefs.getBoolean(mod.id + "_fav", false);
-            prefs.edit().putBoolean(mod.id + "_fav", now).apply();
-            star.setImageResource(now ? R.drawable.ic_sys_star_filled : R.drawable.ic_sys_star_outline);
+            fav[0] = !fav[0];
+            prefs.edit().putBoolean(mod.id + "_fav", fav[0]).apply();
+            star.setImageResource(fav[0] ? R.drawable.ic_sys_star_filled : R.drawable.ic_sys_star_outline);
         });
 
-        Switch toggle = new Switch(activity);
-        toggle.setChecked(on);
-        toggle.setTrackResource(R.drawable.bg_sys_switch_track);
-        toggle.setThumbResource(R.drawable.bg_sys_switch_thumb);
-        // avoid default green/teal tint fighting our drawables
-        try {
-            toggle.getTrackDrawable().setTintList(null);
-            toggle.getThumbDrawable().setTintList(null);
-        } catch (Throwable ignored) {}
-        toggle.setOnCheckedChangeListener((btn, checked) -> {
-            prefs.edit().putBoolean(mod.id + "_on", checked).apply();
-            // live visual update without full rebuild
-            card.setBackgroundResource(checked
-                    ? (mod.id.equals(expandedId) ? R.drawable.bg_sys_module_card_expanded : R.drawable.bg_sys_module_card_on)
-                    : R.drawable.bg_sys_module_card);
-            title.setTextColor(checked ? 0xFFF2F4F8 : 0xFF8B929E);
-            icon.setAlpha(checked ? 1f : 0.45f);
-            star.setAlpha(checked ? 1f : 0.55f);
+        // Custom toggle ImageView — exact ON/OFF art (avoids broken Switch sizing)
+        ImageView toggle = new ImageView(activity);
+        toggle.setImageResource(on[0] ? R.drawable.bg_toggle_on : R.drawable.bg_toggle_off);
+        toggle.setLayoutParams(new LinearLayout.LayoutParams(dp(42), dp(24)));
+        toggle.setScaleType(ImageView.ScaleType.FIT_XY);
+        toggle.setOnClickListener(v -> {
+            on[0] = !on[0];
+            prefs.edit().putBoolean(mod.id + "_on", on[0]).apply();
+            toggle.setImageResource(on[0] ? R.drawable.bg_toggle_on : R.drawable.bg_toggle_off);
+            title.setTextColor(on[0] ? 0xFFF2F4F8 : 0xFF7A808C);
+            chevron.setAlpha(on[0] ? 1f : 0.5f);
+            star.setAlpha(on[0] ? 1f : 0.5f);
+            if (!mod.id.equals(expandedId)) {
+                card.setBackgroundResource(on[0] ? R.drawable.bg_sys_module_card_on : R.drawable.bg_sys_module_card);
+            }
         });
 
-        header.addView(icon);
+        header.addView(chevron);
         header.addView(title);
         header.addView(star);
         header.addView(toggle);
@@ -637,6 +631,8 @@ final class SystemDlcMenuController {
                 });
             }
         });
+
+        chevron.setOnClickListener(v -> header.performClick());
 
         return card;
     }
