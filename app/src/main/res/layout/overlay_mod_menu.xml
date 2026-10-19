@@ -19,7 +19,6 @@
             android:orientation="horizontal">
 
             <!-- SIDEBAR -->
-                        <!-- SIDEBAR -->
             <LinearLayout
                 android:id="@+id/sys_sidebar"
                 android:layout_width="210dp"
@@ -31,7 +30,6 @@
                 android:paddingEnd="12dp"
                 android:paddingBottom="12dp">
 
-                <!-- Brand: star + SystemClient -->
                 <LinearLayout
                     android:id="@+id/sys_brand_row"
                     android:layout_width="match_parent"
@@ -64,36 +62,200 @@
                     android:textColor="#5C6370"
                     android:textSize="11sp" />
 
-                <!-- Categories with icons -->
-                <LinearLayout android:id="@+id/sys_cat_all" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginBottom="2dp" android:background="@drawable/bg_sys_nav" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="10dp" android:paddingEnd="10dp">
-                    <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_cat_all" />
-                    <TextView android:id="@+id/sys_cat_all_text" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:layout_weight="1" android:text="All" android:textColor="#9AA3B5" android:textSize="13sp" />
+
+                <LinearLayout
+                    android:id="@+id/sys_cat_all"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/bg_sys_nav"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp">
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_cat_all" />
+                    <TextView
+                        android:id="@+id/sys_cat_all_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:text="All"
+                        android:textColor="#9AA3B5"
+                        android:textSize="13sp" />
                 </LinearLayout>
-                <LinearLayout android:id="@+id/sys_cat_combat" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginBottom="2dp" android:background="@drawable/bg_sys_nav" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="10dp" android:paddingEnd="10dp">
-                    <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_cat_combat" />
-                    <TextView android:id="@+id/sys_cat_combat_text" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:layout_weight="1" android:text="Combat" android:textColor="#9AA3B5" android:textSize="13sp" />
-                    <TextView android:id="@+id/sys_cat_combat_count" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/bg_sys_badge" android:paddingStart="6dp" android:paddingEnd="6dp" android:paddingTop="1dp" android:paddingBottom="1dp" android:text="6" android:textColor="#9AA3B5" android:textSize="10sp" />
+
+
+                <LinearLayout
+                    android:id="@+id/sys_cat_combat"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/bg_sys_nav"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp">
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_cat_combat" />
+                    <TextView
+                        android:id="@+id/sys_cat_combat_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:text="Combat"
+                        android:textColor="#9AA3B5"
+                        android:textSize="13sp" />
+                    <TextView
+                        android:id="@+id/sys_cat_combat_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_sys_badge"
+                        android:paddingStart="6dp"
+                        android:paddingEnd="6dp"
+                        android:paddingTop="1dp"
+                        android:paddingBottom="1dp"
+                        android:text="6"
+                        android:textColor="#9AA3B5"
+                        android:textSize="10sp" />
                 </LinearLayout>
-                <LinearLayout android:id="@+id/sys_cat_movement" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginBottom="2dp" android:background="@drawable/bg_sys_nav" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="10dp" android:paddingEnd="10dp">
-                    <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_cat_movement" />
-                    <TextView android:id="@+id/sys_cat_movement_text" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:layout_weight="1" android:text="Movement" android:textColor="#9AA3B5" android:textSize="13sp" />
+
+
+                <LinearLayout
+                    android:id="@+id/sys_cat_movement"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/bg_sys_nav"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp">
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_cat_movement" />
+                    <TextView
+                        android:id="@+id/sys_cat_movement_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:text="Movement"
+                        android:textColor="#9AA3B5"
+                        android:textSize="13sp" />
                 </LinearLayout>
-                <LinearLayout android:id="@+id/sys_cat_player" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginBottom="2dp" android:background="@drawable/bg_sys_nav" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="10dp" android:paddingEnd="10dp">
-                    <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_cat_player" />
-                    <TextView android:id="@+id/sys_cat_player_text" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:layout_weight="1" android:text="Player" android:textColor="#9AA3B5" android:textSize="13sp" />
+
+
+                <LinearLayout
+                    android:id="@+id/sys_cat_player"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/bg_sys_nav"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp">
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_cat_player" />
+                    <TextView
+                        android:id="@+id/sys_cat_player_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:text="Player"
+                        android:textColor="#9AA3B5"
+                        android:textSize="13sp" />
                 </LinearLayout>
-                <LinearLayout android:id="@+id/sys_cat_render" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginBottom="2dp" android:background="@drawable/bg_sys_nav" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="10dp" android:paddingEnd="10dp">
-                    <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_cat_render" />
-                    <TextView android:id="@+id/sys_cat_render_text" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:layout_weight="1" android:text="Render" android:textColor="#9AA3B5" android:textSize="13sp" />
+
+
+                <LinearLayout
+                    android:id="@+id/sys_cat_render"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/bg_sys_nav"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp">
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_cat_render" />
+                    <TextView
+                        android:id="@+id/sys_cat_render_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:text="Render"
+                        android:textColor="#9AA3B5"
+                        android:textSize="13sp" />
                 </LinearLayout>
-                <LinearLayout android:id="@+id/sys_cat_visual" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginBottom="2dp" android:background="@drawable/bg_sys_nav" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="10dp" android:paddingEnd="10dp">
-                    <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_cat_visual" />
-                    <TextView android:id="@+id/sys_cat_visual_text" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:layout_weight="1" android:text="Visual" android:textColor="#9AA3B5" android:textSize="13sp" />
+
+
+                <LinearLayout
+                    android:id="@+id/sys_cat_visual"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/bg_sys_nav"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp">
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_cat_visual" />
+                    <TextView
+                        android:id="@+id/sys_cat_visual_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:text="Visual"
+                        android:textColor="#9AA3B5"
+                        android:textSize="13sp" />
                 </LinearLayout>
-                <LinearLayout android:id="@+id/sys_cat_client" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginBottom="2dp" android:background="@drawable/bg_sys_nav" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="10dp" android:paddingEnd="10dp">
-                    <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_cat_client" />
-                    <TextView android:id="@+id/sys_cat_client_text" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:layout_weight="1" android:text="Client" android:textColor="#9AA3B5" android:textSize="13sp" />
+
+
+                <LinearLayout
+                    android:id="@+id/sys_cat_client"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/bg_sys_nav"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp">
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_cat_client" />
+                    <TextView
+                        android:id="@+id/sys_cat_client_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:text="Client"
+                        android:textColor="#9AA3B5"
+                        android:textSize="13sp" />
                 </LinearLayout>
+
 
                 <TextView
                     android:id="@+id/sys_label_settings"
@@ -106,21 +268,64 @@
                     android:textColor="#5C6370"
                     android:textSize="11sp" />
 
-                <!-- Configs only -->
-                <LinearLayout android:id="@+id/sys_nav_configs" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginBottom="2dp" android:background="@drawable/bg_sys_nav" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="10dp" android:paddingEnd="10dp">
-                    <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_nav_configs" />
-                    <TextView android:id="@+id/sys_nav_configs_text" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:layout_weight="1" android:text="Configs" android:textColor="#9AA3B5" android:textSize="13sp" />
+
+                <LinearLayout
+                    android:id="@+id/sys_nav_configs"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/bg_sys_nav"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp">
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_nav_configs" />
+                    <TextView
+                        android:id="@+id/sys_nav_configs_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:text="Configs"
+                        android:textColor="#9AA3B5"
+                        android:textSize="13sp" />
                 </LinearLayout>
 
-                <!-- Client Settings (gear) — no Search -->
-                <LinearLayout android:id="@+id/sys_nav_client_settings" android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginBottom="2dp" android:background="@drawable/bg_sys_nav" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="10dp" android:paddingEnd="10dp">
-                    <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_nav_settings" />
-                    <TextView android:id="@+id/sys_nav_client_settings_text" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:layout_weight="1" android:text="Client Settings" android:textColor="#9AA3B5" android:textSize="13sp" />
+
+                <LinearLayout
+                    android:id="@+id/sys_nav_client_settings"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/bg_sys_nav"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp">
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_nav_settings" />
+                    <TextView
+                        android:id="@+id/sys_nav_client_settings_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:text="Client Settings"
+                        android:textColor="#9AA3B5"
+                        android:textSize="13sp" />
                 </LinearLayout>
 
-                <Space android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" />
 
-                <!-- Footer: SystemPlayer + green online -->
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -172,11 +377,13 @@
             </LinearLayout>
 
             <!-- MAIN -->
-android:layout_weight="1"
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:orientation="vertical"
                 android:padding="12dp">
 
-                <!-- Top bar: sidebar | tab | search + keybind | fav | lang | theme | close -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
@@ -217,7 +424,6 @@ android:layout_weight="1"
                         android:orientation="horizontal"
                         android:paddingStart="10dp"
                         android:paddingEnd="8dp">
-
                         <EditText
                             android:id="@+id/sys_search"
                             android:layout_width="0dp"
@@ -230,7 +436,6 @@ android:layout_weight="1"
                             android:textColor="#F2F4F8"
                             android:textColorHint="#5C6370"
                             android:textSize="13sp" />
-
                         <TextView
                             android:id="@+id/sys_search_keybind"
                             android:layout_width="wrap_content"
@@ -289,7 +494,6 @@ android:layout_weight="1"
                         android:src="@drawable/ic_sys_close" />
                 </LinearLayout>
 
-                <!-- Module grid host (built in Java) -->
                 <ScrollView
                     android:id="@+id/sys_module_scroll"
                     android:layout_width="match_parent"
@@ -307,54 +511,54 @@ android:layout_weight="1"
             </LinearLayout>
         </LinearLayout>
 
-
-    <LinearLayout android:id="@+id/mod_menu_sidebar" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <ImageView android:id="@+id/mod_menu_logo" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <LinearLayout android:id="@+id/filter_bar" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <LinearLayout android:id="@+id/compact_filter_bar" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <TextView android:id="@+id/compact_filter_selector" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <TextView android:id="@+id/compact_module_count" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <EditText android:id="@+id/search_input" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <ImageButton android:id="@+id/btn_clear_search" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <androidx.recyclerview.widget.RecyclerView android:id="@+id/mods_grid_recycler" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <TextView android:id="@+id/nav_modules" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <TextView android:id="@+id/nav_settings" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <TextView android:id="@+id/nav_hud_editor" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <ImageButton android:id="@+id/nav_modules_compact" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <ImageButton android:id="@+id/nav_settings_compact" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <ImageButton android:id="@+id/nav_hud_editor_compact" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <TextView android:id="@+id/filter_all" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <TextView android:id="@+id/filter_favorites" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <TextView android:id="@+id/filter_enabled" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <TextView android:id="@+id/filter_inbuilt" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <TextView android:id="@+id/filter_external" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <TextView android:id="@+id/module_count_text" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <FrameLayout android:id="@+id/modules_container" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <ScrollView android:id="@+id/settings_container" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <LinearLayout android:id="@+id/empty_state" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <TextView android:id="@+id/empty_state_text" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <LinearLayout android:id="@+id/setting_notifications" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <LinearLayout android:id="@+id/setting_pause_menu_only" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <LinearLayout android:id="@+id/setting_compact_mod_menu" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <LinearLayout android:id="@+id/setting_mod_menu_keybind" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <LinearLayout android:id="@+id/setting_mod_menu_opacity" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <LinearLayout android:id="@+id/setting_mod_menu_button_opacity" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <Switch android:id="@+id/switch_notifications" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <Switch android:id="@+id/switch_pause_menu_only" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <Switch android:id="@+id/switch_compact_mod_menu" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <SeekBar android:id="@+id/seekbar_mod_menu_opacity" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <SeekBar android:id="@+id/seekbar_mod_menu_button_opacity" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <SeekBar android:id="@+id/seekbar_hud_button_size" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <TextView android:id="@+id/text_mod_menu_opacity" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <TextView android:id="@+id/text_mod_menu_button_opacity" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <TextView android:id="@+id/text_hud_button_size" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <TextView android:id="@+id/mod_menu_keybind_value" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <LinearLayout android:id="@+id/config_header" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <TextView android:id="@+id/config_title" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <ImageButton android:id="@+id/btn_back_to_modules" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <FrameLayout android:id="@+id/mod_config_container" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <FrameLayout android:id="@+id/mod_config_content" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
-    <LinearLayout android:id="@+id/search_container" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <!-- Legacy stubs for ModMenuOverlay (hidden) -->
+                <LinearLayout android:id="@+id/mod_menu_sidebar" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <ImageView android:id="@+id/mod_menu_logo" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <LinearLayout android:id="@+id/filter_bar" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <LinearLayout android:id="@+id/compact_filter_bar" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <TextView android:id="@+id/compact_filter_selector" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <TextView android:id="@+id/compact_module_count" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <EditText android:id="@+id/search_input" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <ImageButton android:id="@+id/btn_clear_search" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <androidx.recyclerview.widget.RecyclerView android:id="@+id/mods_grid_recycler" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <TextView android:id="@+id/nav_modules" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <TextView android:id="@+id/nav_settings" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <TextView android:id="@+id/nav_hud_editor" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <ImageButton android:id="@+id/nav_modules_compact" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <ImageButton android:id="@+id/nav_settings_compact" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <ImageButton android:id="@+id/nav_hud_editor_compact" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <TextView android:id="@+id/filter_all" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <TextView android:id="@+id/filter_favorites" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <TextView android:id="@+id/filter_enabled" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <TextView android:id="@+id/filter_inbuilt" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <TextView android:id="@+id/filter_external" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <TextView android:id="@+id/module_count_text" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <FrameLayout android:id="@+id/modules_container" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <ScrollView android:id="@+id/settings_container" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <LinearLayout android:id="@+id/empty_state" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <TextView android:id="@+id/empty_state_text" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <LinearLayout android:id="@+id/setting_notifications" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <LinearLayout android:id="@+id/setting_pause_menu_only" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <LinearLayout android:id="@+id/setting_compact_mod_menu" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <LinearLayout android:id="@+id/setting_mod_menu_keybind" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <LinearLayout android:id="@+id/setting_mod_menu_opacity" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <LinearLayout android:id="@+id/setting_mod_menu_button_opacity" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <Switch android:id="@+id/switch_notifications" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <Switch android:id="@+id/switch_pause_menu_only" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <Switch android:id="@+id/switch_compact_mod_menu" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <SeekBar android:id="@+id/seekbar_mod_menu_opacity" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <SeekBar android:id="@+id/seekbar_mod_menu_button_opacity" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <SeekBar android:id="@+id/seekbar_hud_button_size" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <TextView android:id="@+id/text_mod_menu_opacity" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <TextView android:id="@+id/text_mod_menu_button_opacity" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <TextView android:id="@+id/text_hud_button_size" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <TextView android:id="@+id/mod_menu_keybind_value" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <LinearLayout android:id="@+id/config_header" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <TextView android:id="@+id/config_title" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <ImageButton android:id="@+id/btn_back_to_modules" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <FrameLayout android:id="@+id/mod_config_container" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <FrameLayout android:id="@+id/mod_config_content" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                <LinearLayout android:id="@+id/search_container" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
 
     </FrameLayout>
 
@@ -368,9 +572,23 @@ android:layout_weight="1"
         app:cardBackgroundColor="#F20A0C10"
         app:cardCornerRadius="14dp"
         app:cardElevation="10dp">
-        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:padding="8dp">
-            <LinearLayout android:id="@+id/hud_editor_drag_handle" android:layout_width="wrap_content" android:layout_height="40dp" android:gravity="center" android:paddingStart="12dp" android:paddingEnd="12dp">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="HUD" android:textColor="#F2F4F8" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+            <LinearLayout
+                android:id="@+id/hud_editor_drag_handle"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="HUD"
+                    android:textColor="#F2F4F8" />
             </LinearLayout>
             <Button android:id="@+id/btn_hud_save" android:layout_width="wrap_content" android:layout_height="40dp" android:text="Save" />
             <Button android:id="@+id/btn_hud_cancel" android:layout_width="wrap_content" android:layout_height="40dp" android:text="Cancel" />
