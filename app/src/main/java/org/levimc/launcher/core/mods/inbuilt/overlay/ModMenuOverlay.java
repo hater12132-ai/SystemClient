@@ -1361,6 +1361,18 @@ public class ModMenuOverlay {
                 isShowing = false;
             });
         };
+
+        // Shatter-close like the reference: panel breaks into shards then dismisses
+        View panel = overlayView.findViewById(R.id.mod_menu_container);
+        if (panel != null && overlayView instanceof ViewGroup
+                && panel.getWidth() > 0 && panel.getHeight() > 0) {
+            try {
+                ShatterCloseAnimator.play(activity, (ViewGroup) overlayView, panel, performHide);
+                return;
+            } catch (Throwable ignored) {
+                // fall through to normal hide
+            }
+        }
         
         View menuContainer = overlayView.findViewById(R.id.mod_menu_container);
         if (menuContainer != null) {
