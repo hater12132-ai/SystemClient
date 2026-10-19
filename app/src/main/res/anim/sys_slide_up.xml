@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<set xmlns:android="http://schemas.android.com/apk/res/android">
-    <translate android:fromYDelta="0" android:toYDelta="-8%" android:duration="180" android:interpolator="@android:interpolator/accelerate_cubic" />
-    <alpha android:fromAlpha="1" android:toAlpha="0" android:duration="160" />
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shareInterpolator="false">
+    <translate
+        android:fromYDelta="0"
+        android:toYDelta="-14%"
+        android:duration="300"
+        android:interpolator="@android:interpolator/accelerate_cubic" />
+    <alpha
+        android:fromAlpha="1"
+        android:toAlpha="0"
+        android:duration="260"
+        android:interpolator="@android:interpolator/accelerate_quad" />
+    <scale
+        android:fromYScale="1.0"
+        android:toYScale="0.94"
+        android:fromXScale="1.0"
+        android:toXScale="1.0"
+        android:pivotX="50%"
+        android:pivotY="0%"
+        android:duration="300"
+        android:interpolator="@android:interpolator/accelerate_cubic" />
 </set>

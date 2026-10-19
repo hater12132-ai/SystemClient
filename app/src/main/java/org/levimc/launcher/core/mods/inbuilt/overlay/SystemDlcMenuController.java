@@ -9,6 +9,12 @@ import android.graphics.drawable.GradientDrawable;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.FrameLayout;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
@@ -658,24 +664,84 @@ final class SystemDlcMenuController {
             star.setImageResource(fav[0] ? R.drawable.ic_sys_star_filled : R.drawable.ic_sys_star_outline);
         });
 
-        // Custom toggle ImageView — exact ON/OFF art (avoids broken Switch sizing)
-        ImageView toggle = new ImageView(activity);
-        toggle.setImageResource(on[0]
-                ? (isGlass() ? R.drawable.bg_toggle_on_glass : R.drawable.bg_toggle_on)
-                : R.drawable.bg_toggle_off);
-        toggle.setLayoutParams(new LinearLayout.LayoutParams(dp(42), dp(24)));
-        toggle.setScaleType(ImageView.ScaleType.FIT_XY);
+        // Smooth sliding toggle (track + thumb), ~300ms so the motion is visible
+        final int trackW = dp(44);
+        final int trackH = dp(26);
+        final int thumbSize = dp(20);
+        final int pad = dp(3);
+        final float thumbOffX = pad;
+        final float thumbOnX = trackW - thumbSize - pad;
+
+        FrameLayout toggle = new FrameLayout(activity);
+        LinearLayout.LayoutParams toggleLp = new LinearLayout.LayoutParams(trackW, trackH);
+        toggle.setLayoutParams(toggleLp);
+        toggle.setBackgroundResource(on[0] ? R.drawable.bg_toggle_track_on : R.drawable.bg_toggle_track_off);
+
+        final View thumb = new View(activity);
+        FrameLayout.LayoutParams thumbLp = new FrameLayout.LayoutParams(thumbSize, thumbSize);
+        thumbLp.gravity = Gravity.CENTER_VERTICAL;
+        thumb.setLayoutParams(thumbLp);
+        thumb.setBackgroundResource(on[0] ? R.drawable.bg_toggle_thumb : R.drawable.bg_toggle_thumb_off);
+        thumb.setTranslationX(on[0] ? thumbOnX : thumbOffX);
+        toggle.addView(thumb);
+
+        final boolean[] animating = { false };
         toggle.setOnClickListener(v -> {
-            on[0] = !on[0];
-            prefs.edit().putBoolean(mod.id + "_on", on[0]).apply();
-            toggle.setImageResource(on[0]
-                ? (isGlass() ? R.drawable.bg_toggle_on_glass : R.drawable.bg_toggle_on)
-                : R.drawable.bg_toggle_off);
-            title.setTextColor(on[0] ? 0xFFF2F4F8 : 0xFF7A808C);
-            chevron.setAlpha(on[0] ? 1f : 0.5f);
-            star.setAlpha(on[0] ? 1f : 0.5f);
+            if (animating[0]) return;
+            animating[0] = true;
+            final boolean next = !on[0];
+            on[0] = next;
+            prefs.edit().putBoolean(mod.id + "_on", next).apply();
+
+            float from = thumb.getTranslationX();
+            float to = next ? thumbOnX : thumbOffX;
+            ObjectAnimator slide = ObjectAnimator.ofFloat(thumb, "translationX", from, to);
+            slide.setDuration(300);
+            slide.setInterpolator(new DecelerateInterpolator(1.6f));
+
+            int cFrom = next ? 0xFF2C2C32 : 0xFFF2F4F8;
+            int cTo = next ? 0xFFF2F4F8 : 0xFF2C2C32;
+            ValueAnimator colorAnim = ValueAnimator.ofObject(new ArgbEvaluator(), cFrom, cTo);
+            colorAnim.setDuration(300);
+            colorAnim.addUpdateListener(a -> {
+                android.graphics.drawable.GradientDrawable gd =
+                        new android.graphics.drawable.GradientDrawable();
+                gd.setCornerRadius(trackH / 2f);
+                gd.setColor((int) a.getAnimatedValue());
+                toggle.setBackground(gd);
+            });
+
+            slide.addListener(new AnimatorListenerAdapter() {
+                @Override public void onAnimationEnd(android.animation.Animator animation) {
+                    animating[0] = false;
+                    thumb.setBackgroundResource(next
+                            ? R.drawable.bg_toggle_thumb
+                            : R.drawable.bg_toggle_thumb_off);
+                    toggle.setBackgroundResource(next
+                            ? R.drawable.bg_toggle_track_on
+                            : R.drawable.bg_toggle_track_off);
+                }
+            });
+            slide.start();
+            colorAnim.start();
+
+            title.animate().alpha(0.55f).setDuration(120).withEndAction(() -> {
+                title.setTextColor(next ? 0xFFF2F4F8 : 0xFF7A808C);
+                title.animate().alpha(1f).setDuration(160).start();
+            }).start();
+            chevron.animate().alpha(next ? 1f : 0.5f).setDuration(280).start();
+            star.animate().alpha(next ? 1f : 0.5f).setDuration(280).start();
+
             if (!mod.id.equals(expandedId)) {
-                card.setBackgroundResource(on[0] ? R.drawable.bg_sys_module_card_on : R.drawable.bg_sys_module_card);
+                if (isGlass()) {
+                    card.setBackgroundResource(next
+                            ? R.drawable.bg_sys_module_card_glass_on
+                            : R.drawable.bg_sys_module_card_glass);
+                } else {
+                    card.setBackgroundResource(next
+                            ? R.drawable.bg_sys_module_card_on
+                            : R.drawable.bg_sys_module_card);
+                }
             }
         });
 
@@ -699,11 +765,13 @@ final class SystemDlcMenuController {
         fillSettings(settings, mod);
         card.addView(settings);
 
-        // Tap header (not switch/star) toggles expand
+        // Tap header expands/collapses settings with smooth slide
         header.setOnClickListener(v -> {
             if (mod.id.equals(expandedId)) {
-                // collapse
+                chevron.animate().rotation(0f).setDuration(280)
+                        .setInterpolator(new DecelerateInterpolator()).start();
                 Animation up = AnimationUtils.loadAnimation(activity, R.anim.sys_slide_up);
+                up.setDuration(300);
                 up.setAnimationListener(new Animation.AnimationListener() {
                     @Override public void onAnimationStart(Animation animation) {}
                     @Override public void onAnimationEnd(Animation animation) {
@@ -712,6 +780,13 @@ final class SystemDlcMenuController {
                     }
                     @Override public void onAnimationRepeat(Animation animation) {}
                 });
+                settings.startAnimation(up);
+            } else {
+                expandedId = mod.id;
+                rebuildGrid(currentQuery());
+                moduleHost.post(() -> animateExpandedIn());
+            }
+        });
                 settings.startAnimation(up);
             } else {
                 expandedId = mod.id;
@@ -730,20 +805,29 @@ final class SystemDlcMenuController {
     }
 
     private void animateExpandedIn() {
-        // best-effort: animate last visible settings panel
         for (int i = 0; i < moduleHost.getChildCount(); i++) {
             View row = moduleHost.getChildAt(i);
             if (!(row instanceof ViewGroup)) continue;
             ViewGroup vg = (ViewGroup) row;
             for (int j = 0; j < vg.getChildCount(); j++) {
-                View card = vg.getChildAt(j);
-                if (!(card instanceof ViewGroup)) continue;
-                ViewGroup cg = (ViewGroup) card;
+                View cardV = vg.getChildAt(j);
+                if (!(cardV instanceof ViewGroup)) continue;
+                ViewGroup cg = (ViewGroup) cardV;
                 if (cg.getChildCount() < 2) continue;
                 View settings = cg.getChildAt(1);
                 if (settings.getVisibility() == View.VISIBLE) {
                     Animation down = AnimationUtils.loadAnimation(activity, R.anim.sys_slide_down);
+                    down.setDuration(380);
                     settings.startAnimation(down);
+                    if (cg.getChildCount() > 0 && cg.getChildAt(0) instanceof ViewGroup) {
+                        ViewGroup header = (ViewGroup) cg.getChildAt(0);
+                        if (header.getChildCount() > 0) {
+                            View ch = header.getChildAt(0);
+                            ch.setRotation(0f);
+                            ch.animate().rotation(180f).setDuration(320)
+                                    .setInterpolator(new DecelerateInterpolator()).start();
+                        }
+                    }
                 }
             }
         }
