@@ -267,12 +267,24 @@ public class ModMenuOverlay {
             restoreLastSection();
             overlayView.requestFocus();
             
-            overlayView.setAlpha(0f);
-            overlayView.animate().alpha(1f).setDuration(220).start();
-            
+            overlayView.setAlpha(1f);
+
             View menuContainer = overlayView.findViewById(R.id.mod_menu_container);
             if (menuContainer != null && activeSection != MenuSection.HUD_EDITOR) {
-                animateMenuEnter(menuContainer);
+                menuContainer.setVisibility(View.INVISIBLE);
+                menuContainer.post(() -> {
+                    try {
+                        if (overlayView instanceof ViewGroup
+                                && menuContainer.getWidth() > 0
+                                && menuContainer.getHeight() > 0) {
+                            ShatterCloseAnimator.playOpen(
+                                    activity, (ViewGroup) overlayView, menuContainer, null);
+                            return;
+                        }
+                    } catch (Throwable ignored) {}
+                    menuContainer.setVisibility(View.VISIBLE);
+                    animateMenuEnter(menuContainer);
+                });
             }
         } catch (Exception e) {
             showFallback();
@@ -1367,7 +1379,7 @@ public class ModMenuOverlay {
         if (panel != null && overlayView instanceof ViewGroup
                 && panel.getWidth() > 0 && panel.getHeight() > 0) {
             try {
-                ShatterCloseAnimator.play(activity, (ViewGroup) overlayView, panel, performHide);
+                ShatterCloseAnimator.playClose(activity, (ViewGroup) overlayView, panel, performHide);
                 return;
             } catch (Throwable ignored) {
                 // fall through to normal hide

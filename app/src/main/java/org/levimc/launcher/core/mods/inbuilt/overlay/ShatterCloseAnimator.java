@@ -7,7 +7,6 @@ import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Rect;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
@@ -19,20 +18,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-/**
- * Shatter-style close: snapshot the menu panel, split into shards,
- * scatter + rotate + fade — matches "glass break" close UIs.
- */
 final class ShatterCloseAnimator {
+
+    private static final int COLS = 6;
+    private static final int ROWS = 5;
 
     private ShatterCloseAnimator() {}
 
-    /**
-     * @param host full-screen overlay root (gets the temporary shard layer)
-     * @param panel the visual panel to shatter (e.g. mod_menu_container)
-     * @param onDone called on UI thread after animation (or immediately on failure)
-     */
-    static void play(Activity activity, ViewGroup host, View panel, Runnable onDone) {
+    static void playClose(Activity activity, ViewGroup host, View panel, Runnable onDone) {
+        play(activity, host, panel, false, onDone);
+    }
+
+    static void playOpen(Activity activity, ViewGroup host, View panel, Runnable onDone) {
+        play(activity, host, panel, true, onDone);
+    }
+
+    private static void play(Activity activity, ViewGroup host, View panel,
+                             boolean assemble, Runnable onDone) {
         if (activity == null || host == null || panel == null) {
             if (onDone != null) onDone.run();
             return;
@@ -54,7 +56,6 @@ final class ShatterCloseAnimator {
             return;
         }
 
-        // Panel location inside host
         int[] panelLoc = new int[2];
         int[] hostLoc = new int[2];
         panel.getLocationOnScreen(panelLoc);
@@ -62,7 +63,6 @@ final class ShatterCloseAnimator {
         final int originX = panelLoc[0] - hostLoc[0];
         final int originY = panelLoc[1] - hostLoc[1];
 
-        // Hide real panel while shards play
         panel.setVisibility(View.INVISIBLE);
 
         final FrameLayout layer = new FrameLayout(activity);
@@ -72,11 +72,8 @@ final class ShatterCloseAnimator {
         layer.setClickable(true);
         host.addView(layer);
 
-        // Grid of shards (cols x rows). More = closer to the video, costlier.
-        final int cols = 6;
-        final int rows = 5;
-        final int sw = pw / cols;
-        final int sh = ph / rows;
+        final int sw = pw / COLS;
+        final int sh = ph / ROWS;
         final Random rng = new Random(0x51A77E);
         final List<Animator> anims = new ArrayList<>();
         final List<Bitmap> pieces = new ArrayList<>();
@@ -84,12 +81,12 @@ final class ShatterCloseAnimator {
         float cx = originX + pw / 2f;
         float cy = originY + ph / 2f;
 
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < cols; col++) {
+        for (int row = 0; row < ROWS; row++) {
+            for (int col = 0; col < COLS; col++) {
                 int left = col * sw;
                 int top = row * sh;
-                int w = (col == cols - 1) ? (pw - left) : sw;
-                int h = (row == rows - 1) ? (ph - top) : sh;
+                int w = (col == COLS - 1) ? (pw - left) : sw;
+                int h = (row == ROWS - 1) ? (ph - top) : sh;
                 if (w <= 0 || h <= 0) continue;
 
                 Bitmap piece;
@@ -106,49 +103,68 @@ final class ShatterCloseAnimator {
                 lp.leftMargin = originX + left;
                 lp.topMargin = originY + top;
                 iv.setLayoutParams(lp);
-                // Slight random tilt seed
-                iv.setRotation(rng.nextFloat() * 6f - 3f);
                 layer.addView(iv);
 
-                // Scatter away from panel center
                 float shardCx = originX + left + w / 2f;
                 float shardCy = originY + top + h / 2f;
                 float dx = shardCx - cx;
                 float dy = shardCy - cy;
                 float len = (float) Math.sqrt(dx * dx + dy * dy);
                 if (len < 1f) len = 1f;
-                // normalize + boost
                 float nx = dx / len;
                 float ny = dy / len;
                 float dist = 180f + rng.nextFloat() * 320f;
-                // bias a bit outward randomly
-                float tx = nx * dist + (rng.nextFloat() - 0.5f) * 80f;
-                float ty = ny * dist + (rng.nextFloat() - 0.5f) * 80f + 40f;
+                float scatterX = nx * dist + (rng.nextFloat() - 0.5f) * 80f;
+                float scatterY = ny * dist + (rng.nextFloat() - 0.5f) * 80f + 40f;
                 float rot = (rng.nextFloat() - 0.5f) * 140f;
 
-                ObjectAnimator ax = ObjectAnimator.ofFloat(iv, View.TRANSLATION_X, 0f, tx);
-                ObjectAnimator ay = ObjectAnimator.ofFloat(iv, View.TRANSLATION_Y, 0f, ty);
-                ObjectAnimator ar = ObjectAnimator.ofFloat(iv, View.ROTATION, iv.getRotation(), iv.getRotation() + rot);
-                ObjectAnimator aa = ObjectAnimator.ofFloat(iv, View.ALPHA, 1f, 0f);
-                ObjectAnimator asx = ObjectAnimator.ofFloat(iv, View.SCALE_X, 1f, 0.75f);
-                ObjectAnimator asy = ObjectAnimator.ofFloat(iv, View.SCALE_Y, 1f, 0.75f);
-
                 long dur = 420 + rng.nextInt(220);
-                long delay = rng.nextInt(60);
-                AccelerateInterpolator interp = new AccelerateInterpolator(1.2f);
-                for (ObjectAnimator a : new ObjectAnimator[]{ax, ay, ar, aa, asx, asy}) {
-                    a.setDuration(dur);
-                    a.setStartDelay(delay);
-                    a.setInterpolator(interp);
-                    anims.add(a);
+                long delay = rng.nextInt(70);
+
+                ObjectAnimator ax, ay, ar, aa, asx, asy;
+                if (assemble) {
+                    iv.setTranslationX(scatterX);
+                    iv.setTranslationY(scatterY);
+                    iv.setRotation(rot);
+                    iv.setAlpha(0f);
+                    iv.setScaleX(0.75f);
+                    iv.setScaleY(0.75f);
+                    ax = ObjectAnimator.ofFloat(iv, View.TRANSLATION_X, scatterX, 0f);
+                    ay = ObjectAnimator.ofFloat(iv, View.TRANSLATION_Y, scatterY, 0f);
+                    ar = ObjectAnimator.ofFloat(iv, View.ROTATION, rot, 0f);
+                    aa = ObjectAnimator.ofFloat(iv, View.ALPHA, 0f, 1f);
+                    asx = ObjectAnimator.ofFloat(iv, View.SCALE_X, 0.75f, 1f);
+                    asy = ObjectAnimator.ofFloat(iv, View.SCALE_Y, 0.75f, 1f);
+                    DecelerateInterpolator interp = new DecelerateInterpolator(1.35f);
+                    for (ObjectAnimator a : new ObjectAnimator[]{ax, ay, ar, aa, asx, asy}) {
+                        a.setDuration(dur);
+                        a.setStartDelay(delay);
+                        a.setInterpolator(interp);
+                        anims.add(a);
+                    }
+                } else {
+                    ax = ObjectAnimator.ofFloat(iv, View.TRANSLATION_X, 0f, scatterX);
+                    ay = ObjectAnimator.ofFloat(iv, View.TRANSLATION_Y, 0f, scatterY);
+                    ar = ObjectAnimator.ofFloat(iv, View.ROTATION, 0f, rot);
+                    aa = ObjectAnimator.ofFloat(iv, View.ALPHA, 1f, 0f);
+                    asx = ObjectAnimator.ofFloat(iv, View.SCALE_X, 1f, 0.75f);
+                    asy = ObjectAnimator.ofFloat(iv, View.SCALE_Y, 1f, 0.75f);
+                    AccelerateInterpolator interp = new AccelerateInterpolator(1.2f);
+                    for (ObjectAnimator a : new ObjectAnimator[]{ax, ay, ar, aa, asx, asy}) {
+                        a.setDuration(dur);
+                        a.setStartDelay(delay);
+                        a.setInterpolator(interp);
+                        anims.add(a);
+                    }
                 }
             }
         }
         full.recycle();
 
         if (anims.isEmpty()) {
-            host.removeView(layer);
-            for (Bitmap b : pieces) if (!b.isRecycled()) b.recycle();
+            try { host.removeView(layer); } catch (Throwable ignored) {}
+            for (Bitmap b : pieces) try { if (!b.isRecycled()) b.recycle(); } catch (Throwable ignored) {}
+            panel.setVisibility(View.VISIBLE);
             if (onDone != null) onDone.run();
             return;
         }
@@ -157,11 +173,12 @@ final class ShatterCloseAnimator {
         set.playTogether(anims);
         set.addListener(new AnimatorListenerAdapter() {
             @Override public void onAnimationEnd(Animator animation) {
-                try {
-                    host.removeView(layer);
-                } catch (Throwable ignored) {}
+                try { host.removeView(layer); } catch (Throwable ignored) {}
                 for (Bitmap b : pieces) {
                     try { if (!b.isRecycled()) b.recycle(); } catch (Throwable ignored) {}
+                }
+                if (assemble) {
+                    panel.setVisibility(View.VISIBLE);
                 }
                 if (onDone != null) onDone.run();
             }
