@@ -160,7 +160,7 @@ final class SystemDlcMenuController {
         // Always stay INSIDE the window. Expanded = labels; collapsed = icon rail (reference style).
         sidebar.setVisibility(View.VISIBLE);
         final float density = activity.getResources().getDisplayMetrics().density;
-        final int expandedPx = (int) (210f * density + 0.5f);
+        final int expandedPx = (int) (200f * density + 0.5f);
         final int railPx = (int) (56f * density + 0.5f);
         ViewGroup.LayoutParams lp = sidebar.getLayoutParams();
         if (lp != null) {
@@ -239,7 +239,7 @@ final class SystemDlcMenuController {
         View container = root.findViewById(R.id.mod_menu_container);
         // Keep dark SystemDLC chrome for now; light mode softens panel via alpha tags later
         if (container != null) {
-            container.setAlpha(lightTheme ? 0.97f : 1f);
+            container.setAlpha(1f);
         }
     }
 

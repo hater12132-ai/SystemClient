@@ -46,7 +46,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="SystemClient"
+                        android:text="System"
                         android:textColor="#F2F4F8"
                         android:textSize="15sp"
                         android:textStyle="bold" />
