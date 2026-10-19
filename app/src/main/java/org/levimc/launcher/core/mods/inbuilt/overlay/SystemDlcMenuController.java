@@ -787,17 +787,6 @@ final class SystemDlcMenuController {
                 moduleHost.post(() -> animateExpandedIn());
             }
         });
-                settings.startAnimation(up);
-            } else {
-                expandedId = mod.id;
-                rebuildGrid(currentQuery());
-                // after rebuild, animate the new expanded panel
-                moduleHost.post(() -> {
-                    // find expanded settings and animate
-                    animateExpandedIn();
-                });
-            }
-        });
 
         chevron.setOnClickListener(v -> header.performClick());
 
