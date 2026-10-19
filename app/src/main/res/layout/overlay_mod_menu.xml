@@ -327,6 +327,7 @@
                     android:layout_weight="1" />
 
                 <LinearLayout
+                    android:id="@+id/sys_footer_row"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_sys_footer"
@@ -375,6 +376,11 @@
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_sys_sidebar_divider" />
 
             <!-- MAIN -->
             <LinearLayout

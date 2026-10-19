@@ -157,7 +157,74 @@ final class SystemDlcMenuController {
 
     private void applySidebarVisibility() {
         if (sidebar == null) return;
-        sidebar.setVisibility(sidebarVisible ? View.VISIBLE : View.GONE);
+        // Always stay INSIDE the window. Expanded = labels; collapsed = icon rail (reference style).
+        sidebar.setVisibility(View.VISIBLE);
+        final float density = activity.getResources().getDisplayMetrics().density;
+        final int expandedPx = (int) (210f * density + 0.5f);
+        final int railPx = (int) (56f * density + 0.5f);
+        ViewGroup.LayoutParams lp = sidebar.getLayoutParams();
+        if (lp != null) {
+            lp.width = sidebarVisible ? expandedPx : railPx;
+            sidebar.setLayoutParams(lp);
+        }
+        setSidebarTextsVisible(sidebarVisible);
+        // Hide footer brand strip text in rail mode; keep the "S" avatar
+        View footer = root.findViewById(R.id.sys_footer_row);
+        if (footer instanceof ViewGroup) {
+            ViewGroup fg = (ViewGroup) footer;
+            for (int i = 0; i < fg.getChildCount(); i++) {
+                View c = fg.getChildAt(i);
+                if (c instanceof android.widget.TextView) {
+                    c.setVisibility(sidebarVisible ? View.VISIBLE : View.GONE);
+                } else if (c instanceof ViewGroup) {
+                    // the name+online column
+                    c.setVisibility(sidebarVisible ? View.VISIBLE : View.GONE);
+                }
+            }
+        }
+        // brand text only when expanded
+        View brand = root.findViewById(R.id.sys_brand_text);
+        if (brand != null) brand.setVisibility(sidebarVisible ? View.VISIBLE : View.GONE);
+        View brandRow = root.findViewById(R.id.sys_brand_row);
+        if (brandRow != null) {
+            // In rail mode, center the star
+            if (brandRow instanceof ViewGroup) {
+                ((ViewGroup) brandRow).setGravity(sidebarVisible
+                        ? android.view.Gravity.CENTER_VERTICAL | android.view.Gravity.START
+                        : android.view.Gravity.CENTER);
+            }
+        }
+    }
+
+    private void setSidebarTextsVisible(boolean visible) {
+        int[] textIds = {
+                R.id.sys_label_categories, R.id.sys_label_settings,
+                R.id.sys_cat_all_text, R.id.sys_cat_combat_text, R.id.sys_cat_movement_text,
+                R.id.sys_cat_player_text, R.id.sys_cat_render_text, R.id.sys_cat_visual_text,
+                R.id.sys_cat_client_text, R.id.sys_cat_combat_count,
+                R.id.sys_nav_configs_text, R.id.sys_nav_client_settings_text
+        };
+        for (int id : textIds) {
+            View v = root.findViewById(id);
+            if (v != null) v.setVisibility(visible ? View.VISIBLE : View.GONE);
+        }
+        // nav rows: center icons when rail
+        int[] rowIds = {
+                R.id.sys_cat_all, R.id.sys_cat_combat, R.id.sys_cat_movement,
+                R.id.sys_cat_player, R.id.sys_cat_render, R.id.sys_cat_visual, R.id.sys_cat_client,
+                R.id.sys_nav_configs, R.id.sys_nav_client_settings
+        };
+        for (int id : rowIds) {
+            View row = root.findViewById(id);
+            if (!(row instanceof ViewGroup)) continue;
+            ViewGroup g = (ViewGroup) row;
+            g.setGravity(visible
+                    ? android.view.Gravity.CENTER_VERTICAL | android.view.Gravity.START
+                    : android.view.Gravity.CENTER);
+            // tighten horizontal padding in rail so icons sit centered
+            int hPad = (int) ((visible ? 10f : 0f) * activity.getResources().getDisplayMetrics().density);
+            row.setPadding(hPad, row.getPaddingTop(), hPad, row.getPaddingBottom());
+        }
     }
 
     private void updateFavoritesButton() {
