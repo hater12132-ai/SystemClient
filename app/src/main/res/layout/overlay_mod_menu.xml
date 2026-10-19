@@ -18,37 +18,37 @@
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
-            <!-- SIDEBAR -->
+                        <!-- SIDEBAR — SystemDLC 1:1 -->
             <LinearLayout
                 android:id="@+id/sys_sidebar"
-                android:layout_width="210dp"
+                android:layout_width="208dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/bg_sys_sidebar"
                 android:orientation="vertical"
-                android:paddingStart="12dp"
-                android:paddingTop="14dp"
-                android:paddingEnd="12dp"
-                android:paddingBottom="12dp">
+                android:paddingStart="16dp"
+                android:paddingTop="18dp"
+                android:paddingEnd="14dp"
+                android:paddingBottom="14dp">
 
                 <LinearLayout
                     android:id="@+id/sys_brand_row"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="14dp"
+                    android:layout_marginBottom="18dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
                     <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
                         android:src="@drawable/ic_system_star" />
                     <TextView
                         android:id="@+id/sys_brand_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginStart="10dp"
                         android:text="System"
                         android:textColor="#F2F4F8"
-                        android:textSize="15sp"
+                        android:textSize="16sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -56,17 +56,17 @@
                     android:id="@+id/sys_label_categories"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="6dp"
+                    android:layout_marginBottom="8dp"
                     android:paddingStart="4dp"
                     android:text="Client categories"
-                    android:textColor="#5C6370"
+                    android:textColor="#6B7280"
                     android:textSize="11sp" />
 
 
                 <LinearLayout
                     android:id="@+id/sys_cat_all"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="38dp"
                     android:layout_marginBottom="2dp"
                     android:background="@drawable/bg_sys_nav"
                     android:gravity="center_vertical"
@@ -81,10 +81,10 @@
                         android:id="@+id/sys_cat_all_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
+                        android:layout_marginStart="12dp"
                         android:layout_weight="1"
                         android:text="All"
-                        android:textColor="#9AA3B5"
+                        android:textColor="#E8EAED"
                         android:textSize="13sp" />
                 </LinearLayout>
 
@@ -92,7 +92,7 @@
                 <LinearLayout
                     android:id="@+id/sys_cat_combat"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="38dp"
                     android:layout_marginBottom="2dp"
                     android:background="@drawable/bg_sys_nav"
                     android:gravity="center_vertical"
@@ -107,22 +107,22 @@
                         android:id="@+id/sys_cat_combat_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
+                        android:layout_marginStart="12dp"
                         android:layout_weight="1"
                         android:text="Combat"
-                        android:textColor="#9AA3B5"
+                        android:textColor="#E8EAED"
                         android:textSize="13sp" />
                     <TextView
                         android:id="@+id/sys_cat_combat_count"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/bg_sys_badge"
-                        android:paddingStart="6dp"
-                        android:paddingEnd="6dp"
+                        android:paddingStart="7dp"
+                        android:paddingEnd="7dp"
                         android:paddingTop="1dp"
                         android:paddingBottom="1dp"
                         android:text="6"
-                        android:textColor="#9AA3B5"
+                        android:textColor="#C8CDD6"
                         android:textSize="10sp" />
                 </LinearLayout>
 
@@ -130,7 +130,7 @@
                 <LinearLayout
                     android:id="@+id/sys_cat_movement"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="38dp"
                     android:layout_marginBottom="2dp"
                     android:background="@drawable/bg_sys_nav"
                     android:gravity="center_vertical"
@@ -145,10 +145,10 @@
                         android:id="@+id/sys_cat_movement_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
+                        android:layout_marginStart="12dp"
                         android:layout_weight="1"
                         android:text="Movement"
-                        android:textColor="#9AA3B5"
+                        android:textColor="#E8EAED"
                         android:textSize="13sp" />
                 </LinearLayout>
 
@@ -156,7 +156,7 @@
                 <LinearLayout
                     android:id="@+id/sys_cat_player"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="38dp"
                     android:layout_marginBottom="2dp"
                     android:background="@drawable/bg_sys_nav"
                     android:gravity="center_vertical"
@@ -171,10 +171,10 @@
                         android:id="@+id/sys_cat_player_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
+                        android:layout_marginStart="12dp"
                         android:layout_weight="1"
                         android:text="Player"
-                        android:textColor="#9AA3B5"
+                        android:textColor="#E8EAED"
                         android:textSize="13sp" />
                 </LinearLayout>
 
@@ -182,7 +182,7 @@
                 <LinearLayout
                     android:id="@+id/sys_cat_render"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="38dp"
                     android:layout_marginBottom="2dp"
                     android:background="@drawable/bg_sys_nav"
                     android:gravity="center_vertical"
@@ -197,10 +197,10 @@
                         android:id="@+id/sys_cat_render_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
+                        android:layout_marginStart="12dp"
                         android:layout_weight="1"
                         android:text="Render"
-                        android:textColor="#9AA3B5"
+                        android:textColor="#E8EAED"
                         android:textSize="13sp" />
                 </LinearLayout>
 
@@ -208,7 +208,7 @@
                 <LinearLayout
                     android:id="@+id/sys_cat_visual"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="38dp"
                     android:layout_marginBottom="2dp"
                     android:background="@drawable/bg_sys_nav"
                     android:gravity="center_vertical"
@@ -223,10 +223,10 @@
                         android:id="@+id/sys_cat_visual_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
+                        android:layout_marginStart="12dp"
                         android:layout_weight="1"
                         android:text="Visual"
-                        android:textColor="#9AA3B5"
+                        android:textColor="#E8EAED"
                         android:textSize="13sp" />
                 </LinearLayout>
 
@@ -234,7 +234,7 @@
                 <LinearLayout
                     android:id="@+id/sys_cat_client"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="38dp"
                     android:layout_marginBottom="2dp"
                     android:background="@drawable/bg_sys_nav"
                     android:gravity="center_vertical"
@@ -249,10 +249,10 @@
                         android:id="@+id/sys_cat_client_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
+                        android:layout_marginStart="12dp"
                         android:layout_weight="1"
                         android:text="Client"
-                        android:textColor="#9AA3B5"
+                        android:textColor="#E8EAED"
                         android:textSize="13sp" />
                 </LinearLayout>
 
@@ -261,18 +261,18 @@
                     android:id="@+id/sys_label_settings"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginBottom="6dp"
+                    android:layout_marginTop="14dp"
+                    android:layout_marginBottom="8dp"
                     android:paddingStart="4dp"
                     android:text="Settings"
-                    android:textColor="#5C6370"
+                    android:textColor="#6B7280"
                     android:textSize="11sp" />
 
 
                 <LinearLayout
                     android:id="@+id/sys_nav_configs"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="38dp"
                     android:layout_marginBottom="2dp"
                     android:background="@drawable/bg_sys_nav"
                     android:gravity="center_vertical"
@@ -287,18 +287,76 @@
                         android:id="@+id/sys_nav_configs_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
+                        android:layout_marginStart="12dp"
                         android:layout_weight="1"
                         android:text="Configs"
-                        android:textColor="#9AA3B5"
+                        android:textColor="#E8EAED"
                         android:textSize="13sp" />
                 </LinearLayout>
 
 
                 <LinearLayout
+                    android:id="@+id/sys_nav_friends"
+                    android:layout_width="match_parent"
+                    android:layout_height="38dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/bg_sys_nav"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp">
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_nav_friends" />
+                    <TextView
+                        android:id="@+id/sys_nav_friends_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:text="Friends"
+                        android:textColor="#E8EAED"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/sys_nav_waypoints"
+                    android:layout_width="match_parent"
+                    android:layout_height="38dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/bg_sys_nav"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp">
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_nav_waypoints" />
+                    <TextView
+                        android:id="@+id/sys_nav_waypoints_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:text="Waypoints"
+                        android:textColor="#E8EAED"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+
+                <LinearLayout
                     android:id="@+id/sys_nav_client_settings"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="38dp"
                     android:layout_marginBottom="2dp"
                     android:background="@drawable/bg_sys_nav"
                     android:gravity="center_vertical"
@@ -313,23 +371,45 @@
                         android:id="@+id/sys_nav_client_settings_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
+                        android:layout_marginStart="12dp"
                         android:layout_weight="1"
-                        android:text="Client Settings"
-                        android:textColor="#9AA3B5"
+                        android:text="Settings"
+                        android:textColor="#E8EAED"
                         android:textSize="13sp" />
                 </LinearLayout>
 
 
-                <Space
+                <LinearLayout
+                    android:id="@+id/sys_nav_search"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
+                    android:layout_height="38dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/bg_sys_nav"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp">
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_nav_search" />
+                    <TextView
+                        android:id="@+id/sys_nav_search_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:text="Search"
+                        android:textColor="#E8EAED"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
 
                 <LinearLayout
                     android:id="@+id/sys_footer_row"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:background="@drawable/bg_sys_footer"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
@@ -346,7 +426,7 @@
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginStart="10dp"
                         android:layout_weight="1"
                         android:orientation="vertical">
                         <TextView
@@ -354,25 +434,14 @@
                             android:layout_height="wrap_content"
                             android:text="SystemPlayer"
                             android:textColor="#F2F4F8"
-                            android:textSize="11sp"
+                            android:textSize="12sp"
                             android:textStyle="bold" />
-                        <LinearLayout
+                        <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-                            <ImageView
-                                android:layout_width="8dp"
-                                android:layout_height="8dp"
-                                android:src="@drawable/ic_online_dot" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="5dp"
-                                android:text="Online"
-                                android:textColor="#22C55E"
-                                android:textSize="10sp" />
-                        </LinearLayout>
+                            android:text="www.systemdlc.com"
+                            android:textColor="#6B7280"
+                            android:textSize="10sp" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>

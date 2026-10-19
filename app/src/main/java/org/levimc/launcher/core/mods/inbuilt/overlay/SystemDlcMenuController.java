@@ -141,8 +141,22 @@ final class SystemDlcMenuController {
         View configs = root.findViewById(R.id.sys_nav_configs);
         if (configs != null) configs.setOnClickListener(v -> openConfigsPanel());
 
+        View friends = root.findViewById(R.id.sys_nav_friends);
+        if (friends != null) friends.setOnClickListener(v ->
+                Toast.makeText(activity, "Friends", Toast.LENGTH_SHORT).show());
+
+        View waypoints = root.findViewById(R.id.sys_nav_waypoints);
+        if (waypoints != null) waypoints.setOnClickListener(v ->
+                Toast.makeText(activity, "Waypoints", Toast.LENGTH_SHORT).show());
+
         View clientSettings = root.findViewById(R.id.sys_nav_client_settings);
         if (clientSettings != null) clientSettings.setOnClickListener(v -> openClientSettingsPanel());
+
+        View navSearch = root.findViewById(R.id.sys_nav_search);
+        if (navSearch != null) navSearch.setOnClickListener(v -> {
+            EditText search = root.findViewById(R.id.sys_search);
+            if (search != null) search.requestFocus();
+        });
 
         EditText search = root.findViewById(R.id.sys_search);
         if (search != null) {
@@ -160,7 +174,7 @@ final class SystemDlcMenuController {
         // Always stay INSIDE the window. Expanded = labels; collapsed = icon rail (reference style).
         sidebar.setVisibility(View.VISIBLE);
         final float density = activity.getResources().getDisplayMetrics().density;
-        final int expandedPx = (int) (200f * density + 0.5f);
+        final int expandedPx = (int) (208f * density + 0.5f);
         final int railPx = (int) (56f * density + 0.5f);
         ViewGroup.LayoutParams lp = sidebar.getLayoutParams();
         if (lp != null) {
@@ -199,7 +213,8 @@ final class SystemDlcMenuController {
                 R.id.sys_cat_all_text, R.id.sys_cat_combat_text, R.id.sys_cat_movement_text,
                 R.id.sys_cat_player_text, R.id.sys_cat_render_text, R.id.sys_cat_visual_text,
                 R.id.sys_cat_client_text, R.id.sys_cat_combat_count,
-                R.id.sys_nav_configs_text, R.id.sys_nav_client_settings_text
+                R.id.sys_nav_configs_text, R.id.sys_nav_friends_text, R.id.sys_nav_waypoints_text,
+                R.id.sys_nav_client_settings_text, R.id.sys_nav_search_text
         };
         for (int id : textIds) {
             View v = root.findViewById(id);
@@ -209,7 +224,8 @@ final class SystemDlcMenuController {
         int[] rowIds = {
                 R.id.sys_cat_all, R.id.sys_cat_combat, R.id.sys_cat_movement,
                 R.id.sys_cat_player, R.id.sys_cat_render, R.id.sys_cat_visual, R.id.sys_cat_client,
-                R.id.sys_nav_configs, R.id.sys_nav_client_settings
+                R.id.sys_nav_configs, R.id.sys_nav_friends, R.id.sys_nav_waypoints,
+                R.id.sys_nav_client_settings, R.id.sys_nav_search
         };
         for (int id : rowIds) {
             View row = root.findViewById(id);
