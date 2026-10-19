@@ -13,6 +13,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -522,57 +523,78 @@ final class SystemDlcMenuController {
     }
 
     private View buildModuleCard(ModuleDef mod) {
+        final boolean on = prefs.getBoolean(mod.id + "_on", mod.defaultOn);
+        final boolean fav = prefs.getBoolean(mod.id + "_fav", false);
+        final boolean expanded = mod.id.equals(expandedId);
+
         LinearLayout card = new LinearLayout(activity);
         card.setOrientation(LinearLayout.VERTICAL);
-        boolean expanded = mod.id.equals(expandedId);
-        card.setBackgroundResource(expanded
-                ? R.drawable.bg_sys_module_card_expanded
-                : R.drawable.bg_sys_module_card);
-        card.setPadding(dp(12), dp(12), dp(12), dp(12));
+        // ON = brighter rim/fill; OFF = dimmer (reference look)
+        if (expanded) {
+            card.setBackgroundResource(R.drawable.bg_sys_module_card_expanded);
+        } else {
+            card.setBackgroundResource(on ? R.drawable.bg_sys_module_card_on : R.drawable.bg_sys_module_card);
+        }
+        card.setPadding(dp(14), dp(14), dp(14), dp(14));
+        card.setMinimumHeight(dp(52));
 
-        // Header row
         LinearLayout header = new LinearLayout(activity);
         header.setOrientation(LinearLayout.HORIZONTAL);
         header.setGravity(Gravity.CENTER_VERTICAL);
         header.setLayoutParams(new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
+        // Left module icon (swords style)
+        ImageView icon = new ImageView(activity);
+        icon.setImageResource(R.drawable.ic_mod_swords);
+        icon.setLayoutParams(new LinearLayout.LayoutParams(dp(18), dp(18)));
+        // Dim icon when module is off
+        icon.setAlpha(on ? 1f : 0.45f);
+
         TextView title = new TextView(activity);
         title.setText(mod.title);
-        title.setTextColor(TEXT);
+        title.setTextColor(on ? 0xFFF2F4F8 : 0xFF8B929E);
         title.setTextSize(14);
         title.setTypeface(Typeface.DEFAULT_BOLD);
         LinearLayout.LayoutParams titleLp = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+        titleLp.setMarginStart(dp(12));
         title.setLayoutParams(titleLp);
 
-        TextView badge = new TextView(activity);
-        badge.setText(mod.keybind);
-        badge.setTextColor(MUTED);
-        badge.setTextSize(10);
-        badge.setPadding(dp(6), dp(2), dp(6), dp(2));
-        badge.setBackgroundResource(R.drawable.bg_sys_badge);
-
-        TextView star = new TextView(activity);
-        star.setText(prefs.getBoolean(mod.id + "_fav", false) ? "★" : "☆");
-        star.setTextColor(prefs.getBoolean(mod.id + "_fav", false) ? ACCENT : MUTED);
-        star.setTextSize(16);
-        star.setPadding(dp(8), 0, dp(4), 0);
+        // Outline star (no keybind badge)
+        ImageView star = new ImageView(activity);
+        star.setImageResource(fav ? R.drawable.ic_sys_star_filled : R.drawable.ic_sys_star_outline);
+        star.setAlpha(on ? 1f : 0.55f);
+        LinearLayout.LayoutParams starLp = new LinearLayout.LayoutParams(dp(18), dp(18));
+        starLp.setMarginEnd(dp(10));
+        star.setLayoutParams(starLp);
         star.setOnClickListener(v -> {
-            boolean fav = !prefs.getBoolean(mod.id + "_fav", false);
-            prefs.edit().putBoolean(mod.id + "_fav", fav).apply();
-            star.setText(fav ? "★" : "☆");
-            star.setTextColor(fav ? ACCENT : MUTED);
+            boolean now = !prefs.getBoolean(mod.id + "_fav", false);
+            prefs.edit().putBoolean(mod.id + "_fav", now).apply();
+            star.setImageResource(now ? R.drawable.ic_sys_star_filled : R.drawable.ic_sys_star_outline);
         });
 
         Switch toggle = new Switch(activity);
-        toggle.setChecked(prefs.getBoolean(mod.id + "_on", mod.defaultOn));
+        toggle.setChecked(on);
+        toggle.setTrackResource(R.drawable.bg_sys_switch_track);
+        toggle.setThumbResource(R.drawable.bg_sys_switch_thumb);
+        // avoid default green/teal tint fighting our drawables
+        try {
+            toggle.getTrackDrawable().setTintList(null);
+            toggle.getThumbDrawable().setTintList(null);
+        } catch (Throwable ignored) {}
         toggle.setOnCheckedChangeListener((btn, checked) -> {
             prefs.edit().putBoolean(mod.id + "_on", checked).apply();
-            Toast.makeText(activity, mod.title + (checked ? " enabled" : " disabled"), Toast.LENGTH_SHORT).show();
+            // live visual update without full rebuild
+            card.setBackgroundResource(checked
+                    ? (mod.id.equals(expandedId) ? R.drawable.bg_sys_module_card_expanded : R.drawable.bg_sys_module_card_on)
+                    : R.drawable.bg_sys_module_card);
+            title.setTextColor(checked ? 0xFFF2F4F8 : 0xFF8B929E);
+            icon.setAlpha(checked ? 1f : 0.45f);
+            star.setAlpha(checked ? 1f : 0.55f);
         });
 
+        header.addView(icon);
         header.addView(title);
-        header.addView(badge);
         header.addView(star);
         header.addView(toggle);
         card.addView(header);
