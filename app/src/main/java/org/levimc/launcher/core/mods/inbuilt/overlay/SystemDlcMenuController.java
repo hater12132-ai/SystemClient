@@ -1364,14 +1364,10 @@ final class SystemDlcMenuController {
             try {
                 InbuiltModManager im = InbuiltModManager.getInstance(activity);
                 im.setInbuiltModEnabled(mod.id, enabled);
-            } catch (Throwable t) {
-                try {
-                    InbuiltOverlayManager ov = InbuiltOverlayManager.getInstance();
-                    if (ov != null) ov.setModActive(mod.id, enabled);
-                } catch (Throwable ignored) {}
+            } catch (Throwable ignored) {
+                // Levi inbuilt path optional; SystemMods config is primary
             }
         }
-        // Do not route through ModManager external plugins
     }
 
     /** Map SystemDLC card id → native Module::name used in config.json */
