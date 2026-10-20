@@ -8,6 +8,7 @@ import org.levimc.launcher.R
 import org.levimc.launcher.core.auth.MsftAuthManager
 import org.levimc.launcher.core.mods.Mod
 import org.levimc.launcher.core.mods.ModManager
+import org.levimc.launcher.core.mods.SystemBundledMods
 import org.levimc.launcher.core.mods.ModNativeLoader
 import org.levimc.launcher.core.versions.GameVersion
 import org.levimc.launcher.preloader.PreloaderInput
@@ -81,6 +82,12 @@ object MinecraftRuntimePreparer {
         listener.onProgress(34, "Checking mods")
         val modManager = ModManager.getInstance()
         modManager.setCurrentVersion(version)
+        try {
+            SystemBundledMods.ensureInstalled(context.applicationContext, modManager)
+            trace.mark("System bundled mods installed")
+        } catch (error: Throwable) {
+            trace.warning("System bundled mods install skipped", error.message ?: error.javaClass.simpleName)
+        }
         trace.mark("ModManager state prepared")
 
         if (gameManager.shouldLoadMallocRedirect()) {
