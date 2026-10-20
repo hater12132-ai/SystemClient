@@ -59,6 +59,8 @@ final class SystemDlcMenuController {
     };
     private final Map<String, List<ModuleDef>> modulesByCategory = new LinkedHashMap<>();
     private String expandedId = null;
+    private FrameLayout settingsBubbleHost;
+    private View settingsBubble;
     private String activeCategory = "Combat";
     private boolean favoritesOnly = false;
     private boolean sidebarVisible = true;
@@ -615,13 +617,10 @@ final class SystemDlcMenuController {
     private View buildModuleCard(ModuleDef mod) {
         final boolean[] on = { prefs.getBoolean(mod.id + "_on", mod.defaultOn) };
         final boolean[] fav = { prefs.getBoolean(mod.id + "_fav", false) };
-        final boolean expanded = mod.id.equals(expandedId);
 
         LinearLayout card = new LinearLayout(activity);
         card.setOrientation(LinearLayout.VERTICAL);
-        if (expanded) {
-            card.setBackgroundResource(R.drawable.bg_sys_module_card_expanded);
-        } else if (isGlass()) {
+        if (isGlass()) {
             card.setBackgroundResource(on[0]
                     ? R.drawable.bg_sys_module_card_glass_on
                     : R.drawable.bg_sys_module_card_glass);
@@ -637,20 +636,28 @@ final class SystemDlcMenuController {
         header.setLayoutParams(new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        // Chevron: ^ when expanded (up), v when collapsed — taps expand/collapse settings
-        ImageView chevron = new ImageView(activity);
-        chevron.setImageResource(expanded ? R.drawable.ic_chevron_up : R.drawable.ic_chevron_down);
-        chevron.setLayoutParams(new LinearLayout.LayoutParams(dp(18), dp(18)));
-        chevron.setAlpha(on[0] ? 1f : 0.5f);
+        // Title stack (name + short desc)
+        LinearLayout titles = new LinearLayout(activity);
+        titles.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams titlesLp = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+        titlesLp.setMarginEnd(dp(8));
+        titles.setLayoutParams(titlesLp);
 
         TextView title = new TextView(activity);
         title.setText(mod.title);
         title.setTextColor(on[0] ? 0xFFF2F4F8 : 0xFF7A808C);
         title.setTextSize(14);
         title.setTypeface(Typeface.DEFAULT_BOLD);
-        LinearLayout.LayoutParams titleLp = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
-        titleLp.setMarginStart(dp(12));
-        title.setLayoutParams(titleLp);
+        titles.addView(title);
+
+        if (mod.desc != null && !mod.desc.isEmpty()) {
+            TextView desc = new TextView(activity);
+            desc.setText(mod.desc);
+            desc.setTextColor(0xFF6A7080);
+            desc.setTextSize(11);
+            desc.setMaxLines(2);
+            titles.addView(desc);
+        }
 
         ImageView star = new ImageView(activity);
         star.setImageResource(fav[0] ? R.drawable.ic_sys_star_filled : R.drawable.ic_sys_star_outline);
@@ -662,9 +669,10 @@ final class SystemDlcMenuController {
             fav[0] = !fav[0];
             prefs.edit().putBoolean(mod.id + "_fav", fav[0]).apply();
             star.setImageResource(fav[0] ? R.drawable.ic_sys_star_filled : R.drawable.ic_sys_star_outline);
+            if (favoritesOnly) rebuildGrid(currentQuery());
         });
 
-        // Smooth sliding toggle (track + thumb), ~300ms so the motion is visible
+        // Smooth sliding toggle
         final int trackW = dp(44);
         final int trackH = dp(26);
         final int thumbSize = dp(20);
@@ -673,8 +681,7 @@ final class SystemDlcMenuController {
         final float thumbOnX = trackW - thumbSize - pad;
 
         FrameLayout toggle = new FrameLayout(activity);
-        LinearLayout.LayoutParams toggleLp = new LinearLayout.LayoutParams(trackW, trackH);
-        toggle.setLayoutParams(toggleLp);
+        toggle.setLayoutParams(new LinearLayout.LayoutParams(trackW, trackH));
         toggle.setBackgroundResource(on[0] ? R.drawable.bg_toggle_track_on : R.drawable.bg_toggle_track_off);
 
         final View thumb = new View(activity);
@@ -693,9 +700,8 @@ final class SystemDlcMenuController {
             on[0] = next;
             prefs.edit().putBoolean(mod.id + "_on", next).apply();
 
-            float from = thumb.getTranslationX();
-            float to = next ? thumbOnX : thumbOffX;
-            ObjectAnimator slide = ObjectAnimator.ofFloat(thumb, "translationX", from, to);
+            ObjectAnimator slide = ObjectAnimator.ofFloat(thumb, "translationX",
+                    thumb.getTranslationX(), next ? thumbOnX : thumbOffX);
             slide.setDuration(300);
             slide.setInterpolator(new DecelerateInterpolator(1.6f));
 
@@ -710,116 +716,150 @@ final class SystemDlcMenuController {
                 gd.setColor((int) a.getAnimatedValue());
                 toggle.setBackground(gd);
             });
-
             slide.addListener(new AnimatorListenerAdapter() {
                 @Override public void onAnimationEnd(android.animation.Animator animation) {
                     animating[0] = false;
                     thumb.setBackgroundResource(next
-                            ? R.drawable.bg_toggle_thumb
-                            : R.drawable.bg_toggle_thumb_off);
+                            ? R.drawable.bg_toggle_thumb : R.drawable.bg_toggle_thumb_off);
                     toggle.setBackgroundResource(next
-                            ? R.drawable.bg_toggle_track_on
-                            : R.drawable.bg_toggle_track_off);
+                            ? R.drawable.bg_toggle_track_on : R.drawable.bg_toggle_track_off);
                 }
             });
             slide.start();
             colorAnim.start();
 
-            title.animate().alpha(0.55f).setDuration(120).withEndAction(() -> {
-                title.setTextColor(next ? 0xFFF2F4F8 : 0xFF7A808C);
-                title.animate().alpha(1f).setDuration(160).start();
-            }).start();
-            chevron.animate().alpha(next ? 1f : 0.5f).setDuration(280).start();
-            star.animate().alpha(next ? 1f : 0.5f).setDuration(280).start();
-
-            if (!mod.id.equals(expandedId)) {
-                if (isGlass()) {
-                    card.setBackgroundResource(next
-                            ? R.drawable.bg_sys_module_card_glass_on
-                            : R.drawable.bg_sys_module_card_glass);
-                } else {
-                    card.setBackgroundResource(next
-                            ? R.drawable.bg_sys_module_card_on
-                            : R.drawable.bg_sys_module_card);
-                }
+            title.setTextColor(next ? 0xFFF2F4F8 : 0xFF7A808C);
+            star.setAlpha(next ? 1f : 0.5f);
+            if (isGlass()) {
+                card.setBackgroundResource(next
+                        ? R.drawable.bg_sys_module_card_glass_on
+                        : R.drawable.bg_sys_module_card_glass);
+            } else {
+                card.setBackgroundResource(next
+                        ? R.drawable.bg_sys_module_card_on
+                        : R.drawable.bg_sys_module_card);
             }
         });
 
-        header.addView(chevron);
-        header.addView(title);
+        header.addView(titles);
         header.addView(star);
         header.addView(toggle);
         card.addView(header);
 
-        // Expandable settings
-        LinearLayout settings = new LinearLayout(activity);
-        settings.setOrientation(LinearLayout.VERTICAL);
-        settings.setBackgroundResource(R.drawable.bg_sys_settings_panel);
-        settings.setPadding(dp(10), dp(10), dp(10), dp(10));
-        LinearLayout.LayoutParams settingsLp = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        settingsLp.topMargin = dp(10);
-        settings.setLayoutParams(settingsLp);
-        settings.setVisibility(expanded ? View.VISIBLE : View.GONE);
-
-        fillSettings(settings, mod);
-        card.addView(settings);
-
-        // Tap header expands/collapses settings with smooth slide
-        header.setOnClickListener(v -> {
-            if (mod.id.equals(expandedId)) {
-                chevron.animate().rotation(0f).setDuration(280)
-                        .setInterpolator(new DecelerateInterpolator()).start();
-                Animation up = AnimationUtils.loadAnimation(activity, R.anim.sys_slide_up);
-                up.setDuration(300);
-                up.setAnimationListener(new Animation.AnimationListener() {
-                    @Override public void onAnimationStart(Animation animation) {}
-                    @Override public void onAnimationEnd(Animation animation) {
-                        expandedId = null;
-                        rebuildGrid(currentQuery());
-                    }
-                    @Override public void onAnimationRepeat(Animation animation) {}
-                });
-                settings.startAnimation(up);
-            } else {
-                expandedId = mod.id;
-                rebuildGrid(currentQuery());
-                moduleHost.post(() -> animateExpandedIn());
-            }
-        });
-
-        chevron.setOnClickListener(v -> header.performClick());
+        // Tap card (not toggle/star) → settings bubble like reference UI
+        card.setOnClickListener(v -> showSettingsBubble(mod));
+        titles.setOnClickListener(v -> showSettingsBubble(mod));
 
         return card;
     }
 
-    private void animateExpandedIn() {
-        for (int i = 0; i < moduleHost.getChildCount(); i++) {
-            View row = moduleHost.getChildAt(i);
-            if (!(row instanceof ViewGroup)) continue;
-            ViewGroup vg = (ViewGroup) row;
-            for (int j = 0; j < vg.getChildCount(); j++) {
-                View cardV = vg.getChildAt(j);
-                if (!(cardV instanceof ViewGroup)) continue;
-                ViewGroup cg = (ViewGroup) cardV;
-                if (cg.getChildCount() < 2) continue;
-                View settings = cg.getChildAt(1);
-                if (settings.getVisibility() == View.VISIBLE) {
-                    Animation down = AnimationUtils.loadAnimation(activity, R.anim.sys_slide_down);
-                    down.setDuration(380);
-                    settings.startAnimation(down);
-                    if (cg.getChildCount() > 0 && cg.getChildAt(0) instanceof ViewGroup) {
-                        ViewGroup header = (ViewGroup) cg.getChildAt(0);
-                        if (header.getChildCount() > 0) {
-                            View ch = header.getChildAt(0);
-                            ch.setRotation(0f);
-                            ch.animate().rotation(180f).setDuration(320)
-                                    .setInterpolator(new DecelerateInterpolator()).start();
-                        }
-                    }
-                }
-            }
+    private void dismissSettingsBubble() {
+        if (settingsBubbleHost == null) return;
+        if (settingsBubble != null) {
+            settingsBubble.animate().alpha(0f).scaleX(0.92f).scaleY(0.92f)
+                    .setDuration(160)
+                    .withEndAction(() -> {
+                        try {
+                            settingsBubbleHost.removeAllViews();
+                            settingsBubbleHost.setVisibility(View.GONE);
+                        } catch (Throwable ignored) {}
+                        settingsBubble = null;
+                        expandedId = null;
+                    }).start();
+        } else {
+            settingsBubbleHost.removeAllViews();
+            settingsBubbleHost.setVisibility(View.GONE);
+            expandedId = null;
         }
+    }
+
+    private void ensureBubbleHost() {
+        if (settingsBubbleHost != null) return;
+        // Attach over the whole menu root so bubble can float above the grid
+        ViewGroup parent = (ViewGroup) root;
+        settingsBubbleHost = new FrameLayout(activity);
+        settingsBubbleHost.setLayoutParams(new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        settingsBubbleHost.setClickable(true);
+        settingsBubbleHost.setVisibility(View.GONE);
+        settingsBubbleHost.setOnClickListener(v -> dismissSettingsBubble());
+        parent.addView(settingsBubbleHost);
+    }
+
+    private void showSettingsBubble(ModuleDef mod) {
+        if (mod.id.equals(expandedId) && settingsBubble != null) {
+            dismissSettingsBubble();
+            return;
+        }
+        ensureBubbleHost();
+        settingsBubbleHost.removeAllViews();
+        expandedId = mod.id;
+
+        LinearLayout bubble = new LinearLayout(activity);
+        bubble.setOrientation(LinearLayout.VERTICAL);
+        bubble.setBackgroundResource(R.drawable.bg_sys_settings_bubble);
+        bubble.setPadding(dp(16), dp(14), dp(16), dp(16));
+        bubble.setElevation(dp(12));
+        bubble.setClickable(true); // don't dismiss when tapping inside
+
+        // Header: title + close
+        LinearLayout top = new LinearLayout(activity);
+        top.setOrientation(LinearLayout.HORIZONTAL);
+        top.setGravity(Gravity.CENTER_VERTICAL);
+        top.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        TextView title = new TextView(activity);
+        title.setText(mod.title);
+        title.setTextColor(0xFFF2F4F8);
+        title.setTextSize(16);
+        title.setTypeface(Typeface.DEFAULT_BOLD);
+        LinearLayout.LayoutParams tLp = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+        title.setLayoutParams(tLp);
+        top.addView(title);
+
+        TextView close = new TextView(activity);
+        close.setText("✕");
+        close.setTextColor(0xFFAAAAAA);
+        close.setTextSize(18);
+        close.setPadding(dp(8), dp(4), dp(4), dp(4));
+        close.setOnClickListener(v -> dismissSettingsBubble());
+        top.addView(close);
+        bubble.addView(top);
+
+        // Settings body — size grows with content
+        LinearLayout body = new LinearLayout(activity);
+        body.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams bodyLp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        bodyLp.topMargin = dp(10);
+        body.setLayoutParams(bodyLp);
+        fillSettings(body, mod);
+        bubble.addView(body);
+
+        // Width depends on content; clamp
+        int maxW = dp(280);
+        FrameLayout.LayoutParams blp = new FrameLayout.LayoutParams(
+                maxW, ViewGroup.LayoutParams.WRAP_CONTENT);
+        blp.gravity = Gravity.CENTER;
+        bubble.setLayoutParams(blp);
+
+        settingsBubble = bubble;
+        settingsBubbleHost.setVisibility(View.VISIBLE);
+        settingsBubbleHost.setBackgroundColor(0x66000000); // dim behind
+        settingsBubbleHost.addView(bubble);
+
+        bubble.setAlpha(0f);
+        bubble.setScaleX(0.9f);
+        bubble.setScaleY(0.9f);
+        bubble.animate().alpha(1f).scaleX(1f).scaleY(1f)
+                .setDuration(220)
+                .setInterpolator(new DecelerateInterpolator())
+                .start();
+    }
+
+    private void animateExpandedIn() {
+        // kept no-op for any leftover callers
     }
 
     private void fillSettings(LinearLayout panel, ModuleDef mod) {
@@ -1074,6 +1114,7 @@ final class SystemDlcMenuController {
         def.title = title;
         def.keybind = keybind;
         def.defaultOn = on;
+        def.desc = "";
         if ("function".equals(id) || "preview".equals(id) || "elements".equals(id)) def.kind = id;
         else def.kind = "generic";
         return def;
@@ -1084,6 +1125,7 @@ final class SystemDlcMenuController {
         String title;
         String keybind;
         String kind;
+        String desc;
         boolean defaultOn;
     }
 
