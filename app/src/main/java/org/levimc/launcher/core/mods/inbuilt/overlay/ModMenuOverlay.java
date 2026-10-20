@@ -1342,6 +1342,12 @@ public class ModMenuOverlay {
     
     public void hide() {
         if (!isShowing || overlayView == null) return;
+        try {
+            Object tag = overlayView.getTag();
+            if (tag instanceof SystemDlcMenuController) {
+                ((SystemDlcMenuController) tag).dismissAllSettingsBubbles();
+            }
+        } catch (Throwable ignored) {}
         saveVisibleScrollPosition();
         searchHandler.removeCallbacks(searchRunnable);
         RuntimeConfigView.stop(overlayView.findViewById(R.id.mod_config_content));

@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.animation.AnimatorListenerAdapter;
@@ -29,6 +30,7 @@ import android.widget.Toast;
 import org.levimc.launcher.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -60,7 +62,9 @@ final class SystemDlcMenuController {
     private final Map<String, List<ModuleDef>> modulesByCategory = new LinkedHashMap<>();
     private String expandedId = null;
     private FrameLayout settingsBubbleHost;
-    private View settingsBubble;
+    /** module id -> bubble view (multiple open at once) */
+    private final HashMap<String, View> openBubbles = new HashMap<>();
+    private int bubbleSpawnOffset = 0;
     private String activeCategory = "Combat";
     private boolean favoritesOnly = false;
     private boolean sidebarVisible = true;
@@ -80,6 +84,7 @@ final class SystemDlcMenuController {
     }
 
     void attach() {
+        root.setTag(this); // stash controller for hide()
         sidebar = root.findViewById(R.id.sys_sidebar);
         sidebarVisible = prefs.getBoolean("sidebar_visible", true);
         russian = prefs.getBoolean("lang_ru", false);
@@ -531,6 +536,7 @@ final class SystemDlcMenuController {
 
     private void selectCategory(String name) {
         activeCategory = name;
+        dismissAllSettingsBubbles();
         expandedId = null;
         for (int i = 0; i < categoryViews.size(); i++) {
             View row = categoryViews.get(i);
@@ -753,61 +759,168 @@ final class SystemDlcMenuController {
         return card;
     }
 
-    private void dismissSettingsBubble() {
+    /** Close every open settings bubble (menu hide / category switch). */
+    void dismissAllSettingsBubbles() {
         if (settingsBubbleHost == null) return;
-        if (settingsBubble != null) {
-            settingsBubble.animate().alpha(0f).scaleX(0.92f).scaleY(0.92f)
-                    .setDuration(160)
-                    .withEndAction(() -> {
-                        try {
-                            settingsBubbleHost.removeAllViews();
-                            settingsBubbleHost.setVisibility(View.GONE);
-                        } catch (Throwable ignored) {}
-                        settingsBubble = null;
-                        expandedId = null;
-                    }).start();
-        } else {
-            settingsBubbleHost.removeAllViews();
-            settingsBubbleHost.setVisibility(View.GONE);
-            expandedId = null;
+        List<View> copy = new ArrayList<>(openBubbles.values());
+        openBubbles.clear();
+        for (View b : copy) {
+            try {
+                b.animate().alpha(0f).scaleX(0.92f).scaleY(0.92f).setDuration(120)
+                        .withEndAction(() -> {
+                            try { settingsBubbleHost.removeView(b); } catch (Throwable ignored) {}
+                            if (openBubbles.isEmpty() && settingsBubbleHost.getChildCount() == 0) {
+                                settingsBubbleHost.setVisibility(View.GONE);
+                            }
+                        }).start();
+            } catch (Throwable ignored) {
+                try { settingsBubbleHost.removeView(b); } catch (Throwable ignored2) {}
+            }
         }
+        if (openBubbles.isEmpty()) {
+            try {
+                settingsBubbleHost.removeAllViews();
+                settingsBubbleHost.setVisibility(View.GONE);
+            } catch (Throwable ignored) {}
+        }
+        expandedId = null;
+        bubbleSpawnOffset = 0;
+    }
+
+    private void dismissOneBubble(String modId, View bubble) {
+        openBubbles.remove(modId);
+        if (bubble == null) return;
+        bubble.animate().alpha(0f).scaleX(0.92f).scaleY(0.92f).setDuration(160)
+                .withEndAction(() -> {
+                    try {
+                        if (settingsBubbleHost != null) settingsBubbleHost.removeView(bubble);
+                    } catch (Throwable ignored) {}
+                    if (openBubbles.isEmpty() && settingsBubbleHost != null
+                            && settingsBubbleHost.getChildCount() == 0) {
+                        settingsBubbleHost.setVisibility(View.GONE);
+                    }
+                }).start();
+        if (modId.equals(expandedId)) expandedId = null;
     }
 
     private void ensureBubbleHost() {
         if (settingsBubbleHost != null) return;
-        // Attach over the whole menu root so bubble can float above the grid
-        ViewGroup parent = (ViewGroup) root;
-        settingsBubbleHost = new FrameLayout(activity);
+        // Pass-through host: only children (bubbles) receive touches; empty area falls through
+        settingsBubbleHost = new FrameLayout(activity) {
+            @Override
+            public boolean onInterceptTouchEvent(MotionEvent ev) {
+                return false;
+            }
+            @Override
+            public boolean onTouchEvent(MotionEvent event) {
+                // Don't consume — but Android still won't deliver to views under us.
+                // So we only size-wrap content by keeping host match_parent with
+                // pointer-events via hit test: if no child under point, return false
+                // and request parent to not block — use dispatchTouchEvent instead.
+                return false;
+            }
+            @Override
+            public boolean dispatchTouchEvent(MotionEvent ev) {
+                final float rawX = ev.getRawX();
+                final float rawY = ev.getRawY();
+                final int[] loc = new int[2];
+                for (int i = getChildCount() - 1; i >= 0; i--) {
+                    View child = getChildAt(i);
+                    if (child.getVisibility() != View.VISIBLE) continue;
+                    child.getLocationOnScreen(loc);
+                    int w = child.getWidth();
+                    int h = child.getHeight();
+                    if (rawX >= loc[0] && rawY >= loc[1]
+                            && rawX < loc[0] + w && rawY < loc[1] + h) {
+                        // offset event into child local coords
+                        MotionEvent copy = MotionEvent.obtain(ev);
+                        copy.offsetLocation(-(loc[0]), -(loc[1]));
+                        boolean handled = child.dispatchTouchEvent(copy);
+                        copy.recycle();
+                        if (handled) return true;
+                    }
+                }
+                return false; // fall through to menu under the host
+            }
+        };
         settingsBubbleHost.setLayoutParams(new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        settingsBubbleHost.setClickable(true);
-        settingsBubbleHost.setVisibility(View.GONE);
-        settingsBubbleHost.setOnClickListener(v -> dismissSettingsBubble());
-        parent.addView(settingsBubbleHost);
+        settingsBubbleHost.setClickable(false);
+        settingsBubbleHost.setFocusable(false);
+        settingsBubbleHost.setBackgroundColor(Color.TRANSPARENT);
+        ((ViewGroup) root).addView(settingsBubbleHost);
+    }
+
+    private void makeBubbleDraggable(View bubble, View dragHandle) {
+        final float[] last = new float[2];
+        final boolean[] dragging = { false };
+        View.OnTouchListener drag = (v, event) -> {
+            switch (event.getActionMasked()) {
+                case MotionEvent.ACTION_DOWN:
+                    last[0] = event.getRawX();
+                    last[1] = event.getRawY();
+                    dragging[0] = true;
+                    // bring to front
+                    if (settingsBubbleHost != null) {
+                        settingsBubbleHost.bringChildToFront(bubble);
+                        settingsBubbleHost.invalidate();
+                    }
+                    return true;
+                case MotionEvent.ACTION_MOVE:
+                    if (!dragging[0]) return true;
+                    float dx = event.getRawX() - last[0];
+                    float dy = event.getRawY() - last[1];
+                    last[0] = event.getRawX();
+                    last[1] = event.getRawY();
+                    bubble.setTranslationX(bubble.getTranslationX() + dx);
+                    bubble.setTranslationY(bubble.getTranslationY() + dy);
+                    return true;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    dragging[0] = false;
+                    return true;
+            }
+            return false;
+        };
+        dragHandle.setOnTouchListener(drag);
+        // also allow dragging from title bar area only — body stays interactive
     }
 
     private void showSettingsBubble(ModuleDef mod) {
-        if (mod.id.equals(expandedId) && settingsBubble != null) {
-            dismissSettingsBubble();
+        // If already open, just bring that bubble to front
+        if (openBubbles.containsKey(mod.id)) {
+            View existing = openBubbles.get(mod.id);
+            if (existing != null && settingsBubbleHost != null) {
+                settingsBubbleHost.bringChildToFront(existing);
+                settingsBubbleHost.invalidate();
+                existing.animate().scaleX(1.03f).scaleY(1.03f).setDuration(80)
+                        .withEndAction(() -> existing.animate().scaleX(1f).scaleY(1f).setDuration(80).start())
+                        .start();
+            }
             return;
         }
+
         ensureBubbleHost();
-        settingsBubbleHost.removeAllViews();
+        settingsBubbleHost.setVisibility(View.VISIBLE);
+        // never dim
+        settingsBubbleHost.setBackgroundColor(Color.TRANSPARENT);
         expandedId = mod.id;
 
         LinearLayout bubble = new LinearLayout(activity);
         bubble.setOrientation(LinearLayout.VERTICAL);
         bubble.setBackgroundResource(R.drawable.bg_sys_settings_bubble);
         bubble.setPadding(dp(16), dp(14), dp(16), dp(16));
-        bubble.setElevation(dp(12));
-        bubble.setClickable(true); // don't dismiss when tapping inside
+        bubble.setElevation(dp(14));
+        bubble.setClickable(true);
+        bubble.setTag(mod.id);
 
-        // Header: title + close
+        // Header: title + close — this is the drag handle
         LinearLayout top = new LinearLayout(activity);
         top.setOrientation(LinearLayout.HORIZONTAL);
         top.setGravity(Gravity.CENTER_VERTICAL);
         top.setLayoutParams(new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        top.setPadding(0, 0, 0, dp(4));
 
         TextView title = new TextView(activity);
         title.setText(mod.title);
@@ -823,37 +936,39 @@ final class SystemDlcMenuController {
         close.setTextColor(0xFFAAAAAA);
         close.setTextSize(18);
         close.setPadding(dp(8), dp(4), dp(4), dp(4));
-        close.setOnClickListener(v -> dismissSettingsBubble());
+        close.setOnClickListener(v -> dismissOneBubble(mod.id, bubble));
         top.addView(close);
         bubble.addView(top);
 
-        // Settings body — size grows with content
         LinearLayout body = new LinearLayout(activity);
         body.setOrientation(LinearLayout.VERTICAL);
         LinearLayout.LayoutParams bodyLp = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        bodyLp.topMargin = dp(10);
+        bodyLp.topMargin = dp(6);
         body.setLayoutParams(bodyLp);
         fillSettings(body, mod);
         bubble.addView(body);
 
-        // Width depends on content; clamp
         int maxW = dp(280);
         FrameLayout.LayoutParams blp = new FrameLayout.LayoutParams(
                 maxW, ViewGroup.LayoutParams.WRAP_CONTENT);
         blp.gravity = Gravity.CENTER;
+        // cascade new bubbles so they don't fully overlap
+        int offset = (bubbleSpawnOffset % 6) * dp(22);
+        bubbleSpawnOffset++;
         bubble.setLayoutParams(blp);
+        bubble.setTranslationX(offset);
+        bubble.setTranslationY(offset);
 
-        settingsBubble = bubble;
-        settingsBubbleHost.setVisibility(View.VISIBLE);
-        settingsBubbleHost.setBackgroundColor(0x66000000); // dim behind
+        openBubbles.put(mod.id, bubble);
         settingsBubbleHost.addView(bubble);
+        makeBubbleDraggable(bubble, top);
 
         bubble.setAlpha(0f);
         bubble.setScaleX(0.9f);
         bubble.setScaleY(0.9f);
         bubble.animate().alpha(1f).scaleX(1f).scaleY(1f)
-                .setDuration(220)
+                .setDuration(200)
                 .setInterpolator(new DecelerateInterpolator())
                 .start();
     }
