@@ -1,0 +1,80 @@
+name: Build SystemClient Core (.so)
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - "native/SystemClientCore/**"
+      - ".github/workflows/build-systemclient-core.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: build-core-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-so:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Ensure native tree exists
+        run: |
+          if [ ! -f native/SystemClientCore/xmake.lua ]; then
+            echo "::error::native/SystemClientCore/xmake.lua missing."
+            echo "Push the SystemClientCore native source under native/SystemClientCore/"
+            exit 1
+          fi
+
+      - name: Setup Xmake
+        uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: "2.9.9"
+          actions-cache-folder: ".xmake-cache-core"
+          actions-cache-key: "systemclient-core"
+
+      - name: Setup Android NDK
+        uses: nttld/setup-ndk@v1
+        id: ndk
+        with:
+          ndk-version: r28c
+          link-to-sdk: true
+
+      - name: Build libSystemClientCore.so (arm64-v8a release)
+        working-directory: native/SystemClientCore
+        run: |
+          set -euo pipefail
+          xmake f -y -p android -a arm64-v8a -m release --ndk="${{ steps.ndk.outputs.ndk-path }}"
+          xmake -y
+
+      - name: Locate and stage .so
+        id: stage
+        working-directory: native/SystemClientCore
+        run: |
+          set -euo pipefail
+          SO=$(find build -type f -name 'libSystemClientCore.so' 2>/dev/null | head -1 || true)
+          if [ -z "$SO" ]; then
+            # fallback: any shared lib from target
+            SO=$(find build -type f -name 'lib*.so' 2>/dev/null | head -1 || true)
+          fi
+          if [ -z "$SO" ] || [ ! -f "$SO" ]; then
+            echo "::error::libSystemClientCore.so not found after build"
+            find build -type f 2>/dev/null | head -50 || true
+            exit 1
+          fi
+          echo "Found: $SO"
+          mkdir -p "$GITHUB_WORKSPACE/dist/systemclient_core"
+          cp -f "$SO" "$GITHUB_WORKSPACE/dist/systemclient_core/libSystemClientCore.so"
+          ls -la "$GITHUB_WORKSPACE/dist/systemclient_core/libSystemClientCore.so"
+          echo "so_path=dist/systemclient_core/libSystemClientCore.so" >> "$GITHUB_OUTPUT"
+
+      - name: Upload core SO artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SystemClientCore-so
+          path: dist/systemclient_core/libSystemClientCore.so
+          if-no-files-found: error
