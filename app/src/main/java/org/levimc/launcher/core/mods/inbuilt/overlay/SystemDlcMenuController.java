@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -851,43 +852,115 @@ final class SystemDlcMenuController {
         ((ViewGroup) root).addView(settingsBubbleHost);
     }
 
-    private void makeBubbleDraggable(View bubble, View dragHandle) {
+    private void makeBubbleDraggable(View shell, View dragHandle) {
         final float[] last = new float[2];
-        final boolean[] dragging = { false };
         View.OnTouchListener drag = (v, event) -> {
             switch (event.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN:
                     last[0] = event.getRawX();
                     last[1] = event.getRawY();
-                    dragging[0] = true;
-                    // bring to front
                     if (settingsBubbleHost != null) {
-                        settingsBubbleHost.bringChildToFront(bubble);
+                        settingsBubbleHost.bringChildToFront(shell);
                         settingsBubbleHost.invalidate();
                     }
                     return true;
-                case MotionEvent.ACTION_MOVE:
-                    if (!dragging[0]) return true;
+                case MotionEvent.ACTION_MOVE: {
                     float dx = event.getRawX() - last[0];
                     float dy = event.getRawY() - last[1];
                     last[0] = event.getRawX();
                     last[1] = event.getRawY();
-                    bubble.setTranslationX(bubble.getTranslationX() + dx);
-                    bubble.setTranslationY(bubble.getTranslationY() + dy);
+                    shell.setTranslationX(shell.getTranslationX() + dx);
+                    shell.setTranslationY(shell.getTranslationY() + dy);
                     return true;
+                }
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
-                    dragging[0] = false;
                     return true;
             }
             return false;
         };
         dragHandle.setOnTouchListener(drag);
-        // also allow dragging from title bar area only — body stays interactive
+    }
+
+    /** Corner resize: bottom-right, bottom-left, top-right, top-left grey grips. */
+    private void attachResizeHandles(FrameLayout shell, int minW, int minH) {
+        final int grip = dp(18);
+        final int hit = dp(28);
+        int[] corners = {
+                Gravity.TOP | Gravity.START,
+                Gravity.TOP | Gravity.END,
+                Gravity.BOTTOM | Gravity.START,
+                Gravity.BOTTOM | Gravity.END
+        };
+        for (int g : corners) {
+            View handle = new View(activity);
+            handle.setBackgroundResource(R.drawable.bg_sys_resize_grip);
+            FrameLayout.LayoutParams hlp = new FrameLayout.LayoutParams(grip, grip);
+            hlp.gravity = g;
+            int m = dp(4);
+            hlp.setMargins(m, m, m, m);
+            handle.setLayoutParams(hlp);
+            // expand touch area
+            handle.setPadding(0, 0, 0, 0);
+            final int gravity = g;
+            final float[] last = new float[2];
+            final int[] startSize = new int[2];
+            handle.setOnTouchListener((v, event) -> {
+                switch (event.getActionMasked()) {
+                    case MotionEvent.ACTION_DOWN:
+                        last[0] = event.getRawX();
+                        last[1] = event.getRawY();
+                        startSize[0] = shell.getWidth();
+                        startSize[1] = shell.getHeight();
+                        if (settingsBubbleHost != null) {
+                            settingsBubbleHost.bringChildToFront(shell);
+                        }
+                        return true;
+                    case MotionEvent.ACTION_MOVE: {
+                        float dx = event.getRawX() - last[0];
+                        float dy = event.getRawY() - last[1];
+                        ViewGroup.LayoutParams lp = shell.getLayoutParams();
+                        int w = startSize[0];
+                        int h = startSize[1];
+                        boolean left = (gravity & Gravity.START) == Gravity.START
+                                || (gravity & Gravity.LEFT) == Gravity.LEFT;
+                        boolean top = (gravity & Gravity.TOP) == Gravity.TOP;
+                        boolean right = (gravity & Gravity.END) == Gravity.END
+                                || (gravity & Gravity.RIGHT) == Gravity.RIGHT;
+                        boolean bottom = (gravity & Gravity.BOTTOM) == Gravity.BOTTOM;
+
+                        if (right) w = Math.max(minW, (int) (startSize[0] + dx));
+                        if (left) {
+                            w = Math.max(minW, (int) (startSize[0] - dx));
+                            shell.setTranslationX(shell.getTranslationX() + (startSize[0] - w));
+                            startSize[0] = w;
+                            last[0] = event.getRawX();
+                        }
+                        if (bottom) h = Math.max(minH, (int) (startSize[1] + dy));
+                        if (top) {
+                            h = Math.max(minH, (int) (startSize[1] - dy));
+                            shell.setTranslationY(shell.getTranslationY() + (startSize[1] - h));
+                            startSize[1] = h;
+                            last[1] = event.getRawY();
+                        }
+                        if (right) { startSize[0] = w; last[0] = event.getRawX(); }
+                        if (bottom) { startSize[1] = h; last[1] = event.getRawY(); }
+                        lp.width = w;
+                        lp.height = h;
+                        shell.setLayoutParams(lp);
+                        return true;
+                    }
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        return true;
+                }
+                return false;
+            });
+            shell.addView(handle);
+        }
     }
 
     private void showSettingsBubble(ModuleDef mod) {
-        // If already open, just bring that bubble to front
         if (openBubbles.containsKey(mod.id)) {
             View existing = openBubbles.get(mod.id);
             if (existing != null && settingsBubbleHost != null) {
@@ -902,72 +975,112 @@ final class SystemDlcMenuController {
 
         ensureBubbleHost();
         settingsBubbleHost.setVisibility(View.VISIBLE);
-        // never dim
         settingsBubbleHost.setBackgroundColor(Color.TRANSPARENT);
         expandedId = mod.id;
 
-        LinearLayout bubble = new LinearLayout(activity);
-        bubble.setOrientation(LinearLayout.VERTICAL);
-        bubble.setBackgroundResource(R.drawable.bg_sys_settings_bubble);
-        bubble.setPadding(dp(16), dp(14), dp(16), dp(16));
-        bubble.setElevation(dp(14));
-        bubble.setClickable(true);
-        bubble.setTag(mod.id);
+        final int minW = dp(220);
+        final int minH = dp(140);
+        final int defaultW = dp(280);
+        final int defaultH = ViewGroup.LayoutParams.WRAP_CONTENT;
 
-        // Header: title + close — this is the drag handle
-        LinearLayout top = new LinearLayout(activity);
-        top.setOrientation(LinearLayout.HORIZONTAL);
-        top.setGravity(Gravity.CENTER_VERTICAL);
-        top.setLayoutParams(new LinearLayout.LayoutParams(
+        // Outer shell — solid floating window
+        FrameLayout shell = new FrameLayout(activity);
+        shell.setBackgroundResource(R.drawable.bg_sys_settings_bubble);
+        shell.setElevation(dp(16));
+        shell.setClickable(true);
+        shell.setTag(mod.id);
+
+        LinearLayout column = new LinearLayout(activity);
+        column.setOrientation(LinearLayout.VERTICAL);
+        column.setLayoutParams(new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        column.setPadding(0, 0, 0, dp(10));
+
+        // === Title bar with ⋯ drag dots (floating-window style) ===
+        LinearLayout titleBar = new LinearLayout(activity);
+        titleBar.setOrientation(LinearLayout.VERTICAL);
+        titleBar.setBackgroundResource(R.drawable.bg_sys_bubble_titlebar);
+        titleBar.setGravity(Gravity.CENTER_HORIZONTAL);
+        titleBar.setPadding(dp(10), dp(8), dp(10), dp(8));
+        titleBar.setLayoutParams(new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        top.setPadding(0, 0, 0, dp(4));
+
+        // Three landscape dots centered — primary drag handle
+        TextView dots = new TextView(activity);
+        dots.setText("⋯");
+        dots.setTextColor(0xFF9A9AA2);
+        dots.setTextSize(22);
+        dots.setGravity(Gravity.CENTER);
+        dots.setPadding(dp(24), 0, dp(24), 0);
+        titleBar.addView(dots);
+
+        // Title row under dots
+        LinearLayout titleRow = new LinearLayout(activity);
+        titleRow.setOrientation(LinearLayout.HORIZONTAL);
+        titleRow.setGravity(Gravity.CENTER_VERTICAL);
+        titleRow.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        titleRow.setPadding(dp(6), dp(4), dp(2), 0);
 
         TextView title = new TextView(activity);
         title.setText(mod.title);
-        title.setTextColor(0xFFF2F4F8);
-        title.setTextSize(16);
+        title.setTextColor(0xFFF0F0F4);
+        title.setTextSize(15);
         title.setTypeface(Typeface.DEFAULT_BOLD);
-        LinearLayout.LayoutParams tLp = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
-        title.setLayoutParams(tLp);
-        top.addView(title);
+        title.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+        titleRow.addView(title);
 
         TextView close = new TextView(activity);
         close.setText("✕");
-        close.setTextColor(0xFFAAAAAA);
-        close.setTextSize(18);
-        close.setPadding(dp(8), dp(4), dp(4), dp(4));
-        close.setOnClickListener(v -> dismissOneBubble(mod.id, bubble));
-        top.addView(close);
-        bubble.addView(top);
+        close.setTextColor(0xFF9A9AA2);
+        close.setTextSize(16);
+        close.setPadding(dp(10), dp(4), dp(6), dp(4));
+        close.setOnClickListener(v -> dismissOneBubble(mod.id, shell));
+        titleRow.addView(close);
+        titleBar.addView(titleRow);
+        column.addView(titleBar);
 
+        // Body in scroll so resize works
+        ScrollView scroll = new ScrollView(activity);
+        scroll.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
+        scroll.setPadding(dp(14), dp(6), dp(14), dp(6));
         LinearLayout body = new LinearLayout(activity);
         body.setOrientation(LinearLayout.VERTICAL);
-        LinearLayout.LayoutParams bodyLp = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        bodyLp.topMargin = dp(6);
-        body.setLayoutParams(bodyLp);
         fillSettings(body, mod);
-        bubble.addView(body);
+        scroll.addView(body);
+        column.addView(scroll);
 
-        int maxW = dp(280);
-        FrameLayout.LayoutParams blp = new FrameLayout.LayoutParams(
-                maxW, ViewGroup.LayoutParams.WRAP_CONTENT);
+        shell.addView(column);
+
+        FrameLayout.LayoutParams blp = new FrameLayout.LayoutParams(defaultW, ViewGroup.LayoutParams.WRAP_CONTENT);
         blp.gravity = Gravity.CENTER;
-        // cascade new bubbles so they don't fully overlap
-        int offset = (bubbleSpawnOffset % 6) * dp(22);
+        int offset = (bubbleSpawnOffset % 6) * dp(24);
         bubbleSpawnOffset++;
-        bubble.setLayoutParams(blp);
-        bubble.setTranslationX(offset);
-        bubble.setTranslationY(offset);
+        shell.setLayoutParams(blp);
+        shell.setTranslationX(offset);
+        shell.setTranslationY(offset);
 
-        openBubbles.put(mod.id, bubble);
-        settingsBubbleHost.addView(bubble);
-        makeBubbleDraggable(bubble, top);
+        openBubbles.put(mod.id, shell);
+        settingsBubbleHost.addView(shell);
 
-        bubble.setAlpha(0f);
-        bubble.setScaleX(0.9f);
-        bubble.setScaleY(0.9f);
-        bubble.animate().alpha(1f).scaleX(1f).scaleY(1f)
+        makeBubbleDraggable(shell, titleBar);
+        makeBubbleDraggable(shell, dots); // dots also drag
+        attachResizeHandles(shell, minW, minH);
+
+        // After layout, set a sensible height if wrap is huge
+        shell.post(() -> {
+            if (shell.getHeight() > dp(420)) {
+                ViewGroup.LayoutParams lp = shell.getLayoutParams();
+                lp.height = dp(420);
+                shell.setLayoutParams(lp);
+            }
+        });
+
+        shell.setAlpha(0f);
+        shell.setScaleX(0.92f);
+        shell.setScaleY(0.92f);
+        shell.animate().alpha(1f).scaleX(1f).scaleY(1f)
                 .setDuration(200)
                 .setInterpolator(new DecelerateInterpolator())
                 .start();
