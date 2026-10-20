@@ -1394,6 +1394,20 @@ final class SystemDlcMenuController {
         }
     }
 
+
+    private String currentQuery() {
+        try {
+            android.widget.EditText search = root != null ? root.findViewById(R.id.sys_search) : null;
+            return search != null && search.getText() != null ? search.getText().toString() : "";
+        } catch (Throwable ignored) {
+            return "";
+        }
+    }
+
+    private int dp(int v) {
+        return Math.round(v * activity.getResources().getDisplayMetrics().density);
+    }
+
     private static List<ModuleDef> list(ModuleDef... items) {
         List<ModuleDef> out = new ArrayList<>();
         for (ModuleDef m : items) out.add(m);
