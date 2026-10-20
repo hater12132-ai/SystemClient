@@ -1016,64 +1016,79 @@ final class SystemDlcMenuController {
         column.setOrientation(LinearLayout.VERTICAL);
         column.setLayoutParams(new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        column.setPadding(0, 0, 0, dp(10));
+        column.setPadding(0, 0, 0, 0);
 
-        // === Title bar with ⋯ drag dots (floating-window style) ===
+        // === Compact drag bar: small ⋯ only ===
         LinearLayout titleBar = new LinearLayout(activity);
         titleBar.setOrientation(LinearLayout.VERTICAL);
         titleBar.setBackgroundResource(R.drawable.bg_sys_bubble_titlebar);
         titleBar.setGravity(Gravity.CENTER_HORIZONTAL);
-        titleBar.setPadding(dp(10), dp(8), dp(10), dp(8));
+        titleBar.setPadding(dp(8), dp(4), dp(8), dp(4));
         titleBar.setLayoutParams(new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        // Three landscape dots centered — primary drag handle
+        // Small centered dots — low height so it doesn't look like a huge bar
         TextView dots = new TextView(activity);
-        dots.setText("⋯");
-        dots.setTextColor(0xFF9A9AA2);
-        dots.setTextSize(22);
+        dots.setText("···");
+        dots.setTextColor(0xFF7A7A82);
+        dots.setTextSize(11);
         dots.setGravity(Gravity.CENTER);
-        dots.setPadding(dp(24), 0, dp(24), 0);
+        dots.setIncludeFontPadding(false);
+        dots.setPadding(dp(20), dp(2), dp(20), dp(2));
+        dots.setLetterSpacing(0.35f);
         titleBar.addView(dots);
 
-        // Title row under dots
+        // Title + red close dot
         LinearLayout titleRow = new LinearLayout(activity);
         titleRow.setOrientation(LinearLayout.HORIZONTAL);
         titleRow.setGravity(Gravity.CENTER_VERTICAL);
         titleRow.setLayoutParams(new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        titleRow.setPadding(dp(6), dp(4), dp(2), 0);
+        titleRow.setPadding(dp(8), dp(2), dp(4), dp(4));
 
         TextView title = new TextView(activity);
         title.setText(mod.title);
-        title.setTextColor(0xFFF0F0F4);
-        title.setTextSize(15);
+        title.setTextColor(0xFFE8E8EC);
+        title.setTextSize(14);
         title.setTypeface(Typeface.DEFAULT_BOLD);
         title.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
         titleRow.addView(title);
 
-        TextView close = new TextView(activity);
-        close.setText("✕");
-        close.setTextColor(0xFF9A9AA2);
-        close.setTextSize(16);
-        close.setPadding(dp(10), dp(4), dp(6), dp(4));
-        close.setOnClickListener(v -> dismissOneBubble(mod.id, shell));
-        titleRow.addView(close);
+        // Red close dot — small visual, larger hitbox
+        FrameLayout closeHit = new FrameLayout(activity);
+        closeHit.setLayoutParams(new LinearLayout.LayoutParams(dp(32), dp(32)));
+        closeHit.setPadding(dp(8), dp(8), dp(8), dp(8));
+        View closeDot = new View(activity);
+        FrameLayout.LayoutParams cdlp = new FrameLayout.LayoutParams(dp(10), dp(10));
+        cdlp.gravity = Gravity.CENTER;
+        closeDot.setLayoutParams(cdlp);
+        closeDot.setBackgroundResource(R.drawable.bg_sys_close_dot);
+        closeHit.addView(closeDot);
+        closeHit.setOnClickListener(v -> dismissOneBubble(mod.id, shell));
+        titleRow.addView(closeHit);
+
         titleBar.addView(titleRow);
         column.addView(titleBar);
 
-        // Body in scroll so resize works
-        ScrollView scroll = new ScrollView(activity);
-        scroll.setLayoutParams(new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
-        scroll.setPadding(dp(14), dp(6), dp(14), dp(6));
+        // Body: wrap height to content — ends at last setting (no forced max)
         LinearLayout body = new LinearLayout(activity);
         body.setOrientation(LinearLayout.VERTICAL);
+        body.setPadding(dp(14), dp(4), dp(14), dp(12));
+        body.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         fillSettings(body, mod);
-        scroll.addView(body);
-        column.addView(scroll);
+        column.addView(body);
 
-        shell.addView(column);
+        // If content is very tall, allow scroll without leaving empty space when short
+        ScrollView scroll = new ScrollView(activity);
+        scroll.setLayoutParams(new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        scroll.setFillViewport(false);
+        // restructure: column goes inside scroll for tall content only after measure
+        // For simplicity: put column in scroll, height WRAP on shell
+        shell.removeAllViews();
+        scroll.addView(column);
+        shell.addView(scroll);
 
         FrameLayout.LayoutParams blp = new FrameLayout.LayoutParams(defaultW, ViewGroup.LayoutParams.WRAP_CONTENT);
         blp.gravity = Gravity.CENTER;
@@ -1087,13 +1102,14 @@ final class SystemDlcMenuController {
         settingsBubbleHost.addView(shell);
 
         makeBubbleDraggable(shell, titleBar);
-        makeBubbleDraggable(shell, dots); // dots also drag
+        makeBubbleDraggable(shell, dots);
 
-        // After layout, set a sensible height if wrap is huge
+        // Cap only if taller than ~70% of screen — still ends at last item via scroll
         shell.post(() -> {
-            if (shell.getHeight() > dp(420)) {
+            int maxH = (int) (activity.getResources().getDisplayMetrics().heightPixels * 0.72f);
+            if (shell.getHeight() > maxH) {
                 ViewGroup.LayoutParams lp = shell.getLayoutParams();
-                lp.height = dp(420);
+                lp.height = maxH;
                 shell.setLayoutParams(lp);
             }
         });
@@ -1243,19 +1259,23 @@ final class SystemDlcMenuController {
         seek.setMax(100);
         seek.setProgress(cur);
         LinearLayout.LayoutParams slp = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, dp(28));
-        slp.topMargin = dp(2);
+                ViewGroup.LayoutParams.MATCH_PARENT, dp(22));
+        slp.topMargin = dp(4);
         seek.setLayoutParams(slp);
         try {
-            seek.setProgressDrawable(activity.getResources().getDrawable(R.drawable.bg_sys_slider_layer, null));
-        } catch (Throwable ignored) {
-            // fallback layer built below if missing
-        }
+            android.graphics.drawable.Drawable progress =
+                    activity.getResources().getDrawable(R.drawable.bg_sys_slider_layer, null).mutate();
+            seek.setProgressDrawable(progress);
+        } catch (Throwable ignored) {}
         try {
-            seek.setThumb(activity.getResources().getDrawable(R.drawable.bg_sys_slider_thumb, null));
+            android.graphics.drawable.Drawable thumb =
+                    activity.getResources().getDrawable(R.drawable.bg_sys_slider_thumb, null).mutate();
+            seek.setThumb(thumb);
+            seek.setThumbOffset(0);
         } catch (Throwable ignored) {}
         seek.setSplitTrack(false);
-        seek.setPadding(dp(6), 0, dp(6), 0);
+        seek.setPadding(dp(4), dp(4), dp(4), dp(4));
+        seek.setMinimumHeight(dp(22));
 
         final int[] animProg = { cur };
         seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
