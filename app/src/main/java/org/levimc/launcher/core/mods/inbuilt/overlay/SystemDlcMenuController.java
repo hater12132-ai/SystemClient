@@ -543,7 +543,6 @@ final class SystemDlcMenuController {
             View row = categoryViews.get(i);
             boolean sel = categoryNames[i].equals(name);
             row.setSelected(sel);
-            // tint label text inside row
             if (row instanceof ViewGroup) {
                 ViewGroup vg = (ViewGroup) row;
                 for (int c = 0; c < vg.getChildCount(); c++) {
@@ -555,18 +554,41 @@ final class SystemDlcMenuController {
                     }
                 }
             }
+            // slow soft highlight pulse on the selected sidebar row
+            if (sel) {
+                row.setAlpha(0.55f);
+                row.animate().alpha(1f).setDuration(380)
+                        .setInterpolator(new DecelerateInterpolator(1.4f)).start();
+                row.setScaleX(0.97f);
+                row.setScaleY(0.97f);
+                row.animate().scaleX(1f).scaleY(1f).setDuration(420)
+                        .setInterpolator(new DecelerateInterpolator(1.5f)).start();
+            }
         }
         if (topCategory != null) {
-            // show localized label
             String[] en = {"All", "Combat", "Movement", "Player", "Render", "Visual", "Client"};
             String[] ru = {"Все", "Бой", "Движение", "Игрок", "Рендер", "Визуал", "Клиент"};
             String label = name;
             for (int i = 0; i < en.length; i++) {
                 if (en[i].equals(name)) { label = russian ? ru[i] : en[i]; break; }
             }
+            topCategory.setAlpha(0.4f);
             topCategory.setText(label);
+            topCategory.animate().alpha(1f).setDuration(360).start();
         }
-        rebuildGrid("");
+        // fade grid out then rebuild with stagger-in
+        if (moduleHost != null) {
+            moduleHost.animate().alpha(0f).setDuration(180)
+                    .withEndAction(() -> {
+                        rebuildGrid("");
+                        moduleHost.setAlpha(0f);
+                        moduleHost.setTranslationY(dp(10));
+                        moduleHost.animate().alpha(1f).translationY(0f).setDuration(360)
+                                .setInterpolator(new DecelerateInterpolator(1.3f)).start();
+                    }).start();
+        } else {
+            rebuildGrid("");
+        }
     }
 
     private void rebuildGrid(String query) {
@@ -1066,7 +1088,6 @@ final class SystemDlcMenuController {
 
         makeBubbleDraggable(shell, titleBar);
         makeBubbleDraggable(shell, dots); // dots also drag
-        attachResizeHandles(shell, minW, minH);
 
         // After layout, set a sensible height if wrap is huge
         shell.post(() -> {
@@ -1202,24 +1223,59 @@ final class SystemDlcMenuController {
 
     private void addSeek(LinearLayout panel, String key, int def, ValueFmt fmt) {
         int cur = prefs.getInt(key, def);
+
+        LinearLayout wrap = new LinearLayout(activity);
+        wrap.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams wlp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        wlp.topMargin = dp(6);
+        wrap.setLayoutParams(wlp);
+
         TextView value = new TextView(activity);
         value.setText(fmt.format(cur));
         value.setTextColor(MUTED);
         value.setTextSize(11);
         value.setGravity(Gravity.END);
-        panel.addView(value);
+        wrap.addView(value);
+
+        // Custom monochrome pill slider matching the reference image
         SeekBar seek = new SeekBar(activity);
         seek.setMax(100);
         seek.setProgress(cur);
+        LinearLayout.LayoutParams slp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, dp(28));
+        slp.topMargin = dp(2);
+        seek.setLayoutParams(slp);
+        try {
+            seek.setProgressDrawable(activity.getResources().getDrawable(R.drawable.bg_sys_slider_layer, null));
+        } catch (Throwable ignored) {
+            // fallback layer built below if missing
+        }
+        try {
+            seek.setThumb(activity.getResources().getDrawable(R.drawable.bg_sys_slider_thumb, null));
+        } catch (Throwable ignored) {}
+        seek.setSplitTrack(false);
+        seek.setPadding(dp(6), 0, dp(6), 0);
+
+        final int[] animProg = { cur };
         seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 value.setText(fmt.format(progress));
-                if (fromUser) prefs.edit().putInt(key, progress).apply();
+                if (fromUser) {
+                    prefs.edit().putInt(key, progress).apply();
+                    animProg[0] = progress;
+                }
             }
-            @Override public void onStartTrackingTouch(SeekBar seekBar) {}
-            @Override public void onStopTrackingTouch(SeekBar seekBar) {}
+            @Override public void onStartTrackingTouch(SeekBar seekBar) {
+                seekBar.animate().scaleY(1.15f).setDuration(120).start();
+            }
+            @Override public void onStopTrackingTouch(SeekBar seekBar) {
+                seekBar.animate().scaleY(1f).setDuration(180)
+                        .setInterpolator(new DecelerateInterpolator()).start();
+            }
         });
-        panel.addView(seek);
+        wrap.addView(seek);
+        panel.addView(wrap);
     }
 
     private void addToggleRow(LinearLayout panel, String label, String key, boolean def) {
@@ -1230,16 +1286,71 @@ final class SystemDlcMenuController {
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.topMargin = dp(8);
         row.setLayoutParams(lp);
+
         TextView t = new TextView(activity);
         t.setText(label);
         t.setTextColor(TEXT);
-        t.setTextSize(13);
+        t.setTextSize(12);
         t.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-        Switch sw = new Switch(activity);
-        sw.setChecked(prefs.getBoolean(key, def));
-        sw.setOnCheckedChangeListener((b, c) -> prefs.edit().putBoolean(key, c).apply());
+
+        // Smaller version of module toggles
+        final boolean[] on = { prefs.getBoolean(key, def) };
+        final int trackW = dp(36);
+        final int trackH = dp(20);
+        final int thumbSize = dp(16);
+        final int pad = dp(2);
+        final float thumbOffX = pad;
+        final float thumbOnX = trackW - thumbSize - pad;
+
+        FrameLayout toggle = new FrameLayout(activity);
+        toggle.setLayoutParams(new LinearLayout.LayoutParams(trackW, trackH));
+        toggle.setBackgroundResource(on[0] ? R.drawable.bg_toggle_track_on : R.drawable.bg_toggle_track_off);
+
+        final View thumb = new View(activity);
+        FrameLayout.LayoutParams thumbLp = new FrameLayout.LayoutParams(thumbSize, thumbSize);
+        thumbLp.gravity = Gravity.CENTER_VERTICAL;
+        thumb.setLayoutParams(thumbLp);
+        thumb.setBackgroundResource(on[0] ? R.drawable.bg_toggle_thumb : R.drawable.bg_toggle_thumb_off);
+        thumb.setTranslationX(on[0] ? thumbOnX : thumbOffX);
+        toggle.addView(thumb);
+
+        final boolean[] animating = { false };
+        toggle.setOnClickListener(v -> {
+            if (animating[0]) return;
+            animating[0] = true;
+            final boolean next = !on[0];
+            on[0] = next;
+            prefs.edit().putBoolean(key, next).apply();
+
+            ObjectAnimator slide = ObjectAnimator.ofFloat(thumb, "translationX",
+                    thumb.getTranslationX(), next ? thumbOnX : thumbOffX);
+            slide.setDuration(280);
+            slide.setInterpolator(new DecelerateInterpolator(1.5f));
+            int cFrom = next ? 0xFF2C2C32 : 0xFFF2F4F8;
+            int cTo = next ? 0xFFF2F4F8 : 0xFF2C2C32;
+            ValueAnimator colorAnim = ValueAnimator.ofObject(new ArgbEvaluator(), cFrom, cTo);
+            colorAnim.setDuration(280);
+            colorAnim.addUpdateListener(a -> {
+                GradientDrawable gd = new GradientDrawable();
+                gd.setCornerRadius(trackH / 2f);
+                gd.setColor((int) a.getAnimatedValue());
+                toggle.setBackground(gd);
+            });
+            slide.addListener(new AnimatorListenerAdapter() {
+                @Override public void onAnimationEnd(android.animation.Animator animation) {
+                    animating[0] = false;
+                    thumb.setBackgroundResource(next
+                            ? R.drawable.bg_toggle_thumb : R.drawable.bg_toggle_thumb_off);
+                    toggle.setBackgroundResource(next
+                            ? R.drawable.bg_toggle_track_on : R.drawable.bg_toggle_track_off);
+                }
+            });
+            slide.start();
+            colorAnim.start();
+        });
+
         row.addView(t);
-        row.addView(sw);
+        row.addView(toggle);
         panel.addView(row);
     }
 
