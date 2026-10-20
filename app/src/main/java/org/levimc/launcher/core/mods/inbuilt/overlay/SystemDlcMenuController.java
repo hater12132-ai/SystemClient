@@ -29,6 +29,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.levimc.launcher.R;
+import org.levimc.launcher.core.mods.inbuilt.overlay.InbuiltOverlayManager;
+import org.levimc.launcher.core.mods.inbuilt.model.ModIds;
+import org.levimc.launcher.core.mods.inbuilt.manager.InbuiltModManager;
+import org.levimc.launcher.core.mods.ModManager;
+import org.levimc.launcher.core.mods.Mod;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,9 +62,7 @@ final class SystemDlcMenuController {
     private final LinearLayout moduleHost;
     private final TextView topCategory;
     private final List<View> categoryViews = new ArrayList<>();
-    private final String[] categoryNames = {
-            "All", "Combat", "Movement", "Player", "Render", "Visual", "Client"
-    };
+    private final String[] categoryNames = {"All", "Player", "HUD", "Visual", "Client", "Combat", "Movement", "Render"};
     private final Map<String, List<ModuleDef>> modulesByCategory = new LinkedHashMap<>();
     private String expandedId = null;
     private FrameLayout settingsBubbleHost;
@@ -275,8 +278,8 @@ final class SystemDlcMenuController {
     }
 
     private void applyLanguageLabels() {
-        String[] en = {"All", "Combat", "Movement", "Player", "Render", "Visual", "Client"};
-        String[] ru = {"Все", "Бой", "Движение", "Игрок", "Рендер", "Визуал", "Клиент"};
+        String[] en = {"All", "Player", "HUD", "Visual", "Client", "Combat", "Movement", "Render"};
+        String[] ru = {"Все", "Игрок", "HUD", "Визуал", "Клиент", "Бой", "Движение", "Рендер"};
         String[] labels = russian ? ru : en;
         int[] textIds = {
                 R.id.sys_cat_all_text, R.id.sys_cat_combat_text, R.id.sys_cat_movement_text,
@@ -566,8 +569,8 @@ final class SystemDlcMenuController {
             }
         }
         if (topCategory != null) {
-            String[] en = {"All", "Combat", "Movement", "Player", "Render", "Visual", "Client"};
-            String[] ru = {"Все", "Бой", "Движение", "Игрок", "Рендер", "Визуал", "Клиент"};
+            String[] en = {"All", "Player", "HUD", "Visual", "Client", "Combat", "Movement", "Render"};
+            String[] ru = {"Все", "Игрок", "HUD", "Визуал", "Клиент", "Бой", "Движение", "Рендер"};
             String label = name;
             for (int i = 0; i < en.length; i++) {
                 if (en[i].equals(name)) { label = russian ? ru[i] : en[i]; break; }
@@ -727,7 +730,7 @@ final class SystemDlcMenuController {
             animating[0] = true;
             final boolean next = !on[0];
             on[0] = next;
-            prefs.edit().putBoolean(mod.id + "_on", next).apply();
+            applyModuleEnabled(mod, next);
 
             ObjectAnimator slide = ObjectAnimator.ofFloat(thumb, "translationX",
                     thumb.getTranslationX(), next ? thumbOnX : thumbOffX);
@@ -1128,133 +1131,52 @@ final class SystemDlcMenuController {
     }
 
     private void fillSettings(LinearLayout panel, ModuleDef mod) {
-        switch (mod.kind) {
-            case "function":
-                addLabel(panel, "Preset", "Pick a preset to bias the function.");
-                addChoice(panel, mod.id + "_preset", new String[]{"Balanced", "Aggressive", "Safe"}, "Balanced");
-                addLabel(panel, "Mode", "How aggressively the function runs.");
-                addChoice(panel, mod.id + "_mode", new String[]{"Smart", "Always", "Legit"}, "Smart");
-                addLabel(panel, "Range", null);
-                addSeek(panel, mod.id + "_range", 28, v -> String.format(Locale.US, "%.1f blocks", v / 10f));
-                addToggleRow(panel, "Sync to TPS", mod.id + "_tps", false);
-                addLabel(panel, "Hotkey", null);
-                addReadonly(panel, prefs.getString(mod.id + "_hotkey", "^K"));
-                addLabel(panel, "Accent colour", null);
-                addAccentDots(panel, mod.id + "_accent");
-                break;
-            case "preview":
-                addLabel(panel, "Layout", "Pick which layout the preview uses.");
-                addChoice(panel, mod.id + "_layout", new String[]{"Compact", "Comfortable", "Spacious"}, "Compact");
-                addLabel(panel, "Display mode", null);
-                addChoice(panel, mod.id + "_display", new String[]{"Normal", "Transparent"}, "Transparent");
-                addLabel(panel, "Client colour", null);
-                addChoice(panel, mod.id + "_colour", new String[]{"Default", "Custom", "Dark", "Light"}, "Default");
-                addLabel(panel, "Styling", "Fine-tune the style of each parameter.");
-                addSeek(panel, mod.id + "_intensity", 88, v -> String.format(Locale.US, "%.2f", v / 10f));
-                addSeek(panel, mod.id + "_refraction", 40, v -> String.format(Locale.US, "%.1f", v / 100f));
-                addToggleRow(panel, "Chromatic", mod.id + "_chromatic", false);
-                break;
-            case "elements":
-                addLabel(panel, "Style", null);
-                addChoice(panel, mod.id + "_style", new String[]{"Flat", "Glass", "Minimal"}, "Flat");
-                addLabel(panel, "Displayed elements", null);
-                addToggleRow(panel, "Waypoints", mod.id + "_el_wp", true);
-                addToggleRow(panel, "StaffList", mod.id + "_el_staff", true);
-                addToggleRow(panel, "Potions", mod.id + "_el_pot", true);
-                addToggleRow(panel, "Keybinds", mod.id + "_el_kb", true);
-                addToggleRow(panel, "Notifications", mod.id + "_el_nt", true);
-                addButton(panel, "Reset positions", () -> {
-                    Toast.makeText(activity, "Positions reset", Toast.LENGTH_SHORT).show();
-                });
-                addLabel(panel, "Accent colour", null);
-                addAccentDots(panel, mod.id + "_accent");
-                break;
-            default:
-                addLabel(panel, "Options", "Configure " + mod.title);
-                addToggleRow(panel, "Enabled in menu", mod.id + "_detail", true);
-                addSeek(panel, mod.id + "_strength", 50, v -> v + "%");
-                break;
+        if (mod.desc != null && !mod.desc.isEmpty()) {
+            addLabel(panel, mod.title, mod.desc);
+        }
+        if ("native".equals(mod.kind)) {
+            addLabel(panel, "Source", "Bundled native pack — loaded by preloader.");
+        } else if ("inbuilt".equals(mod.kind)) {
+            addLabel(panel, "Source", "SystemClient inbuilt module.");
+        } else {
+            addLabel(panel, "Info", "No extra settings for this module.");
         }
     }
 
-    private void addLabel(LinearLayout panel, String title, String desc) {
-        TextView t = new TextView(activity);
-        t.setText(title);
-        t.setTextColor(TEXT);
-        t.setTextSize(13);
-        t.setTypeface(Typeface.DEFAULT_BOLD);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+    private void addLabel(LinearLayout panel, String title, String body) {
+        TextView h = new TextView(activity);
+        h.setText(title);
+        h.setTextColor(TEXT);
+        h.setTextSize(13);
+        h.setTypeface(Typeface.DEFAULT_BOLD);
+        LinearLayout.LayoutParams hlp = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.topMargin = dp(8);
-        t.setLayoutParams(lp);
-        panel.addView(t);
-        if (desc != null) {
-            TextView d = new TextView(activity);
-            d.setText(desc);
-            d.setTextColor(DIM);
-            d.setTextSize(11);
-            panel.addView(d);
+        hlp.topMargin = dp(8);
+        h.setLayoutParams(hlp);
+        panel.addView(h);
+        if (body != null && !body.isEmpty()) {
+            TextView b = new TextView(activity);
+            b.setText(body);
+            b.setTextColor(MUTED);
+            b.setTextSize(11);
+            panel.addView(b);
         }
-    }
-
-    private void addReadonly(LinearLayout panel, String value) {
-        TextView t = new TextView(activity);
-        t.setText(value);
-        t.setTextColor(MUTED);
-        t.setTextSize(13);
-        t.setGravity(Gravity.CENTER);
-        t.setBackgroundResource(R.drawable.bg_sys_input);
-        t.setPadding(dp(12), dp(10), dp(12), dp(10));
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.topMargin = dp(6);
-        t.setLayoutParams(lp);
-        panel.addView(t);
-    }
-
-    private void addChoice(LinearLayout panel, String key, String[] options, String def) {
-        String current = prefs.getString(key, def);
-        TextView t = new TextView(activity);
-        t.setText(current);
-        t.setTextColor(TEXT);
-        t.setTextSize(13);
-        t.setGravity(Gravity.CENTER_VERTICAL);
-        t.setBackgroundResource(R.drawable.bg_sys_input);
-        t.setPadding(dp(12), dp(10), dp(12), dp(10));
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.topMargin = dp(6);
-        t.setLayoutParams(lp);
-        t.setOnClickListener(v -> {
-            int idx = 0;
-            for (int i = 0; i < options.length; i++) {
-                if (options[i].equals(prefs.getString(key, def))) { idx = i; break; }
-            }
-            idx = (idx + 1) % options.length;
-            prefs.edit().putString(key, options[idx]).apply();
-            t.setText(options[idx]);
-        });
-        panel.addView(t);
     }
 
     private void addSeek(LinearLayout panel, String key, int def, ValueFmt fmt) {
         int cur = prefs.getInt(key, def);
-
         LinearLayout wrap = new LinearLayout(activity);
         wrap.setOrientation(LinearLayout.VERTICAL);
         LinearLayout.LayoutParams wlp = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         wlp.topMargin = dp(6);
         wrap.setLayoutParams(wlp);
-
         TextView value = new TextView(activity);
         value.setText(fmt.format(cur));
         value.setTextColor(MUTED);
         value.setTextSize(11);
         value.setGravity(Gravity.END);
         wrap.addView(value);
-
-        // Custom monochrome pill slider matching the reference image
         SeekBar seek = new SeekBar(activity);
         seek.setMax(100);
         seek.setProgress(cur);
@@ -1263,28 +1185,18 @@ final class SystemDlcMenuController {
         slp.topMargin = dp(4);
         seek.setLayoutParams(slp);
         try {
-            android.graphics.drawable.Drawable progress =
-                    activity.getResources().getDrawable(R.drawable.bg_sys_slider_layer, null).mutate();
-            seek.setProgressDrawable(progress);
+            seek.setProgressDrawable(activity.getResources().getDrawable(R.drawable.bg_sys_slider_layer, null).mutate());
         } catch (Throwable ignored) {}
         try {
-            android.graphics.drawable.Drawable thumb =
-                    activity.getResources().getDrawable(R.drawable.bg_sys_slider_thumb, null).mutate();
-            seek.setThumb(thumb);
+            seek.setThumb(activity.getResources().getDrawable(R.drawable.bg_sys_slider_thumb, null).mutate());
             seek.setThumbOffset(0);
         } catch (Throwable ignored) {}
         seek.setSplitTrack(false);
         seek.setPadding(dp(4), dp(4), dp(4), dp(4));
-        seek.setMinimumHeight(dp(22));
-
-        final int[] animProg = { cur };
         seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 value.setText(fmt.format(progress));
-                if (fromUser) {
-                    prefs.edit().putInt(key, progress).apply();
-                    animProg[0] = progress;
-                }
+                if (fromUser) prefs.edit().putInt(key, progress).apply();
             }
             @Override public void onStartTrackingTouch(SeekBar seekBar) {
                 seekBar.animate().scaleY(1.15f).setDuration(120).start();
@@ -1306,14 +1218,11 @@ final class SystemDlcMenuController {
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.topMargin = dp(8);
         row.setLayoutParams(lp);
-
         TextView t = new TextView(activity);
         t.setText(label);
         t.setTextColor(TEXT);
         t.setTextSize(12);
         t.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-
-        // Smaller version of module toggles
         final boolean[] on = { prefs.getBoolean(key, def) };
         final int trackW = dp(36);
         final int trackH = dp(20);
@@ -1321,11 +1230,9 @@ final class SystemDlcMenuController {
         final int pad = dp(2);
         final float thumbOffX = pad;
         final float thumbOnX = trackW - thumbSize - pad;
-
         FrameLayout toggle = new FrameLayout(activity);
         toggle.setLayoutParams(new LinearLayout.LayoutParams(trackW, trackH));
         toggle.setBackgroundResource(on[0] ? R.drawable.bg_toggle_track_on : R.drawable.bg_toggle_track_off);
-
         final View thumb = new View(activity);
         FrameLayout.LayoutParams thumbLp = new FrameLayout.LayoutParams(thumbSize, thumbSize);
         thumbLp.gravity = Gravity.CENTER_VERTICAL;
@@ -1333,7 +1240,6 @@ final class SystemDlcMenuController {
         thumb.setBackgroundResource(on[0] ? R.drawable.bg_toggle_thumb : R.drawable.bg_toggle_thumb_off);
         thumb.setTranslationX(on[0] ? thumbOnX : thumbOffX);
         toggle.addView(thumb);
-
         final boolean[] animating = { false };
         toggle.setOnClickListener(v -> {
             if (animating[0]) return;
@@ -1341,21 +1247,10 @@ final class SystemDlcMenuController {
             final boolean next = !on[0];
             on[0] = next;
             prefs.edit().putBoolean(key, next).apply();
-
             ObjectAnimator slide = ObjectAnimator.ofFloat(thumb, "translationX",
                     thumb.getTranslationX(), next ? thumbOnX : thumbOffX);
             slide.setDuration(280);
             slide.setInterpolator(new DecelerateInterpolator(1.5f));
-            int cFrom = next ? 0xFF2C2C32 : 0xFFF2F4F8;
-            int cTo = next ? 0xFFF2F4F8 : 0xFF2C2C32;
-            ValueAnimator colorAnim = ValueAnimator.ofObject(new ArgbEvaluator(), cFrom, cTo);
-            colorAnim.setDuration(280);
-            colorAnim.addUpdateListener(a -> {
-                GradientDrawable gd = new GradientDrawable();
-                gd.setCornerRadius(trackH / 2f);
-                gd.setColor((int) a.getAnimatedValue());
-                toggle.setBackground(gd);
-            });
             slide.addListener(new AnimatorListenerAdapter() {
                 @Override public void onAnimationEnd(android.animation.Animator animation) {
                     animating[0] = false;
@@ -1366,9 +1261,7 @@ final class SystemDlcMenuController {
                 }
             });
             slide.start();
-            colorAnim.start();
         });
-
         row.addView(t);
         row.addView(toggle);
         panel.addView(row);
@@ -1390,75 +1283,115 @@ final class SystemDlcMenuController {
         panel.addView(t);
     }
 
-    private void addAccentDots(LinearLayout panel, String key) {
-        int[] colors = {0xFFE53935, 0xFFFB8C00, 0xFFFDD835, 0xFF43A047, 0xFF00ACC1, 0xFFE8EAED, 0xFF8E24AA};
-        LinearLayout row = new LinearLayout(activity);
-        row.setOrientation(LinearLayout.HORIZONTAL);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lp.topMargin = dp(8);
-        row.setLayoutParams(lp);
-        int selected = prefs.getInt(key, ACCENT);
-        for (int c : colors) {
-            View dot = new View(activity);
-            LinearLayout.LayoutParams dlp = new LinearLayout.LayoutParams(dp(22), dp(22));
-            dlp.setMarginEnd(dp(8));
-            dot.setLayoutParams(dlp);
-            GradientDrawable gd = new GradientDrawable();
-            gd.setShape(GradientDrawable.OVAL);
-            gd.setColor(c);
-            if (c == selected) gd.setStroke(dp(2), Color.WHITE);
-            dot.setBackground(gd);
-            final int color = c;
-            dot.setOnClickListener(v -> {
-                prefs.edit().putInt(key, color).apply();
-                rebuildGrid(currentQuery());
-            });
-            row.addView(dot);
-        }
-        panel.addView(row);
-    }
-
-    private String currentQuery() {
-        EditText search = root.findViewById(R.id.sys_search);
-        return search != null ? search.getText().toString() : "";
-    }
-
-    private int dp(int v) {
-        return Math.round(v * activity.getResources().getDisplayMetrics().density);
-    }
-
     private void seedModules() {
-        modulesByCategory.put("Combat", list(
-                m("function", "Function", "None", true),
-                m("preview", "Preview", "None", true),
-                m("elements", "Elements", "None", true),
-                m("notifications", "Notifications", "None", true),
-                m("waypoints", "Waypoints", "N", false),
-                m("interface", "Interface", "None", true)
-        ));
-        modulesByCategory.put("Movement", list(
-                m("speed", "Speed", "None", false),
-                m("sprint", "Auto Sprint", "None", true),
-                m("jesus", "Jesus", "None", false)
-        ));
-        modulesByCategory.put("Player", list(
-                m("scaffold", "Scaffold", "None", false),
-                m("invwalk", "Inventory Walk", "None", false)
-        ));
-        modulesByCategory.put("Render", list(
-                m("fullbright", "Fullbright", "None", true),
-                m("esp", "ESP", "None", false),
-                m("tracers", "Tracers", "None", false)
+        modulesByCategory.clear();
+        // SystemMods.levipack modules (shown in SystemDLC)
+        modulesByCategory.put("HUD", list(
+                inbuilt("armorhud", "Armor HUD", "Show armor durability on screen")
         ));
         modulesByCategory.put("Visual", list(
-                m("animations", "Animations", "None", true),
-                m("ambience", "Ambience", "None", false)
+                inbuilt("connectedglass", "Connected Glass", "Seamless glass rendering"),
+                inbuilt("fogcolor", "Fog Color", "Tint world fog"),
+                inbuilt("fullbright", "Fullbright", "Full brightness"),
+                inbuilt("glintcolor", "Glint Color", "Custom enchantment glint"),
+                inbuilt("hitbox", "Hitbox", "Entity hitbox outlines"),
+                inbuilt("nofog", "No Fog", "Remove distance fog"),
+                inbuilt("swingmodifier", "Swing Modifier", "Customize arm swing"),
+                inbuilt("thirdpersonnametag", "Third Person Nametag", "Show your nametag in 3rd person"),
+                inbuilt("viewmodel", "View Model", "Adjust held-item view model"),
+                inbuilt("ambience", "Ambience", "Time of day + weather")
         ));
-        modulesByCategory.put("Client", list(
-                m("clickgui", "Click GUI", "RSHIFT", true),
-                m("arraylist", "ArrayList", "None", true)
+        modulesByCategory.put("Player", list(
+                inbuilt("nick", "Nick", "Local display name")
         ));
+        // No Disconnect is always-on inside SystemMods — not listed
+    }
+
+    private void refreshEnabledFromManagers() {
+        try {
+            InbuiltOverlayManager ov = InbuiltOverlayManager.getInstance();
+            InbuiltModManager im = InbuiltModManager.getInstance(activity);
+            for (List<ModuleDef> group : modulesByCategory.values()) {
+                for (ModuleDef m : group) {
+                    if ("inbuilt".equals(m.kind)) {
+                        try {
+                            m.defaultOn = ov != null
+                                    ? ov.isModActive(m.id)
+                                    : im.resolveInbuiltModEnabled(m.id, m.defaultOn);
+                        } catch (Throwable ignored) {}
+                    } else if ("native".equals(m.kind)) {
+                        try {
+                            ModManager mm = ModManager.getInstance();
+                            List<Mod> mods = mm.getMods();
+                            for (Mod mod : mods) {
+                                if (m.id.equalsIgnoreCase(mod.getId())
+                                        || m.id.equalsIgnoreCase(mod.getDisplayName())
+                                        || (mod.getFileName() != null
+                                            && mod.getFileName().toLowerCase(Locale.US)
+                                                .contains(m.id.toLowerCase(Locale.US)))) {
+                                    m.defaultOn = mod.isEnabled();
+                                    m.nativeId = mod.getId();
+                                    break;
+                                }
+                            }
+                        } catch (Throwable ignored) {}
+                    }
+                }
+            }
+        } catch (Throwable ignored) {}
+    }
+
+    private void applyModuleEnabled(ModuleDef mod, boolean enabled) {
+        prefs.edit().putBoolean(mod.id + "_on", enabled).apply();
+        // First-party SystemClient core (not a levipack / external mod)
+        try {
+            String nativeName = systemModsModuleName(mod);
+            if (nativeName != null) {
+                org.levimc.launcher.core.mods.ModManager mm =
+                        org.levimc.launcher.core.mods.ModManager.getInstance();
+                org.levimc.launcher.core.mods.SystemModsInstaller.setModuleEnabled(
+                        activity, mm, nativeName, enabled);
+                // Stock SystemMods binary still uses Time/Weather Changer names
+                if ("ambience".equals(mod.id)) {
+                    org.levimc.launcher.core.mods.SystemModsInstaller.setModuleEnabled(
+                            activity, mm, "Time Changer", enabled);
+                    org.levimc.launcher.core.mods.SystemModsInstaller.setModuleEnabled(
+                            activity, mm, "Weather Changer", enabled);
+                }
+            }
+        } catch (Throwable ignored) {}
+        if ("inbuilt".equals(mod.kind)) {
+            try {
+                InbuiltModManager im = InbuiltModManager.getInstance(activity);
+                im.setInbuiltModEnabled(mod.id, enabled);
+            } catch (Throwable t) {
+                try {
+                    InbuiltOverlayManager ov = InbuiltOverlayManager.getInstance();
+                    if (ov != null) ov.setModActive(mod.id, enabled);
+                } catch (Throwable ignored) {}
+            }
+        }
+        // Do not route through ModManager external plugins
+    }
+
+    /** Map SystemDLC card id → native Module::name used in config.json */
+    private static String systemModsModuleName(ModuleDef mod) {
+        if (mod == null || mod.id == null) return null;
+        switch (mod.id) {
+            case "armorhud": return "Armor HUD";
+            case "connectedglass": return "Connected Glass";
+            case "fogcolor": return "Fog Color";
+            case "fullbright": return "Fullbright";
+            case "glintcolor": return "Glint Color";
+            case "hitbox": return "Hitbox";
+            case "nofog": return "No Fog";
+            case "swingmodifier": return "Swing Modifier";
+            case "thirdpersonnametag": return "Third Person Nametag";
+            case "viewmodel": return "View Model";
+            case "nick": return "Nick";
+            case "ambience": return "Ambience";
+            default: return null;
+        }
     }
 
     private static List<ModuleDef> list(ModuleDef... items) {
@@ -1467,15 +1400,26 @@ final class SystemDlcMenuController {
         return out;
     }
 
-    private static ModuleDef m(String id, String title, String keybind, boolean on) {
+    private static ModuleDef inbuilt(String id, String title, String desc) {
         ModuleDef def = new ModuleDef();
         def.id = id;
         def.title = title;
-        def.keybind = keybind;
-        def.defaultOn = on;
-        def.desc = "";
-        if ("function".equals(id) || "preview".equals(id) || "elements".equals(id)) def.kind = id;
-        else def.kind = "generic";
+        def.keybind = "None";
+        def.defaultOn = false;
+        def.desc = desc;
+        def.kind = "inbuilt";
+        return def;
+    }
+
+    private static ModuleDef nativePack(String id, String title, String desc) {
+        ModuleDef def = new ModuleDef();
+        def.id = id;
+        def.title = title;
+        def.keybind = "None";
+        def.defaultOn = true;
+        def.desc = desc;
+        def.kind = "native";
+        def.nativeId = id;
         return def;
     }
 
@@ -1485,6 +1429,7 @@ final class SystemDlcMenuController {
         String keybind;
         String kind;
         String desc;
+        String nativeId;
         boolean defaultOn;
     }
 
