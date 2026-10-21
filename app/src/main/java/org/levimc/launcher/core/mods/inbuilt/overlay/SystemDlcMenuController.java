@@ -1233,6 +1233,10 @@ final class SystemDlcMenuController {
             prefs.edit().putBoolean(moduleName + "_" + key, next).apply();
             org.levimc.launcher.core.mods.SystemModsInstaller.setModuleSetting(
                     activity, mm, moduleName, key, next);
+            try {
+                org.levimc.launcher.core.mods.inbuilt.ExternalModBridge.setExternalModConfig(
+                        "bedrocktools." + moduleName, key, next ? "true" : "false");
+            } catch (Throwable ignored) {}
             thumb.animate().translationX(next ? thumbOnX : thumbOffX).setDuration(200).start();
             toggle.setBackgroundResource(next ? R.drawable.bg_toggle_track_on : R.drawable.bg_toggle_track_off);
             thumb.setBackgroundResource(next ? R.drawable.bg_toggle_thumb : R.drawable.bg_toggle_thumb_off);
@@ -1285,9 +1289,17 @@ final class SystemDlcMenuController {
                         else fv = (float) v;
                         org.levimc.launcher.core.mods.SystemModsInstaller.setModuleSetting(
                                 activity, mm, moduleName, key, fv);
+                        try {
+                            org.levimc.launcher.core.mods.inbuilt.ExternalModBridge.setExternalModConfig(
+                                    "bedrocktools." + moduleName, key, String.valueOf(fv));
+                        } catch (Throwable ignored) {}
                     } else {
                         org.levimc.launcher.core.mods.SystemModsInstaller.setModuleSetting(
                                 activity, mm, moduleName, key, v);
+                        try {
+                            org.levimc.launcher.core.mods.inbuilt.ExternalModBridge.setExternalModConfig(
+                                    "bedrocktools." + moduleName, key, String.valueOf(v));
+                        } catch (Throwable ignored) {}
                     }
                 }
             }
@@ -1491,11 +1503,15 @@ final class SystemDlcMenuController {
     private void applyModuleEnabled(ModuleDef mod, boolean enabled) {
         prefs.edit().putBoolean(mod.id + "_on", enabled).apply();
         try {
-            String nativeName = systemModsModuleName(mod);
             org.levimc.launcher.core.mods.ModManager mm =
                     org.levimc.launcher.core.mods.ModManager.getInstance();
-            // Keep SystemMods pack itself enabled
             try { mm.setModEnabled("SystemMods", true); } catch (Throwable ignored) {}
+            try { mm.setModEnabled("AirSwing", true); } catch (Throwable ignored) {}
+
+            String nativeName = systemModsModuleName(mod);
+            String plId = systemModsPlId(mod);
+
+            // 1) Persist for next launch (stock SO reads this at load)
             if (nativeName != null) {
                 org.levimc.launcher.core.mods.SystemModsInstaller.setModuleEnabled(
                         activity, mm, nativeName, enabled);
@@ -1506,9 +1522,28 @@ final class SystemDlcMenuController {
                 org.levimc.launcher.core.mods.SystemModsInstaller.setModuleEnabled(
                         activity, mm, "Weather Changer", enabled);
             }
-            // Always force No Disconnect on
             org.levimc.launcher.core.mods.SystemModsInstaller.setModuleEnabled(
                     activity, mm, "No Disconnect", true);
+
+            // 2) LIVE toggle via Levi preloader (same as in-game mod menu)
+            //    Only works while Minecraft/preloader is loaded — this is why
+            //    config-only never felt like it "did anything" in-session.
+            if (plId != null) {
+                try {
+                    org.levimc.launcher.core.mods.inbuilt.ExternalModBridge
+                            .toggleExternalMod(plId, enabled);
+                } catch (Throwable t) {
+                    android.util.Log.w("SystemDLC", "live toggle " + plId + ": " + t.getMessage());
+                }
+            }
+            if ("ambience".equals(mod.id)) {
+                try {
+                    org.levimc.launcher.core.mods.inbuilt.ExternalModBridge
+                            .toggleExternalMod("bedrocktools.Time Changer", enabled);
+                    org.levimc.launcher.core.mods.inbuilt.ExternalModBridge
+                            .toggleExternalMod("bedrocktools.Weather Changer", enabled);
+                } catch (Throwable ignored) {}
+            }
         } catch (Throwable ignored) {}
         if ("inbuilt".equals(mod.kind)) {
             try {
@@ -1518,10 +1553,11 @@ final class SystemDlcMenuController {
         }
     }
 
+
     /** Map SystemDLC card id → native Module::name used in config.json */
     private static String systemModsModuleName(ModuleDef mod) {
         if (mod == null || mod.id == null) return null;
-        // Exact names from stock libBedrockTools.so Module("...") constructors
+        // Exact Module("name") strings inside stock libBedrockTools.so
         switch (mod.id) {
             case "armorhud": return "ArmorHUD";
             case "connectedglass": return "Connected Glass";
@@ -1534,10 +1570,17 @@ final class SystemDlcMenuController {
             case "thirdpersonnametag": return "Third Person Nametag";
             case "viewmodel": return "View Model";
             case "nick": return "Nick";
-            case "ambience": return "Time Changer"; // Weather Changer toggled separately
+            case "ambience": return "Time Changer";
             default: return null;
         }
     }
+
+    /** PL module id: bedrocktools.<Module name> */
+    private static String systemModsPlId(ModuleDef mod) {
+        String name = systemModsModuleName(mod);
+        return name == null ? null : "bedrocktools." + name;
+    }
+
 
 
     private String currentQuery() {

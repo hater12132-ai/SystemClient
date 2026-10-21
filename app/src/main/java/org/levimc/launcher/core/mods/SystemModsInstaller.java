@@ -92,6 +92,12 @@ public final class SystemModsInstaller {
     /** All locations the stock SO / PL may read. */
     public static List<File> configFiles(Context context, ModManager modManager) {
         List<File> out = new ArrayList<>();
+        // PL typically uses <modRoot>/config as configDir → config.json here
+        File root = modRoot(modManager);
+        if (root != null) {
+            out.add(new File(root, "config/config.json"));
+            out.add(new File(root, "config.json"));
+        }
         // Stock BedrockTools default (confirmed in libBedrockTools.so strings)
         out.add(new File("/sdcard/games/BedrockTools/config.json"));
         try {
