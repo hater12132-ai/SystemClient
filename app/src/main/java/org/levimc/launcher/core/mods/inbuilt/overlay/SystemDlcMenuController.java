@@ -1502,49 +1502,18 @@ final class SystemDlcMenuController {
 
     private void applyModuleEnabled(ModuleDef mod, boolean enabled) {
         prefs.edit().putBoolean(mod.id + "_on", enabled).apply();
+        // Persist + live-toggle THIS mod, then re-assert EVERY enabled SystemMod.
+        // Without the re-assert, enabling B often left A stuck off (config/live race).
         try {
             org.levimc.launcher.core.mods.ModManager mm =
                     org.levimc.launcher.core.mods.ModManager.getInstance();
             try { mm.setModEnabled("SystemMods", true); } catch (Throwable ignored) {}
             try { mm.setModEnabled("AirSwing", true); } catch (Throwable ignored) {}
 
-            String nativeName = systemModsModuleName(mod);
-            String plId = systemModsPlId(mod);
-
-            // 1) Persist for next launch (stock SO reads this at load)
-            if (nativeName != null) {
-                org.levimc.launcher.core.mods.SystemModsInstaller.setModuleEnabled(
-                        activity, mm, nativeName, enabled);
-            }
-            if ("ambience".equals(mod.id)) {
-                org.levimc.launcher.core.mods.SystemModsInstaller.setModuleEnabled(
-                        activity, mm, "Time Changer", enabled);
-                org.levimc.launcher.core.mods.SystemModsInstaller.setModuleEnabled(
-                        activity, mm, "Weather Changer", enabled);
-            }
-            org.levimc.launcher.core.mods.SystemModsInstaller.setModuleEnabled(
-                    activity, mm, "No Disconnect", true);
-
-            // 2) LIVE toggle via Levi preloader (same as in-game mod menu)
-            //    Only works while Minecraft/preloader is loaded — this is why
-            //    config-only never felt like it "did anything" in-session.
-            if (plId != null) {
-                try {
-                    org.levimc.launcher.core.mods.inbuilt.ExternalModBridge
-                            .toggleExternalMod(plId, enabled);
-                } catch (Throwable t) {
-                    android.util.Log.w("SystemDLC", "live toggle " + plId + ": " + t.getMessage());
-                }
-            }
-            if ("ambience".equals(mod.id)) {
-                try {
-                    org.levimc.launcher.core.mods.inbuilt.ExternalModBridge
-                            .toggleExternalMod("bedrocktools.Time Changer", enabled);
-                    org.levimc.launcher.core.mods.inbuilt.ExternalModBridge
-                            .toggleExternalMod("bedrocktools.Weather Changer", enabled);
-                } catch (Throwable ignored) {}
-            }
-        } catch (Throwable ignored) {}
+            syncAllSystemMods(mm);
+        } catch (Throwable t) {
+            android.util.Log.w("SystemDLC", "applyModuleEnabled: " + t.getMessage());
+        }
         if ("inbuilt".equals(mod.kind)) {
             try {
                 InbuiltModManager im = InbuiltModManager.getInstance(activity);
@@ -1552,6 +1521,69 @@ final class SystemDlcMenuController {
             } catch (Throwable ignored) {}
         }
     }
+
+    /**
+     * Write full config for all SystemDLC modules from prefs, then live-toggle each
+     * via ExternalModBridge so multiple modules stay on together.
+     */
+    private void syncAllSystemMods(org.levimc.launcher.core.mods.ModManager mm) {
+        // Always force No Disconnect on in config
+        try {
+            org.levimc.launcher.core.mods.SystemModsInstaller.setModuleEnabled(
+                    activity, mm, "No Disconnect", true);
+        } catch (Throwable ignored) {}
+
+        java.util.LinkedHashMap<String, Boolean> byNativeName = new java.util.LinkedHashMap<>();
+        java.util.LinkedHashMap<String, Boolean> byPlId = new java.util.LinkedHashMap<>();
+
+        for (List<ModuleDef> group : modulesByCategory.values()) {
+            for (ModuleDef m : group) {
+                boolean on = prefs.getBoolean(m.id + "_on", false);
+                String nativeName = systemModsModuleName(m);
+                String plId = systemModsPlId(m);
+                if (nativeName != null) {
+                    // Ambience drives both time + weather
+                    if ("ambience".equals(m.id)) {
+                        byNativeName.put("Time Changer", on);
+                        byNativeName.put("Weather Changer", on);
+                        byPlId.put("bedrocktools.Time Changer", on);
+                        byPlId.put("bedrocktools.Weather Changer", on);
+                    } else {
+                        byNativeName.put(nativeName, on);
+                        if (plId != null) byPlId.put(plId, on);
+                    }
+                }
+            }
+        }
+        byNativeName.put("No Disconnect", true);
+
+        // One merged config write for ALL modules (avoids last-write-wins races)
+        try {
+            org.levimc.launcher.core.mods.SystemModsInstaller.setModulesEnabled(
+                    activity, mm, byNativeName);
+        } catch (Throwable ignored) {
+            for (java.util.Map.Entry<String, Boolean> e : byNativeName.entrySet()) {
+                try {
+                    org.levimc.launcher.core.mods.SystemModsInstaller.setModuleEnabled(
+                            activity, mm, e.getKey(), e.getValue());
+                } catch (Throwable ignored2) {}
+            }
+        }
+
+        // Live re-assert in a stable order (all offs first would be wrong — set each to desired)
+        for (java.util.Map.Entry<String, Boolean> e : byPlId.entrySet()) {
+            try {
+                org.levimc.launcher.core.mods.inbuilt.ExternalModBridge
+                        .toggleExternalMod(e.getKey(), e.getValue());
+            } catch (Throwable ignored) {}
+        }
+        try {
+            org.levimc.launcher.core.mods.inbuilt.ExternalModBridge
+                    .toggleExternalMod("bedrocktools.No Disconnect", true);
+        } catch (Throwable ignored) {}
+    }
+
+
 
 
     /** Map SystemDLC card id → native Module::name used in config.json */

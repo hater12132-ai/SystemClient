@@ -18,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -119,6 +120,49 @@ public final class SystemModsInstaller {
         return out;
     }
 
+
+    /**
+     * Atomically write masterEnabled for EVERY known module in one pass.
+     * Prevents the "only last toggle sticks" bug where sequential
+     * read-modify-write races with native ConfigManager.save().
+     */
+    public static void syncAllEnabled(Context context, ModManager modManager,
+                                      Map<String, Boolean> enabledByName) {
+        if (enabledByName == null || enabledByName.isEmpty()) return;
+        try {
+            for (File cfg : configFiles(context, modManager)) {
+                writeAllFlags(cfg, enabledByName);
+            }
+        } catch (Throwable t) {
+            Log.e(TAG, "syncAllEnabled failed", t);
+        }
+    }
+
+    private static void writeAllFlags(File cfg, Map<String, Boolean> enabledByName)
+            throws Exception {
+        //noinspection ResultOfMethodCallIgnored
+        if (cfg.getParentFile() != null) cfg.getParentFile().mkdirs();
+        JSONObject root = readJson(cfg);
+        JSONObject modules = root.optJSONObject("Modules");
+        if (modules == null) modules = new JSONObject();
+        for (Map.Entry<String, Boolean> e : enabledByName.entrySet()) {
+            if (e.getKey() == null) continue;
+            JSONObject mod = modules.optJSONObject(e.getKey());
+            if (mod == null) mod = new JSONObject();
+            mod.put("masterEnabled", Boolean.TRUE.equals(e.getValue()));
+            mod.put("keybindActive", true);
+            modules.put(e.getKey(), mod);
+        }
+        // Always force No Disconnect on
+        JSONObject noDc = modules.optJSONObject("No Disconnect");
+        if (noDc == null) noDc = new JSONObject();
+        noDc.put("masterEnabled", true);
+        noDc.put("keybindActive", true);
+        modules.put("No Disconnect", noDc);
+        root.put("Modules", modules);
+        atomicWrite(cfg, root);
+    }
+
     /** Enable/disable a native module by its BedrockTools display name. */
     public static void setModuleEnabled(Context context, ModManager modManager,
                                         String moduleName, boolean enabled) {
@@ -130,6 +174,39 @@ public final class SystemModsInstaller {
         } catch (Throwable t) {
             Log.e(TAG, "setModuleEnabled failed", t);
         }
+    }
+
+
+    /** Write many module enable flags in one read-modify-write per config file. */
+    public static void setModulesEnabled(Context context, ModManager modManager,
+                                         java.util.Map<String, Boolean> moduleStates) {
+        if (moduleStates == null || moduleStates.isEmpty()) return;
+        try {
+            for (File cfg : configFiles(context, modManager)) {
+                writeModuleFlags(cfg, moduleStates);
+            }
+        } catch (Throwable t) {
+            Log.e(TAG, "setModulesEnabled failed", t);
+        }
+    }
+
+    private static void writeModuleFlags(File cfg, java.util.Map<String, Boolean> moduleStates)
+            throws Exception {
+        //noinspection ResultOfMethodCallIgnored
+        if (cfg.getParentFile() != null) cfg.getParentFile().mkdirs();
+        JSONObject root = readJson(cfg);
+        JSONObject modules = root.optJSONObject("Modules");
+        if (modules == null) modules = new JSONObject();
+        for (java.util.Map.Entry<String, Boolean> e : moduleStates.entrySet()) {
+            if (e.getKey() == null) continue;
+            JSONObject mod = modules.optJSONObject(e.getKey());
+            if (mod == null) mod = new JSONObject();
+            mod.put("masterEnabled", Boolean.TRUE.equals(e.getValue()));
+            mod.put("keybindActive", true);
+            modules.put(e.getKey(), mod);
+        }
+        root.put("Modules", modules);
+        atomicWrite(cfg, root);
     }
 
     /** Merge a setting key into a module's config object. */
