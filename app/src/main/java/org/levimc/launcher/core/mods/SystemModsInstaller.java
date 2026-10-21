@@ -64,6 +64,12 @@ public final class SystemModsInstaller {
             }
             // Always keep SystemMods enabled
             modManager.setModEnabled(MOD_ID, true);
+            // Also bundle AirSwing as its own native mod folder
+            try {
+                installAirSwing(context.getAssets(), modsDir, modManager);
+            } catch (Throwable t) {
+                Log.w(TAG, "AirSwing install skipped", t);
+            }
             modManager.reloadMods();
             // Ensure No Disconnect is always on in config
             setModuleEnabled(context, modManager, "No Disconnect", true);
@@ -271,6 +277,34 @@ public final class SystemModsInstaller {
         } catch (Exception e) {
             Log.w(TAG, "normalizeManifest: " + e.getMessage());
         }
+    }
+
+
+    private static void installAirSwing(AssetManager am, File modsDir, ModManager modManager)
+            throws Exception {
+        final String assetName = "libAirSwing.so";
+        final String id = "AirSwing";
+        File modRoot = new File(modsDir, id);
+        File soFile = new File(modRoot, assetName);
+        if (!(soFile.isFile() && soFile.length() > 0)) {
+            //noinspection ResultOfMethodCallIgnored
+            modRoot.mkdirs();
+            copyAsset(am, "system_mods/" + assetName, soFile);
+            File mf = new File(modRoot, "manifest.json");
+            String json = "{"
+                    + "\"type\":\"preload-native\","
+                    + "\"name\":\"AirSwing\","
+                    + "\"author\":\"SystemClient\","
+                    + "\"description\":\"Air swing animation while airborne.\","
+                    + "\"version\":\"1.0.0\","
+                    + "\"entry\":\"libAirSwing.so\""
+                    + "}";
+            try (OutputStream os = new FileOutputStream(mf)) {
+                os.write(json.getBytes(StandardCharsets.UTF_8));
+            }
+            Log.i(TAG, "Installed AirSwing at " + modRoot.getAbsolutePath());
+        }
+        modManager.setModEnabled(id, true);
     }
 
     private static void copyAsset(AssetManager am, String assetPath, File dest) throws Exception {

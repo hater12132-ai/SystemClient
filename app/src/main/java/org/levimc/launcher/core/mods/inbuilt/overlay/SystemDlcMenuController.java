@@ -1180,8 +1180,11 @@ final class SystemDlcMenuController {
                 addConfigToggle(panel, nn, "Italic", "m_italic", false, mm);
                 break;
             case "ambience":
-                addConfigSeekInt(panel, "Time Changer", "m_customTime", 6000, 0, 24000, mm);
+                addConfigSeekInt(panel, "Time Changer", "Custom time", "m_customTime", 6000, 0, 24000, mm);
                 addLabel(panel, "Weather", "Weather Changer follows this module toggle.");
+                break;
+            case "airswing":
+                addLabel(panel, "Settings", "Loaded with SystemMods — enable pack keeps Air Swing injected.");
                 break;
             case "fullbright":
             case "nofog":
@@ -1460,7 +1463,8 @@ final class SystemDlcMenuController {
                 inbuilt("ambience", "Ambience", "Time of day + weather")
         ));
         modulesByCategory.put("Player", list(
-                inbuilt("nick", "Nick", "Local display name")
+                inbuilt("nick", "Nick", "Local display name"),
+                inbuilt("airswing", "Air Swing", "Swing animation while in air")
         ));
         // No Disconnect is always-on inside SystemMods — not listed
     }
@@ -1522,6 +1526,9 @@ final class SystemDlcMenuController {
             case "armorhud": return "ArmorHUD";
             case "connectedglass": return "Connected Glass";
             case "fogcolor": return "Fog Color";
+            case "airswing":
+                addLabel(panel, "Settings", "Loaded with SystemMods — enable pack keeps Air Swing injected.");
+                break;
             case "fullbright": return "Fullbright";
             case "glintcolor": return "Glint Color";
             case "hitbox": return "Hitbox";
