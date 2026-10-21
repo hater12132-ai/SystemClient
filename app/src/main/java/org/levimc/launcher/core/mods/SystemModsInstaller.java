@@ -93,10 +93,11 @@ public final class SystemModsInstaller {
     public static List<File> configFiles(Context context, ModManager modManager) {
         List<File> out = new ArrayList<>();
         // PL typically uses <modRoot>/config as configDir → config.json here
-        File root = modRoot(modManager);
-        if (root != null) {
-            out.add(new File(root, "config/config.json"));
-            out.add(new File(root, "config.json"));
+        File modRootDir = modRoot(modManager);
+        if (modRootDir != null) {
+            out.add(new File(modRootDir, "config/config.json"));
+            out.add(new File(modRootDir, "config.json"));
+            out.add(new File(modRootDir, "data/config.json"));
         }
         // Stock BedrockTools default (confirmed in libBedrockTools.so strings)
         out.add(new File("/sdcard/games/BedrockTools/config.json"));
@@ -106,12 +107,6 @@ public final class SystemModsInstaller {
                 out.add(new File(ext, "games/BedrockTools/config.json"));
             }
         } catch (Throwable ignored) {}
-        File root = modRoot(modManager);
-        if (root != null) {
-            out.add(new File(root, "config.json"));
-            out.add(new File(root, "config/config.json"));
-            out.add(new File(root, "data/config.json"));
-        }
         if (context != null) {
             out.add(new File(context.getFilesDir(), "systemclient/config.json"));
             out.add(new File(context.getFilesDir(), "systemmods/config.json"));
