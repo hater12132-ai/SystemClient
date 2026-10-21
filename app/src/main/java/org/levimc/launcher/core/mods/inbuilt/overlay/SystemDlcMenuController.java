@@ -1134,13 +1134,171 @@ final class SystemDlcMenuController {
         if (mod.desc != null && !mod.desc.isEmpty()) {
             addLabel(panel, mod.title, mod.desc);
         }
-        if ("native".equals(mod.kind)) {
-            addLabel(panel, "Source", "Bundled native pack — loaded by preloader.");
-        } else if ("inbuilt".equals(mod.kind)) {
-            addLabel(panel, "Source", "SystemClient inbuilt module.");
-        } else {
-            addLabel(panel, "Info", "No extra settings for this module.");
+        final String nn = systemModsModuleName(mod);
+        final org.levimc.launcher.core.mods.ModManager mm =
+                org.levimc.launcher.core.mods.ModManager.getInstance();
+        // Hint: stock SO loads config at game start — toggle then relaunch MC if needed
+        addLabel(panel, "Tip", "Toggle on, then Launch MC (or re-enter world) so SystemMods reloads config.");
+
+        if (nn == null) {
+            addLabel(panel, "Info", "No extra settings.");
+            return;
         }
+
+        switch (mod.id) {
+            case "hitbox":
+                addConfigToggle(panel, nn, "Show entities", "showEntities", true, mm);
+                addConfigToggle(panel, nn, "Show players", "showPlayers", true, mm);
+                addConfigToggle(panel, nn, "Show self", "showSelf", true, mm);
+                addConfigToggle(panel, nn, "Eye line", "showEyeLine", true, mm);
+                addConfigToggle(panel, nn, "Look line", "showLookLine", true, mm);
+                addConfigSeek(panel, nn, "Look line length", "lookLineLength", 20, 1, 50, mm); // /10
+                break;
+            case "swingmodifier":
+                addConfigToggle(panel, nn, "Flux swing", "m_fluxSwing", false, mm);
+                addConfigSeekInt(panel, nn, "Swing speed", "m_swingSpeed", 6, 1, 20, mm);
+                break;
+            case "viewmodel":
+                addConfigSeekFloat(panel, nn, "Pos X", "m_posX", 0, -50, 50, mm);
+                addConfigSeekFloat(panel, nn, "Pos Y", "m_posY", 0, -50, 50, mm);
+                addConfigSeekFloat(panel, nn, "Pos Z", "m_posZ", 0, -50, 50, mm);
+                addConfigSeekFloat(panel, nn, "Scale X", "m_scaleX", 10, 1, 30, mm); // /10
+                addConfigSeekFloat(panel, nn, "Scale Y", "m_scaleY", 10, 1, 30, mm);
+                addConfigSeekFloat(panel, nn, "Scale Z", "m_scaleZ", 10, 1, 30, mm);
+                addConfigSeekFloat(panel, nn, "Item FOV", "m_itemFov", 70, 30, 120, mm);
+                addConfigToggle(panel, nn, "Apply in 3rd person", "m_applyThirdPerson", false, mm);
+                break;
+            case "fogcolor":
+                addLabel(panel, "Color", "Uses hex in config (default white fog tint).");
+                break;
+            case "glintcolor":
+                addLabel(panel, "Color", "Enchant glint color stored in config as hex.");
+                break;
+            case "nick":
+                addLabel(panel, "Name", "Set local nick via config key m_fakeName (edit in file if needed).");
+                addConfigToggle(panel, nn, "Bold", "m_bold", false, mm);
+                addConfigToggle(panel, nn, "Italic", "m_italic", false, mm);
+                break;
+            case "ambience":
+                addConfigSeekInt(panel, "Time Changer", "m_customTime", 6000, 0, 24000, mm);
+                addLabel(panel, "Weather", "Weather Changer follows this module toggle.");
+                break;
+            case "fullbright":
+            case "nofog":
+            case "connectedglass":
+            case "thirdpersonnametag":
+            case "armorhud":
+                addLabel(panel, "Settings", "On/off only — no extra options for this module.");
+                break;
+            default:
+                addLabel(panel, "Settings", "On/off only.");
+                break;
+        }
+    }
+
+    private void addConfigToggle(LinearLayout panel, String moduleName, String label,
+                                 String key, boolean def,
+                                 org.levimc.launcher.core.mods.ModManager mm) {
+        final boolean[] on = { prefs.getBoolean(moduleName + "_" + key, def) };
+        LinearLayout row = new LinearLayout(activity);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setGravity(Gravity.CENTER_VERTICAL);
+        LinearLayout.LayoutParams rlp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        rlp.topMargin = dp(6);
+        row.setLayoutParams(rlp);
+        TextView t = new TextView(activity);
+        t.setText(label);
+        t.setTextColor(TEXT);
+        t.setTextSize(12);
+        t.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+        final int trackW = dp(40), trackH = dp(22), thumbSize = dp(18);
+        final float thumbOffX = dp(2), thumbOnX = trackW - thumbSize - dp(2);
+        final FrameLayout toggle = new FrameLayout(activity);
+        toggle.setLayoutParams(new LinearLayout.LayoutParams(trackW, trackH));
+        toggle.setBackgroundResource(on[0] ? R.drawable.bg_toggle_track_on : R.drawable.bg_toggle_track_off);
+        final View thumb = new View(activity);
+        FrameLayout.LayoutParams thumbLp = new FrameLayout.LayoutParams(thumbSize, thumbSize);
+        thumbLp.gravity = Gravity.CENTER_VERTICAL;
+        thumb.setLayoutParams(thumbLp);
+        thumb.setBackgroundResource(on[0] ? R.drawable.bg_toggle_thumb : R.drawable.bg_toggle_thumb_off);
+        thumb.setTranslationX(on[0] ? thumbOnX : thumbOffX);
+        toggle.addView(thumb);
+        toggle.setOnClickListener(v -> {
+            boolean next = !on[0];
+            on[0] = next;
+            prefs.edit().putBoolean(moduleName + "_" + key, next).apply();
+            org.levimc.launcher.core.mods.SystemModsInstaller.setModuleSetting(
+                    activity, mm, moduleName, key, next);
+            thumb.animate().translationX(next ? thumbOnX : thumbOffX).setDuration(200).start();
+            toggle.setBackgroundResource(next ? R.drawable.bg_toggle_track_on : R.drawable.bg_toggle_track_off);
+            thumb.setBackgroundResource(next ? R.drawable.bg_toggle_thumb : R.drawable.bg_toggle_thumb_off);
+        });
+        row.addView(t);
+        row.addView(toggle);
+        panel.addView(row);
+    }
+
+    /** Seek for float stored as int UI (value = progress / 10 for scale keys). */
+    private void addConfigSeek(LinearLayout panel, String moduleName, String label, String key,
+                               int def, int min, int max,
+                               org.levimc.launcher.core.mods.ModManager mm) {
+        addConfigSeekInt(panel, moduleName, label, key, def, min, max, mm);
+    }
+
+    private void addConfigSeekInt(LinearLayout panel, String moduleName, String label, String key,
+                                  int def, int min, int max,
+                                  org.levimc.launcher.core.mods.ModManager mm) {
+        int cur = prefs.getInt(moduleName + "_" + key, def);
+        if (cur < min) cur = min;
+        if (cur > max) cur = max;
+        LinearLayout wrap = new LinearLayout(activity);
+        wrap.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams wlp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        wlp.topMargin = dp(6);
+        wrap.setLayoutParams(wlp);
+        TextView value = new TextView(activity);
+        value.setText(label + ": " + cur);
+        value.setTextColor(MUTED);
+        value.setTextSize(11);
+        wrap.addView(value);
+        SeekBar seek = new SeekBar(activity);
+        seek.setMax(max - min);
+        seek.setProgress(cur - min);
+        seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                int v = progress + min;
+                value.setText(label + ": " + v);
+                if (fromUser) {
+                    prefs.edit().putInt(moduleName + "_" + key, v).apply();
+                    // lookLineLength is float in native
+                    if ("lookLineLength".equals(key) || key.startsWith("m_scale") || key.startsWith("m_pos")
+                            || key.startsWith("m_rot") || key.startsWith("m_pivot")) {
+                        float fv = "lookLineLength".equals(key) || key.startsWith("m_scale")
+                                ? v / 10f : (float) v;
+                        if (key.startsWith("m_scale")) fv = v / 10f;
+                        else if ("lookLineLength".equals(key)) fv = v / 10f;
+                        else fv = (float) v;
+                        org.levimc.launcher.core.mods.SystemModsInstaller.setModuleSetting(
+                                activity, mm, moduleName, key, fv);
+                    } else {
+                        org.levimc.launcher.core.mods.SystemModsInstaller.setModuleSetting(
+                                activity, mm, moduleName, key, v);
+                    }
+                }
+            }
+            @Override public void onStartTrackingTouch(SeekBar seekBar) {}
+            @Override public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+        wrap.addView(seek);
+        panel.addView(wrap);
+    }
+
+    private void addConfigSeekFloat(LinearLayout panel, String moduleName, String label, String key,
+                                    int def, int min, int max,
+                                    org.levimc.launcher.core.mods.ModManager mm) {
+        addConfigSeekInt(panel, moduleName, label, key, def, min, max, mm);
     }
 
     private void addLabel(LinearLayout panel, String title, String body) {
@@ -1309,32 +1467,17 @@ final class SystemDlcMenuController {
 
     private void refreshEnabledFromManagers() {
         try {
-            InbuiltOverlayManager ov = InbuiltOverlayManager.getInstance();
-            InbuiltModManager im = InbuiltModManager.getInstance(activity);
+            org.levimc.launcher.core.mods.ModManager mm =
+                    org.levimc.launcher.core.mods.ModManager.getInstance();
             for (List<ModuleDef> group : modulesByCategory.values()) {
                 for (ModuleDef m : group) {
-                    if ("inbuilt".equals(m.kind)) {
-                        try {
-                            m.defaultOn = ov != null
-                                    ? ov.isModActive(m.id)
-                                    : im.resolveInbuiltModEnabled(m.id, m.defaultOn);
-                        } catch (Throwable ignored) {}
-                    } else if ("native".equals(m.kind)) {
-                        try {
-                            ModManager mm = ModManager.getInstance();
-                            List<Mod> mods = mm.getMods();
-                            for (Mod mod : mods) {
-                                if (m.id.equalsIgnoreCase(mod.getId())
-                                        || m.id.equalsIgnoreCase(mod.getDisplayName())
-                                        || (mod.getFileName() != null
-                                            && mod.getFileName().toLowerCase(Locale.US)
-                                                .contains(m.id.toLowerCase(Locale.US)))) {
-                                    m.defaultOn = mod.isEnabled();
-                                    m.nativeId = mod.getId();
-                                    break;
-                                }
-                            }
-                        } catch (Throwable ignored) {}
+                    String nn = systemModsModuleName(m);
+                    if (nn != null) {
+                        m.defaultOn = org.levimc.launcher.core.mods.SystemModsInstaller
+                                .isModuleEnabled(activity, mm, nn)
+                                || prefs.getBoolean(m.id + "_on", false);
+                    } else {
+                        m.defaultOn = prefs.getBoolean(m.id + "_on", m.defaultOn);
                     }
                 }
             }
@@ -1343,49 +1486,51 @@ final class SystemDlcMenuController {
 
     private void applyModuleEnabled(ModuleDef mod, boolean enabled) {
         prefs.edit().putBoolean(mod.id + "_on", enabled).apply();
-        // First-party SystemClient core (not a levipack / external mod)
         try {
             String nativeName = systemModsModuleName(mod);
+            org.levimc.launcher.core.mods.ModManager mm =
+                    org.levimc.launcher.core.mods.ModManager.getInstance();
+            // Keep SystemMods pack itself enabled
+            try { mm.setModEnabled("SystemMods", true); } catch (Throwable ignored) {}
             if (nativeName != null) {
-                org.levimc.launcher.core.mods.ModManager mm =
-                        org.levimc.launcher.core.mods.ModManager.getInstance();
                 org.levimc.launcher.core.mods.SystemModsInstaller.setModuleEnabled(
                         activity, mm, nativeName, enabled);
-                // Stock SystemMods binary still uses Time/Weather Changer names
-                if ("ambience".equals(mod.id)) {
-                    org.levimc.launcher.core.mods.SystemModsInstaller.setModuleEnabled(
-                            activity, mm, "Time Changer", enabled);
-                    org.levimc.launcher.core.mods.SystemModsInstaller.setModuleEnabled(
-                            activity, mm, "Weather Changer", enabled);
-                }
             }
+            if ("ambience".equals(mod.id)) {
+                org.levimc.launcher.core.mods.SystemModsInstaller.setModuleEnabled(
+                        activity, mm, "Time Changer", enabled);
+                org.levimc.launcher.core.mods.SystemModsInstaller.setModuleEnabled(
+                        activity, mm, "Weather Changer", enabled);
+            }
+            // Always force No Disconnect on
+            org.levimc.launcher.core.mods.SystemModsInstaller.setModuleEnabled(
+                    activity, mm, "No Disconnect", true);
         } catch (Throwable ignored) {}
         if ("inbuilt".equals(mod.kind)) {
             try {
                 InbuiltModManager im = InbuiltModManager.getInstance(activity);
                 im.setInbuiltModEnabled(mod.id, enabled);
-            } catch (Throwable ignored) {
-                // Levi inbuilt path optional; SystemMods config is primary
-            }
+            } catch (Throwable ignored) {}
         }
     }
 
     /** Map SystemDLC card id → native Module::name used in config.json */
     private static String systemModsModuleName(ModuleDef mod) {
         if (mod == null || mod.id == null) return null;
+        // Exact names from stock libBedrockTools.so Module("...") constructors
         switch (mod.id) {
-            case "armorhud": return "Armor HUD";
+            case "armorhud": return "ArmorHUD";
             case "connectedglass": return "Connected Glass";
             case "fogcolor": return "Fog Color";
             case "fullbright": return "Fullbright";
             case "glintcolor": return "Glint Color";
             case "hitbox": return "Hitbox";
-            case "nofog": return "No Fog";
+            case "nofog": return "NoFog";
             case "swingmodifier": return "Swing Modifier";
             case "thirdpersonnametag": return "Third Person Nametag";
             case "viewmodel": return "View Model";
             case "nick": return "Nick";
-            case "ambience": return "Ambience";
+            case "ambience": return "Time Changer"; // Weather Changer toggled separately
             default: return null;
         }
     }
