@@ -1526,9 +1526,6 @@ final class SystemDlcMenuController {
             case "armorhud": return "ArmorHUD";
             case "connectedglass": return "Connected Glass";
             case "fogcolor": return "Fog Color";
-            case "airswing":
-                addLabel(panel, "Settings", "Loaded with SystemMods — enable pack keeps Air Swing injected.");
-                break;
             case "fullbright": return "Fullbright";
             case "glintcolor": return "Glint Color";
             case "hitbox": return "Hitbox";
